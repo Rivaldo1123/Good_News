@@ -460,9 +460,9 @@
   if(c.showMinistries!==false){g('min-h2').textContent=c.ministriesHeading||'Our Ministries';g('min-sub').textContent=c.ministriesSub||'';g('min-grid').innerHTML=(c.ministries||[]).map(m=>`<div class="min-card"><div class="min-icon">${e(m.icon)}</div><div><div class="min-name">${e(m.name)}</div><div class="min-desc">${e(m.desc)}</div></div></div>`).join('');}else{g('ministries').style.display='none';}
   g('loc-h2').textContent=c.mapHeading||'Find Us';
   if(c.showMap!==false){const src=u(c.mapEmbedUrl)||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
-  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(c.privacyPolicyUrl)}" target="_blank" rel="noopener" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
+  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(u(c.privacyPolicyUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
   const socs=[['Facebook',c.facebook,'f'],['Instagram',c.instagram,'ig'],['YouTube',c.youtube,'▶'],['Twitter/X',c.twitter,'𝕏']].filter(s=>s[1]);
-  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener" title="${e(s[0])}">${s[2]}</a>`).join('');}
+  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener noreferrer" title="${e(s[0])}">${s[2]}</a>`).join('');}
   g('foot-copy').textContent=c.footerText||`© ${new Date().getFullYear()} ${c.name}. All rights reserved.`;
   window.openMob=()=>g('mob-nav').classList.add('open');
   window.closeMob=()=>g('mob-nav').classList.remove('open');
@@ -484,7 +484,7 @@
   // ANNOUNCEMENT BANNER
   if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
   // PRIVACY LINK IN FOOTER
-  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
+  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener noreferrer';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
   // COOKIE CONSENT BANNER
   if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
@@ -918,6 +918,20 @@ async function changePassword(){
 }
 
 // ═══════════════════════ PUBLISH TO GITHUB ═══════════════════════
+
+// UTF-8-safe base64 encode/decode (replaces deprecated escape/unescape)
+function toBase64(str){
+  const bytes=new TextEncoder().encode(str);
+  let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function fromBase64(b64){
+  const bin=atob(b64.replace(/\n/g,''));
+  const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
 function pubToast(msg, type, dur=3500){
   const t=document.getElementById('pub-status');
   t.textContent=msg; t.className='pub-status '+type+' show';
@@ -930,7 +944,7 @@ async function ghPushFile(repo, path, content, hdrs, message){
   let sha=undefined;
   if(getRes.ok){ sha=(await getRes.json()).sha; }
   else if(getRes.status!==404){ const e=await getRes.json(); throw new Error(e.message||`Cannot read ${path}`); }
-  const encoded=btoa(unescape(encodeURIComponent(content)));
+  const encoded=toBase64(content);
   const body={message,content:encoded}; if(sha) body.sha=sha;
   const putRes=await fetch(apiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify(body)});
   if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||`Push of ${path} failed`);}
@@ -958,10 +972,10 @@ async function publishToGitHub(){
     const adminRes=await fetch(adminApiUrl,{headers:hdrs});
     if(adminRes.ok){
       const {sha, content}=await adminRes.json();
-      let adminHTML=decodeURIComponent(escape(atob(content.replace(/\n/g,''))));
+      let adminHTML=fromBase64(content);
       const liveHash=localStorage.getItem(HASH_KEY)||DEFAULT_HASH;
       adminHTML=adminHTML.replace(/const DEFAULT_HASH = '[a-f0-9]{64}'/,`const DEFAULT_HASH = '${liveHash}'`);
-      const encoded=btoa(unescape(encodeURIComponent(adminHTML)));
+      const encoded=toBase64(adminHTML);
       const putRes=await fetch(adminApiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message:'Update admin security config',content:encoded,sha})});
       if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'Push of admin.html failed');}
     }
