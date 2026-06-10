@@ -1,0 +1,7 @@
+# Claude Code internal state
+.claude/
+
+# Node / build artifacts (added when Vite is set up)
+node_modules/
+dist/assets/
+dist/admin.html
