@@ -111,6 +111,16 @@
   .color-field{display:flex;align-items:center;gap:10px}
   .color-field input[type="color"]{flex-shrink:0}
   .color-field input[type="text"]{flex:1}
+
+  /* PUBLISH BUTTON */
+  .btn-pub{padding:8px 18px;background:#16a34a;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:6px}
+  .btn-pub:hover{background:#15803d}
+  .btn-pub:disabled{background:#374151;color:#6b7280;cursor:not-allowed}
+  .pub-status{position:fixed;bottom:60px;right:24px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;max-width:280px}
+  .pub-status.show{opacity:1}
+  .pub-status.ok{background:#16a34a;color:#fff}
+  .pub-status.err{background:var(--red);color:#fff}
+  .pub-status.busy{background:#2563eb;color:#fff}
   </style>
 </head>
 <body>
@@ -140,7 +150,8 @@
     </div>
     <div class="hdr-actions">
       <a class="btn-preview" href="index.html" target="_blank">👁 Preview</a>
-      <button class="btn-dl" onclick="dlPage()">⬇ Download Landing Page</button>
+      <button class="btn-dl" onclick="dlPage()">⬇ Download</button>
+      <button class="btn-pub" id="pub-btn" onclick="publishToGitHub()">🚀 Publish to GitHub</button>
     </div>
   </header>
   <div class="layout">
@@ -175,6 +186,7 @@
 </div>
 
 <div class="saved" id="saved-toast">Saved ✓</div>
+<div class="pub-status" id="pub-status"></div>
 
 <!-- ═══════════════════════════════════════════════════════════
      LANDING PAGE TEMPLATE — DO NOT EDIT BELOW THIS LINE
@@ -675,20 +687,79 @@ function renderPanel(name){
       </select></div>`,
 
     security:`
-      <div class="panel-hdr"><div class="panel-h1">Security</div><div class="panel-sub">Admin panel password</div></div>
-      <div class="info-box"><p>This password is stored in the downloaded landing page file. Keep it simple but not guessable — it protects your admin panel.</p></div>
-      ${f('Admin Password','adminPassword','admin123')}`
+      <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Admin password and GitHub publish settings</div></div>
+      ${f('Admin Password','adminPassword','admin123')}
+      <hr style="border-color:var(--bdr);margin:20px 0"/>
+      <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
+      <div class="info-box"><p>
+        <strong>Setup (one time):</strong><br/>
+        1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br/>
+        2. Click <strong>Generate new token</strong><br/>
+        3. Set repository access to <strong>Rivaldo1123/Good_News</strong><br/>
+        4. Under Permissions → Repository → <strong>Contents: Read and Write</strong><br/>
+        5. Generate &amp; paste the token below<br/><br/>
+        <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
+      </p></div>
+      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(localStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." oninput="localStorage.setItem('gh_token',this.value)"/></div>
+      <div class="field"><label>GitHub Repo (owner/repo)</label><input type="text" value="${esc(localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News')}" placeholder="Rivaldo1123/Good_News" oninput="localStorage.setItem('gh_repo',this.value)"/></div>`
   };
   return `<div class="panel active">${panels[name]||''}</div>`;
 }
 
+// ═══════════════════════ PUBLISH TO GITHUB ═══════════════════════
+function pubToast(msg, type, dur=3500){
+  const t=document.getElementById('pub-status');
+  t.textContent=msg; t.className='pub-status '+type+' show';
+  if(dur) setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+async function publishToGitHub(){
+  const token = localStorage.getItem('gh_token')||'';
+  const repo  = localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News';
+  if(!token){ alert('Add your GitHub Personal Access Token in the Security section first.'); showSec('security'); return; }
+
+  const btn = document.getElementById('pub-btn');
+  btn.disabled = true; btn.textContent = '⏳ Publishing…';
+  pubToast('Pushing to GitHub…', 'busy', 0);
+
+  try {
+    const apiUrl = `https://api.github.com/repos/${repo}/contents/index.html`;
+    const headers = { Authorization:`Bearer ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' };
+
+    // 1. Get current file SHA (required for updates)
+    const getRes = await fetch(apiUrl, { headers });
+    if(!getRes.ok){ const e=await getRes.json(); throw new Error(e.message||'Could not read file from GitHub'); }
+    const { sha } = await getRes.json();
+
+    // 2. Build the page and base64-encode it
+    const html = buildPageHTML();
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+
+    // 3. Commit the update
+    const putRes = await fetch(apiUrl, {
+      method:'PUT', headers,
+      body: JSON.stringify({ message:'Update church landing page via admin panel', content:encoded, sha })
+    });
+    if(!putRes.ok){ const e=await putRes.json(); throw new Error(e.message||'Push failed'); }
+
+    pubToast('✅ Published! Netlify will update in ~30 seconds.', 'ok');
+  } catch(err) {
+    pubToast('❌ '+err.message, 'err');
+  } finally {
+    btn.disabled=false; btn.innerHTML='🚀 Publish to GitHub';
+  }
+}
+
 // ═══════════════════════ DOWNLOAD ═══════════════════════
-function dlPage(){
+function buildPageHTML(){
   const tpl=document.getElementById('tpl').textContent;
-  const configJSON=JSON.stringify(cfg);
-  const html=tpl
-    .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+configJSON+';')
+  return tpl
+    .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+JSON.stringify(cfg)+';')
     .replace(/<\/SCRIPTEND>/g,'<\/script>');
+}
+
+function dlPage(){
+  const html=buildPageHTML();
   const fname=(cfg.name||'church').toLowerCase().replace(/\s+/g,'-')+'-landing.html';
   const blob=new Blob([html],{type:'text/html'});
   const a=document.createElement('a');
