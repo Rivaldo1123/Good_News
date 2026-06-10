@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Church Admin Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
+  [x-cloak]{display:none!important}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--bg:#12141a;--surf:#1c1f27;--surf2:#232730;--bdr:#2a2f3d;--acc:#6c63ff;--acc2:#8a83ff;--txt:#eef0f8;--muted:#7a7f99;--inp:#252933;--red:#e85a6a;--green:#3cc97c}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height:100vh;overflow:hidden;display:flex;flex-direction:column}
@@ -16,15 +18,11 @@
   .gate-icon{font-size:48px;margin-bottom:20px}
   .gate-h1{font-size:22px;font-weight:700;margin-bottom:6px}
   .gate-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
-  .gate-input{width:100%;padding:11px 14px;background:var(--inp);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:14px;outline:none;margin-bottom:12px;transition:border-color .2s;font-family:'Inter',sans-serif}
-  .gate-input:focus{border-color:var(--acc)}
   .gate-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
   .gate-btn:hover{background:var(--acc2)}
-  .gate-err{font-size:13px;color:var(--red);margin-top:10px}
-  .gate-hint{font-size:11px;color:var(--muted);margin-top:16px}
 
   /* ADMIN SHELL */
-  #adm{display:none;flex-direction:column;height:100vh;overflow:hidden}
+  #adm{display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
   header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
   .hdr-left{display:flex;align-items:center;gap:12px}
@@ -54,8 +52,6 @@
   .panels::-webkit-scrollbar{width:5px}
   .panels::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
 
-  .panel{display:none}
-  .panel.active{display:block}
   .panel-hdr{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)}
   .panel-h1{font-size:20px;font-weight:700;margin-bottom:4px}
   .panel-sub{font-size:13px;color:var(--muted)}
@@ -92,9 +88,7 @@
   .item-card-actions{display:flex;gap:8px;align-items:center}
   .ic-del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;opacity:.7;line-height:1}
   .ic-del:hover{opacity:1}
-  .ic-arr{font-size:12px;color:var(--muted);transition:transform .2s}
-  .item-card-body{padding:14px;border-top:1px solid var(--bdr);display:none}
-  .item-card-body.open{display:block}
+  .item-card-body{padding:14px;border-top:1px solid var(--bdr)}
   .btn-add{padding:8px 16px;background:rgba(108,99,255,.15);border:1px dashed var(--acc);border-radius:8px;color:var(--acc2);font-size:13px;font-weight:500;cursor:pointer;width:100%;transition:all .2s;margin-top:4px}
   .btn-add:hover{background:rgba(108,99,255,.25)}
 
@@ -125,903 +119,376 @@
 </head>
 <body>
 
-<!-- ── GATE ── -->
-<div id="gate">
-  <div class="gate-card">
-    <div class="gate-icon">⛪</div>
-    <div class="gate-h1" id="gate-h1">Church Admin</div>
-    <div class="gate-sub" id="gate-sub">Enter your admin password to continue</div>
-    <form onsubmit="checkPw(event)">
-      <input id="pw-in" type="password" class="gate-input" placeholder="Password" autofocus/>
-      <div id="pw-confirm-wrap" style="display:none"><input id="pw-confirm-in" type="password" class="gate-input" placeholder="Confirm password"/></div>
-      <button class="gate-btn" id="login-btn" type="submit">Login</button>
-    </form>
-    <p class="gate-err" id="pw-err"></p>
-  </div>
-</div>
+<div x-data="admin" x-cloak>
 
-<!-- ── ADMIN ── -->
-<div id="adm">
-  <header>
-    <div class="hdr-left">
-      <span class="hdr-icon">⛪</span>
-      <span class="hdr-title">Church Admin</span>
-      <span class="hdr-church" id="hdr-name">My Church</span>
+  <!-- ── GATE ── -->
+  <div id="gate" x-show="!user" style="display:flex">
+    <div class="gate-card">
+      <div class="gate-icon">⛪</div>
+      <div class="gate-h1">Church Admin</div>
+      <div class="gate-sub">Sign in to manage your church website</div>
+      <button class="gate-btn" @click="netlifyIdentity.open()">Sign In</button>
     </div>
-    <div class="hdr-actions">
-      <a class="btn-preview" href="index.html" target="_blank" rel="noopener noreferrer">👁 Preview</a>
-      <button class="btn-dl" onclick="dlPage()">⬇ Download</button>
-      <button class="btn-pub" id="pub-btn" onclick="publishToGitHub()">🚀 Publish to GitHub</button>
-      <button class="btn-preview" onclick="logout()" style="color:var(--red);border-color:var(--red)">⏻ Logout</button>
-    </div>
-  </header>
-  <div class="layout">
-    <aside>
-      <div class="nav-group">
-        <div class="nav-group-label">Site</div>
-        <div class="nav-item active" data-sec="general" onclick="showSec('general')"><span class="nav-icon">🏛</span>General</div>
-        <div class="nav-item" data-sec="hero" onclick="showSec('hero')"><span class="nav-icon">🖼</span>Hero</div>
-        <div class="nav-item" data-sec="infobar" onclick="showSec('infobar')"><span class="nav-icon">📌</span>Info Bar</div>
-        <div class="nav-item" data-sec="about" onclick="showSec('about')"><span class="nav-icon">📖</span>About</div>
+  </div>
+
+  <!-- ── ADMIN ── -->
+  <div id="adm" x-show="user" style="display:none">
+    <header>
+      <div class="hdr-left">
+        <span class="hdr-icon">⛪</span>
+        <span class="hdr-title">Church Admin</span>
+        <span class="hdr-church" x-text="cfg.name || 'My Church'"></span>
       </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Content</div>
-        <div class="nav-item" data-sec="services" onclick="showSec('services')"><span class="nav-icon">🕐</span>Services</div>
-        <div class="nav-item" data-sec="events" onclick="showSec('events')"><span class="nav-icon">📅</span>Events</div>
-        <div class="nav-item" data-sec="pastor" onclick="showSec('pastor')"><span class="nav-icon">👤</span>Pastor</div>
-        <div class="nav-item" data-sec="ministries" onclick="showSec('ministries')"><span class="nav-icon">🤝</span>Ministries</div>
+      <div class="hdr-actions">
+        <a class="btn-preview" href="index.html" target="_blank" rel="noopener noreferrer">👁 Preview</a>
+        <button class="btn-pub"
+          :disabled="publishStatus === 'busy'"
+          @click="publish()">
+          <span x-text="publishStatus === 'busy' ? '⏳ Publishing…' : '🚀 Publish to GitHub'"></span>
+        </button>
+        <button class="btn-preview" @click="logout()" style="color:var(--red);border-color:var(--red)">⏻ Logout</button>
       </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Contact</div>
-        <div class="nav-item" data-sec="mapcontact" onclick="showSec('mapcontact')"><span class="nav-icon">📍</span>Map &amp; Contact</div>
-        <div class="nav-item" data-sec="social" onclick="showSec('social')"><span class="nav-icon">🔗</span>Social &amp; Footer</div>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Settings</div>
-        <div class="nav-item" data-sec="seo" onclick="showSec('seo')"><span class="nav-icon">🔍</span>SEO &amp; Sharing</div>
-        <div class="nav-item" data-sec="compliance" onclick="showSec('compliance')"><span class="nav-icon">⚖️</span>Legal &amp; Compliance</div>
-        <div class="nav-item" data-sec="theme" onclick="showSec('theme')"><span class="nav-icon">🎨</span>Theme</div>
-        <div class="nav-item" data-sec="security" onclick="showSec('security')"><span class="nav-icon">🔒</span>Security</div>
-      </div>
-    </aside>
-    <div class="panels" id="panels"></div>
-  </div>
-</div>
+    </header>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside>
+        <div class="nav-group">
+          <div class="nav-group-label">Site</div>
+          <div class="nav-item" :class="{active: section==='general'}" @click="section='general'"><span class="nav-icon">🏛</span>General</div>
+          <div class="nav-item" :class="{active: section==='hero'}" @click="section='hero'"><span class="nav-icon">🖼</span>Hero</div>
+          <div class="nav-item" :class="{active: section==='infobar'}" @click="section='infobar'"><span class="nav-icon">📌</span>Info Bar</div>
+          <div class="nav-item" :class="{active: section==='about'}" @click="section='about'"><span class="nav-icon">📖</span>About</div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Content</div>
+          <div class="nav-item" :class="{active: section==='services'}" @click="section='services'"><span class="nav-icon">🕐</span>Services</div>
+          <div class="nav-item" :class="{active: section==='events'}" @click="section='events'"><span class="nav-icon">📅</span>Events</div>
+          <div class="nav-item" :class="{active: section==='pastor'}" @click="section='pastor'"><span class="nav-icon">👤</span>Pastor</div>
+          <div class="nav-item" :class="{active: section==='ministries'}" @click="section='ministries'"><span class="nav-icon">🤝</span>Ministries</div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Contact</div>
+          <div class="nav-item" :class="{active: section==='mapcontact'}" @click="section='mapcontact'"><span class="nav-icon">📍</span>Map &amp; Contact</div>
+          <div class="nav-item" :class="{active: section==='social'}" @click="section='social'"><span class="nav-icon">🔗</span>Social &amp; Footer</div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Settings</div>
+          <div class="nav-item" :class="{active: section==='seo'}" @click="section='seo'"><span class="nav-icon">🔍</span>SEO &amp; Sharing</div>
+          <div class="nav-item" :class="{active: section==='compliance'}" @click="section='compliance'"><span class="nav-icon">⚖️</span>Legal &amp; Compliance</div>
+          <div class="nav-item" :class="{active: section==='theme'}" @click="section='theme'"><span class="nav-icon">🎨</span>Theme</div>
+          <div class="nav-item" :class="{active: section==='security'}" @click="section='security'"><span class="nav-icon">🔒</span>Security</div>
+        </div>
+      </aside>
 
-<div class="saved" id="saved-toast">Saved ✓</div>
-<div class="pub-status" id="pub-status"></div>
+      <!-- PANELS -->
+      <div class="panels">
 
-<!-- ═══════════════════════════════════════════════════════════
-     LANDING PAGE TEMPLATE — DO NOT EDIT BELOW THIS LINE
-     </SCRIPTEND> and CHURCH_CONFIG_PLACEHOLDER are markers
-     ═══════════════════════════════════════════════════════════ -->
-<script type="text/plain" id="tpl"><!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Church</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script id="site-config">
-  /* BEGIN_CONFIG */
-  window.C = CHURCH_CONFIG_PLACEHOLDER;
-  /* END_CONFIG */
-  </SCRIPTEND>
-  <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:'Inter',sans-serif;color:#222;background:#fff;line-height:1.6}
-  img{max-width:100%;display:block}
-  a{text-decoration:none;color:inherit}
-  :root{--accent:#6c4ecb;--accent-dark:#5a3db9;--hf:'Playfair Display',serif}
-  #nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;transition:all .3s}
-  #nav.scrolled{background:rgba(255,255,255,.97);backdrop-filter:blur(12px);box-shadow:0 2px 24px rgba(0,0,0,.08);padding:12px 48px}
-  .nav-logo{font-size:18px;font-weight:700;color:#fff;font-family:var(--hf);transition:color .3s}
-  #nav.scrolled .nav-logo{color:#1a1a2e}
-  .nav-links{display:flex;align-items:center;gap:28px}
-  .nav-links a{font-size:14px;font-weight:500;color:rgba(255,255,255,.9);transition:color .2s}
-  #nav.scrolled .nav-links a{color:#555}
-  .nav-links a:hover{color:var(--accent)}
-  .nav-cta{padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:var(--accent);color:#fff !important;transition:all .2s}
-  .nav-cta:hover{background:var(--accent-dark) !important;transform:translateY(-1px)}
-  .hamburger{display:none;background:none;border:none;cursor:pointer;color:#fff;font-size:24px;padding:4px}
-  #nav.scrolled .hamburger{color:#333}
-  .mob-nav{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);z-index:1001;flex-direction:column;align-items:center;justify-content:center;gap:28px}
-  .mob-nav.open{display:flex}
-  .mob-nav a{font-size:22px;font-weight:600;color:#1a1a2e}
-  .mob-close{position:absolute;top:20px;right:24px;font-size:28px;cursor:pointer;color:#333;background:none;border:none}
-  #hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;overflow:hidden}
-  .hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-  .hero-ov{position:absolute;inset:0}
-  .hero-cnt{position:relative;z-index:1;max-width:780px}
-  .hero-badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 16px;margin-bottom:24px}
-  .hero-h1{font-family:var(--hf);font-size:clamp(40px,7vw,72px);color:#fff;line-height:1.1;margin-bottom:20px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
-  .hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,.88);max-width:580px;margin:0 auto 36px;line-height:1.65}
-  .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .btn{padding:15px 36px;border-radius:40px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-block}
-  .btn-p{background:var(--accent);color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.25)}
-  .btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.3)}
-  .btn-o{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.5);backdrop-filter:blur(4px)}
-  .btn-o:hover{background:rgba(255,255,255,.25)}
-  .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:4px;animation:bob 2.5s ease-in-out infinite}
-  .scroll-hint::after{content:"↓";font-size:18px}
-  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
-  #info-bar{background:var(--accent);display:flex;justify-content:center;flex-wrap:wrap}
-  .ib-item{display:flex;align-items:center;gap:10px;padding:14px 36px;font-size:13px;font-weight:500;color:#fff;border-right:1px solid rgba(255,255,255,.25)}
-  .ib-item:last-child{border-right:none}
-  .sec{padding:80px 24px}
-  .sec-inner{max-width:1100px;margin:0 auto}
-  .sec-hdr{text-align:center;margin-bottom:52px}
-  .eyebrow{font-size:11px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-  .sec-h2{font-family:var(--hf);font-size:clamp(28px,4vw,42px);color:#1a1a2e;line-height:1.2;margin-bottom:10px}
-  .sec-sub{font-size:16px;color:#666;max-width:500px;margin:0 auto}
-  #about{background:#fff}
-  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-  .about-vis{border-radius:20px;overflow:hidden;aspect-ratio:4/3;background:#f0f0f8;display:flex;align-items:center;justify-content:center;font-size:80px}
-  .about-vis img{width:100%;height:100%;object-fit:cover}
-  .about-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
-  .about-h2{font-family:var(--hf);font-size:clamp(26px,3.5vw,38px);color:#1a1a2e;line-height:1.2;margin-bottom:20px}
-  .about-body p{font-size:16px;color:#444;line-height:1.85;margin-bottom:16px}
-  .about-body p:last-child{margin-bottom:0}
-  #services{background:#f9f9fc}
-  .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
-  .svc-card{background:#fff;border-radius:16px;padding:28px;text-align:center;border:1px solid #eee;transition:all .25s;cursor:default}
-  .svc-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.1)}
-  .svc-day{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-  .svc-time{font-family:var(--hf);font-size:30px;color:#1a1a2e;margin-bottom:8px}
-  .svc-name{font-size:14px;font-weight:600;color:#333;margin-bottom:4px}
-  .svc-desc{font-size:13px;color:#888}
-  #events{background:#fff}
-  .evt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-  .evt-card{border-radius:16px;overflow:hidden;border:1px solid #eee;transition:all .25s}
-  .evt-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.1)}
-  .evt-head{display:flex;align-items:center;gap:16px;padding:20px 24px;background:#f9f9fc}
-  .evt-badge{min-width:56px;height:56px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:700}
-  .evt-mo{font-size:10px;letter-spacing:1px;text-transform:uppercase}
-  .evt-dy{font-size:24px;line-height:1}
-  .evt-title{font-family:var(--hf);font-size:18px;color:#1a1a2e}
-  .evt-body{padding:16px 24px 20px}
-  .evt-body p{font-size:14px;color:#666;line-height:1.7}
-  #pastor{background:#1a1a2e;padding:80px 24px}
-  .pstr-inner{max-width:720px;margin:0 auto;text-align:center}
-  .pstr-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:24px}
-  .pstr-photo{width:140px;height:140px;border-radius:50%;margin:0 auto 24px;overflow:hidden;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;border:3px solid var(--accent);font-size:56px}
-  .pstr-photo img{width:100%;height:100%;object-fit:cover}
-  .pstr-name{font-family:var(--hf);font-size:clamp(24px,3.5vw,36px);color:#fff;margin-bottom:20px}
-  .pstr-bio{font-size:16px;color:rgba(255,255,255,.72);line-height:1.8}
-  #ministries{background:#f9f9fc}
-  .min-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-  .min-card{background:#fff;border-radius:16px;padding:28px;display:flex;gap:18px;align-items:flex-start;border:1px solid #eee;transition:all .25s}
-  .min-card:hover{border-color:var(--accent);box-shadow:0 8px 30px rgba(0,0,0,.08)}
-  .min-icon{font-size:32px;flex-shrink:0;line-height:1}
-  .min-name{font-family:var(--hf);font-size:17px;color:#1a1a2e;margin-bottom:6px}
-  .min-desc{font-size:14px;color:#666;line-height:1.6}
-  #location{background:#fff}
-  .mc-grid{display:grid;grid-template-columns:1fr 1fr;border-radius:20px;overflow:hidden;border:1px solid #eee;box-shadow:0 4px 30px rgba(0,0,0,.06)}
-  .map-frame{width:100%;min-height:460px;border:none;display:block}
-  .cp-pane{padding:48px;display:flex;flex-direction:column;justify-content:center}
-  .cp-h2{font-family:var(--hf);font-size:26px;color:#1a1a2e;margin-bottom:6px}
-  .cp-sub{font-size:14px;color:#888;margin-bottom:28px}
-  .cp-items{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
-  .cp-row{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:#444}
-  .cp-icon{width:36px;height:36px;border-radius:50%;background:#f0f0f8;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-  .cf{display:flex;flex-direction:column;gap:10px}
-  .cf-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .cf input,.cf textarea{padding:11px 14px;border:1px solid #e0e0e8;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%}
-  .cf input:focus,.cf textarea:focus{border-color:var(--accent)}
-  .cf textarea{resize:vertical;min-height:90px}
-  .cf-btn{padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;align-self:flex-start}
-  .cf-btn:hover{background:var(--accent-dark)}
-  #footer{background:#1a1a2e;padding:36px 24px;text-align:center}
-  .soc-row{display:flex;gap:14px;justify-content:center;margin-bottom:18px}
-  .soc-a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#fff;transition:background .2s;font-size:14px;font-weight:700}
-  .soc-a:hover{background:var(--accent)}
-  .foot-copy{font-size:13px;color:rgba(255,255,255,.45)}
-  @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:40px}.about-vis{order:-1}.mc-grid{grid-template-columns:1fr}.cp-pane{padding:32px 24px}}
-  @media(max-width:768px){#nav{padding:16px 20px}#nav.scrolled{padding:12px 20px}.nav-links{display:none}.hamburger{display:block}.sec{padding:56px 20px}#pastor{padding:56px 20px}.ib-item{padding:12px 20px;border-right:none;border-bottom:1px solid rgba(255,255,255,.2)}.ib-item:last-child{border-bottom:none}}
-  @media(max-width:480px){.cf-2{grid-template-columns:1fr}.hero-btns{flex-direction:column;align-items:center}}
-  .skip-link{position:absolute;top:-100px;left:0;background:var(--accent);color:#fff;padding:8px 16px;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;font-size:14px;font-weight:600}
-  .skip-link:focus{top:0}
-  #ann-banner{background:var(--accent);color:#fff;text-align:center;padding:12px 24px;font-size:13px;font-weight:500;display:none}
-  #cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:rgba(255,255,255,.85);font-size:13px;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:2000;border-top:1px solid rgba(255,255,255,.1);gap:16px}
-  #cookie-banner button{flex-shrink:0;padding:7px 18px;background:var(--accent);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:12px;font-weight:600}
-  .cf-consent{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#666;cursor:pointer;margin-bottom:8px;line-height:1.5}
-  .cf-consent input[type=checkbox]{margin-top:2px;flex-shrink:0}
-  </style>
-</head>
-<body>
-<a href="#hero" class="skip-link">Skip to main content</a>
-<nav id="nav">
-  <div class="nav-logo" id="nav-logo"></div>
-  <div class="nav-links" id="nav-links"></div>
-  <button class="hamburger" onclick="openMob()" aria-label="Menu">☰</button>
-</nav>
-<div class="mob-nav" id="mob-nav">
-  <button class="mob-close" onclick="closeMob()">✕</button>
-  <div id="mob-links"></div>
-</div>
-<section id="hero" tabindex="-1">
-  <div class="hero-bg" id="hero-bg"></div>
-  <div class="hero-ov" id="hero-ov"></div>
-  <div class="hero-cnt">
-    <div class="hero-badge" id="hero-badge"></div>
-    <h1 class="hero-h1" id="hero-h1"></h1>
-    <p class="hero-sub" id="hero-sub"></p>
-    <div class="hero-btns" id="hero-btns"></div>
-  </div>
-  <div class="scroll-hint">Scroll</div>
-</section>
-<div id="info-bar"></div>
-<div id="ann-banner"></div>
-<section class="sec" id="about">
-  <div class="sec-inner">
-    <div class="about-grid">
-      <div class="about-vis" id="about-vis"></div>
-      <div>
-        <div class="about-eyebrow" id="about-eyebrow"></div>
-        <h2 class="about-h2" id="about-h2"></h2>
-        <div class="about-body" id="about-body"></div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="sec" id="services">
-  <div class="sec-inner">
-    <div class="sec-hdr">
-      <div class="eyebrow">Service Times</div>
-      <h2 class="sec-h2" id="svc-h2"></h2>
-      <p class="sec-sub" id="svc-sub"></p>
-    </div>
-    <div class="svc-grid" id="svc-grid"></div>
-  </div>
-</section>
-<section class="sec" id="events">
-  <div class="sec-inner">
-    <div class="sec-hdr">
-      <div class="eyebrow">Calendar</div>
-      <h2 class="sec-h2" id="evt-h2"></h2>
-      <p class="sec-sub" id="evt-sub"></p>
-    </div>
-    <div class="evt-grid" id="evt-grid"></div>
-  </div>
-</section>
-<section id="pastor">
-  <div class="pstr-inner">
-    <div class="pstr-eyebrow" id="pstr-eyebrow"></div>
-    <div class="pstr-photo" id="pstr-photo"></div>
-    <h2 class="pstr-name" id="pstr-name"></h2>
-    <p class="pstr-bio" id="pstr-bio"></p>
-  </div>
-</section>
-<section class="sec" id="ministries">
-  <div class="sec-inner">
-    <div class="sec-hdr">
-      <div class="eyebrow">Get Involved</div>
-      <h2 class="sec-h2" id="min-h2"></h2>
-      <p class="sec-sub" id="min-sub"></p>
-    </div>
-    <div class="min-grid" id="min-grid"></div>
-  </div>
-</section>
-<section class="sec" id="location">
-  <div class="sec-inner">
-    <div class="sec-hdr">
-      <div class="eyebrow">Location &amp; Contact</div>
-      <h2 class="sec-h2" id="loc-h2"></h2>
-    </div>
-    <div class="mc-grid">
-      <iframe id="map-frame" class="map-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" allowfullscreen="" loading="lazy" title="Church Location"></iframe>
-      <div class="cp-pane">
-        <h3 class="cp-h2" id="cp-h2"></h3>
-        <p class="cp-sub" id="cp-sub"></p>
-        <div class="cp-items" id="cp-items"></div>
-        <div id="cp-form"></div>
-      </div>
-    </div>
-  </div>
-</section>
-<footer id="footer">
-  <div class="soc-row" id="soc-row"></div>
-  <p class="foot-copy" id="foot-copy"></p>
-</footer>
-<script>
-(function(){
-  const c=window.C,g=id=>document.getElementById(id);
-  function shade(hex,amt){let r=parseInt(hex.slice(1,3),16),gv=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return '#'+[r,gv,b].map(v=>Math.min(255,Math.max(0,v+amt)).toString(16).padStart(2,'0')).join('')}
-  function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-  function u(s){s=String(s||'').trim();return /^javascript:/i.test(s)?'#':s;}
-  document.documentElement.style.setProperty('--accent',c.accent||'#6c4ecb');
-  document.documentElement.style.setProperty('--accent-dark',shade(c.accent||'#6c4ecb',-20));
-  document.documentElement.style.setProperty('--hf',c.headingFont||"'Playfair Display',serif");
-  document.title=c.name||'Church';
-  g('nav-logo').textContent=c.name||'';
-  const nlks=[{label:'About',href:'#about'},{label:'Services',href:'#services'},{label:'Events',href:'#events'},{label:'Contact',href:'#location'}];
-  g('nav-links').innerHTML=nlks.map(l=>`<a href="${e(l.href)}">${e(l.label)}</a>`).join('')+`<a href="#services" class="nav-cta">${e(c.navCtaText||'Join Us')}</a>`;
-  g('mob-links').innerHTML=nlks.map(l=>`<a href="${e(l.href)}" onclick="closeMob()">${e(l.label)}</a>`).join('')+`<a href="#services" onclick="closeMob()" style="color:var(--accent);font-weight:700">${e(c.navCtaText||'Join Us')}</a>`;
-  window.addEventListener('scroll',()=>g('nav').classList.toggle('scrolled',scrollY>60));
-  const hbg=g('hero-bg');
-  if(c.heroType==='image'&&c.heroImage){hbg.style.backgroundImage=`url('${c.heroImage}')`;hbg.style.backgroundColor=c.heroColor||'#1a1a4e';}
-  else if(c.heroType==='gradient'){hbg.style.background=`linear-gradient(135deg,${c.heroGradFrom||'#1a1a4e'},${c.heroGradTo||'#4a0e6e'})`;}
-  else{hbg.style.backgroundColor=c.heroColor||'#1a1a4e';}
-  g('hero-ov').style.background=`rgba(0,0,0,${c.heroOverlay||0.4})`;
-  const hbadge=g('hero-badge');
-  if(c.badge){hbadge.textContent=c.badge;}else{hbadge.style.display='none';}
-  g('hero-h1').textContent=c.heroHeading||c.name||'';
-  g('hero-sub').textContent=c.heroSub||'';
-  g('hero-btns').innerHTML=`<a href="${e(u(c.heroCta1Link||'#services'))}" class="btn btn-p">${e(c.heroCta1||'Join Us')}</a>`+(c.heroCta2?`<a href="${e(u(c.heroCta2Link||'#about'))}" class="btn btn-o">${e(c.heroCta2)}</a>`:'');
-  if(c.showInfoBar!==false){g('info-bar').innerHTML=[c.infoAddress?`<div class="ib-item">📍 ${e(c.infoAddress)}</div>`:'',c.infoService?`<div class="ib-item">🕐 ${e(c.infoService)}</div>`:'',c.infoPhone?`<div class="ib-item">📞 ${e(c.infoPhone)}</div>`:''].join('');}else{g('info-bar').style.display='none';}
-  if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="${e(c.aboutImageAlt||c.aboutHeading||'Our Church')}"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';g('about-body').innerHTML=(c.aboutBody||'').split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
-  if(c.showServices!==false){g('svc-h2').textContent=c.servicesHeading||'Join Us';g('svc-sub').textContent=c.servicesSub||'';g('svc-grid').innerHTML=(c.services||[]).map(s=>`<div class="svc-card"><div class="svc-day">${e(s.day)}</div><div class="svc-time">${e(s.time)}</div><div class="svc-name">${e(s.name)}</div>${s.desc?`<div class="svc-desc">${e(s.desc)}</div>`:''}</div>`).join('');}else{g('services').style.display='none';}
-  const EC=['#6c4ecb','#e8507a','#20b2aa','#f59e0b'];
-  if(c.showEvents!==false){g('evt-h2').textContent=c.eventsHeading||'Events';g('evt-sub').textContent=c.eventsSub||'';g('evt-grid').innerHTML=(c.events||[]).map((ev,i)=>`<div class="evt-card"><div class="evt-head"><div class="evt-badge" style="background:${e(ev.color||EC[i%4])}"><span class="evt-mo">${e(ev.month)}</span><span class="evt-dy">${e(ev.day)}</span></div><div class="evt-title">${e(ev.title)}</div></div><div class="evt-body"><p>${e(ev.desc)}</p></div></div>`).join('');}else{g('events').style.display='none';}
-  if(c.showPastor!==false){g('pstr-eyebrow').textContent=c.pastorTitle||'Meet Our Pastor';const pp=g('pstr-photo');if(c.pastorImage){pp.innerHTML=`<img src="${e(c.pastorImage)}" alt="${e(c.pastorName)}"/>`;}else{pp.textContent='✝';}g('pstr-name').textContent=c.pastorName||'';g('pstr-bio').textContent=c.pastorBio||'';}else{g('pastor').style.display='none';}
-  if(c.showMinistries!==false){g('min-h2').textContent=c.ministriesHeading||'Our Ministries';g('min-sub').textContent=c.ministriesSub||'';g('min-grid').innerHTML=(c.ministries||[]).map(m=>`<div class="min-card"><div class="min-icon">${e(m.icon)}</div><div><div class="min-name">${e(m.name)}</div><div class="min-desc">${e(m.desc)}</div></div></div>`).join('');}else{g('ministries').style.display='none';}
-  g('loc-h2').textContent=c.mapHeading||'Find Us';
-  if(c.showMap!==false){const src=u(c.mapEmbedUrl)||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
-  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(u(c.privacyPolicyUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
-  const socs=[['Facebook',c.facebook,'f'],['Instagram',c.instagram,'ig'],['YouTube',c.youtube,'▶'],['Twitter/X',c.twitter,'𝕏']].filter(s=>s[1]);
-  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener noreferrer" title="${e(s[0])}">${s[2]}</a>`).join('');}
-  g('foot-copy').textContent=c.footerText||`© ${new Date().getFullYear()} ${c.name}. All rights reserved.`;
-  window.openMob=()=>g('mob-nav').classList.add('open');
-  window.closeMob=()=>g('mob-nav').classList.remove('open');
-  // FAVICON
-  if(c.favicon){const _fl=document.createElement('link');_fl.rel='icon';_fl.href=c.favicon;document.head.appendChild(_fl);}
-  // SEO META + OPEN GRAPH + TWITTER CARD
-  const _desc=c.metaDesc||c.heroSub||c.tagline||'';
-  const _metas=[['name','description',_desc],['property','og:type','website'],['property','og:title',c.name||''],['property','og:description',_desc],['property','og:image',c.ogImage||''],['property','og:url',c.siteUrl||''],['name','twitter:card','summary_large_image'],['name','twitter:title',c.name||''],['name','twitter:description',_desc],['name','twitter:image',c.ogImage||'']].filter(t=>t[2]);
-  _metas.forEach(t=>{const m=document.createElement('meta');m.setAttribute(t[0],t[1]);m.content=t[2];document.head.appendChild(m);});
-  if(c.siteUrl){const _cl=document.createElement('link');_cl.rel='canonical';_cl.href=c.siteUrl;document.head.appendChild(_cl);}
-  // SCHEMA.ORG JSON-LD
-  const _schema={"@context":"https://schema.org","@type":"Church","name":c.name||"","description":_desc,"url":c.siteUrl||"","telephone":c.contactPhone||"","email":c.contactEmail||"","address":{"@type":"PostalAddress","streetAddress":c.contactAddress||""}};
-  if(c.ogImage){_schema.image=c.ogImage;}
-  const _sl=document.createElement('script');_sl.type='application/ld+json';_sl.textContent=JSON.stringify(_schema);document.head.appendChild(_sl);
-  // NAV LOGO IMAGE (overrides text name when logoUrl is set)
-  if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(u(c.logoUrl))}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
-  // DONATION BUTTON IN NAV
-  if(c.donationUrl){const _db=document.createElement('a');_db.href=u(c.donationUrl);_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
-  // ANNOUNCEMENT BANNER
-  if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
-  // PRIVACY LINK IN FOOTER
-  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener noreferrer';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
-  // COOKIE CONSENT BANNER
-  if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
-})();
-</SCRIPTEND>
-</body>
-</html></script>
+        <!-- ── GENERAL ── -->
+        <div x-show="section==='general'">
+          <div class="panel-hdr"><div class="panel-h1">General</div><div class="panel-sub">Core identity shown throughout the site</div></div>
+          <div class="field"><label>Church Name</label><input type="text" x-model="cfg.name" @input="debouncedSave()" placeholder="Grace Community Church"/></div>
+          <div class="field"><label>Denomination / Badge</label><input type="text" x-model="cfg.badge" @input="debouncedSave()" placeholder="Non-Denominational"/></div>
+          <div class="field"><label>Tagline</label><input type="text" x-model="cfg.tagline" @input="debouncedSave()" placeholder="A Place to Belong, Believe &amp; Grow"/></div>
+          <div class="field"><label>Navigation CTA Button</label><input type="text" x-model="cfg.navCtaText" @input="debouncedSave()" placeholder="Join Us Sunday"/></div>
+          <hr style="border-color:var(--bdr);margin:16px 0"/>
+          <div class="field"><label>Nav Logo Image URL (replaces text name)</label><input type="text" x-model="cfg.logoUrl" @input="debouncedSave()" placeholder="https://example.com/logo.png"/></div>
+          <div class="field"><label>Announcement Banner (leave blank to hide)</label><input type="text" x-model="cfg.announcementBanner" @input="debouncedSave()" placeholder="Special service this Sunday at 10 AM!"/></div>
+        </div>
 
-<script>
-// ═══════════════════════ CONFIG ═══════════════════════
-const DEFAULTS = {
-  name:"Grace Community Church",tagline:"A Place to Belong, Believe & Grow",badge:"Non-Denominational",navCtaText:"Join Us Sunday",
-  heroType:"color",heroColor:"#1a1a4e",heroImage:"",heroGradFrom:"#1a1a4e",heroGradTo:"#4a0e6e",heroOverlay:0.45,
-  heroHeading:"Welcome Home",heroSub:"You don't have to be perfect to worship here. Come as you are.",
-  heroCta1:"Join Us Sunday",heroCta1Link:"#services",heroCta2:"Learn More",heroCta2Link:"#about",
-  showInfoBar:true,infoAddress:"123 Faith Ave, Springfield, IL",infoService:"Sundays at 9 AM & 11 AM",infoPhone:"(555) 123-4567",
-  showAbout:true,aboutHeading:"About Our Church",aboutSub:"Faith · Community · Purpose",
-  aboutBody:"We are a vibrant, welcoming community of believers committed to making faith real and relevant. Whether you're exploring Christianity for the first time or have been a believer for decades, there is a place for you here.\n\nFounded in 1987, our congregation has grown into a family of over 800 members spanning all generations.",
-  aboutImage:"",
-  showServices:true,servicesHeading:"Join Us for Worship",servicesSub:"Everyone is welcome — come as you are",
-  services:[{day:"Sunday",time:"9:00 AM",name:"Morning Worship",desc:"Traditional service with hymns"},{day:"Sunday",time:"11:00 AM",name:"Contemporary",desc:"Modern music, same great message"},{day:"Wednesday",time:"7:00 PM",name:"Bible Study",desc:"Midweek deep dive into scripture"}],
-  showEvents:true,eventsHeading:"Upcoming Events",eventsSub:"Stay connected with your church family",
-  events:[{month:"JUN",day:"15",title:"Summer BBQ",desc:"Family fun for the whole congregation. Bring a dish to share!",color:"#e8507a"},{month:"JUN",day:"22",title:"Youth Night",desc:"An evening for teens and young adults. Live music & games.",color:"#6c4ecb"},{month:"JUL",day:"4",title:"Prayer Vigil",desc:"A powerful night of corporate prayer and worship.",color:"#20b2aa"}],
-  showPastor:true,pastorTitle:"Meet Our Pastor",pastorName:"Pastor John Smith",pastorImage:"",
-  pastorBio:"Pastor John has been leading Grace Community Church for over 15 years with a heart for people and a passion for the Word. He and his wife Jane have three children and are deeply rooted in this community.",
-  showMinistries:true,ministriesHeading:"Our Ministries",ministriesSub:"Find your place to serve and grow",
-  ministries:[{icon:"👶",name:"Children's Ministry",desc:"Safe, engaging programs for ages 0–12"},{icon:"🎯",name:"Youth Ministry",desc:"Empowering teens to live out their faith"},{icon:"🎵",name:"Worship Arts",desc:"Choir, band, and creative arts teams"},{icon:"🤝",name:"Community Outreach",desc:"Serving the needs of our city"},{icon:"📖",name:"Bible Study",desc:"Small groups meeting throughout the week"},{icon:"💑",name:"Marriage & Family",desc:"Strengthening homes and relationships"}],
-  showMap:true,mapHeading:"Find Us",mapAddress:"123 Faith Ave, Springfield, IL 62701",mapEmbedUrl:"",
-  showContact:true,contactHeading:"Get In Touch",contactSub:"We'd love to hear from you",
-  contactAddress:"123 Faith Ave, Springfield, IL 62701",contactPhone:"(555) 123-4567",contactEmail:"info@gracechurch.org",contactWeb:"",formspreeId:"",
-  facebook:"",instagram:"",youtube:"",twitter:"",footerText:"",
-  accent:"#6c4ecb",headingFont:"'Playfair Display', serif",
-  siteUrl:"",metaDesc:"",ogImage:"",favicon:"",logoUrl:"",
-  aboutImageAlt:"",pastorImageAlt:"",
-  donationUrl:"",donationText:"Give",
-  privacyPolicyUrl:"",cookieNotice:"",announcementBanner:""
-};
-
-let cfg = JSON.parse(JSON.stringify(DEFAULTS));
-let saveTimer = null;
-
-function loadCfg(){const s=localStorage.getItem('church_cfg');if(s){try{const p=JSON.parse(s);cfg={...DEFAULTS};Object.keys(DEFAULTS).forEach(k=>{if(k in p)cfg[k]=p[k];});}catch(e){}}}
-function saveCfg(){localStorage.setItem('church_cfg',JSON.stringify(cfg));showToast();}
-function showToast(){const t=document.getElementById('saved-toast');t.classList.add('show');clearTimeout(saveTimer);saveTimer=setTimeout(()=>t.classList.remove('show'),1800);}
-function set(k,v){cfg[k]=v;saveCfg();document.getElementById('hdr-name').textContent=cfg.name||'My Church';}
-function setNum(k,v){cfg[k]=parseFloat(v);saveCfg();}
-function setBool(k,v){cfg[k]=v;saveCfg();}
-function setArr(k,i,sk,v){cfg[k][i][sk]=v;saveCfg();}
-function addItem(k,tpl){cfg[k].push({...tpl});saveCfg();showSec(curSec);}
-function delItem(k,i){cfg[k].splice(i,1);saveCfg();showSec(curSec);}
-function toggleCard(el){const b=el.nextElementSibling;const a=el.querySelector('.ic-arr');b.classList.toggle('open');a.style.transform=b.classList.contains('open')?'rotate(90deg)':'';}
-
-// ═══════════════════════ SECURITY ENGINE ═══════════════════════
-// DEFAULT_HASH is a sentinel (all-zeros) that triggers first-run password setup.
-// After the user sets a password, the hash is stored in localStorage.
-// On GitHub publish the live hash is baked into this constant so it survives localStorage clears.
-const DEFAULT_HASH = 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f';
-const HASH_KEY    = 'adm_pwd_hash';
-const LOCK_KEY    = 'adm_lock';
-const SESS_KEY    = 'adm_sess';
-const SESS_ID_KEY = 'adm_sess_id';
-const MAX_TRIES   = 5;
-const LOCK_MS     = 15 * 60 * 1000;   // 15 minutes
-const SESS_MS     = 30 * 60 * 1000;   // 30 minutes
-
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-function storedHash(){ return localStorage.getItem(HASH_KEY) || DEFAULT_HASH; }
-
-// Brute-force lockout — mirrored in both storages so clearing one alone does not reset the counter
-function lockData(){
-  const ls=JSON.parse(localStorage.getItem(LOCK_KEY)||'{"tries":0}');
-  const ss=JSON.parse(sessionStorage.getItem(LOCK_KEY)||'{"tries":0}');
-  return {tries:Math.max(ls.tries||0,ss.tries||0),until:Math.max(ls.until||0,ss.until||0)||undefined};
-}
-function minsLocked(){
-  const d=lockData();
-  if(d.until && Date.now()<d.until) return Math.ceil((d.until-Date.now())/60000);
-  if(d.until){ localStorage.removeItem(LOCK_KEY); sessionStorage.removeItem(LOCK_KEY); }
-  return 0;
-}
-function recordFail(){
-  const d=lockData(); d.tries=(d.tries||0)+1;
-  if(d.tries>=MAX_TRIES) d.until=Date.now()+LOCK_MS;
-  const payload=JSON.stringify(d);
-  localStorage.setItem(LOCK_KEY,payload); sessionStorage.setItem(LOCK_KEY,payload); return d;
-}
-function clearLock(){ localStorage.removeItem(LOCK_KEY); sessionStorage.removeItem(LOCK_KEY); }
-
-// Session — includes a random ID stored in localStorage so changing the password
-// invalidates sessions in other tabs on their next activity check.
-function createSession(){
-  const id=crypto.randomUUID?crypto.randomUUID():(Math.random().toString(36).slice(2)+Date.now().toString(36));
-  localStorage.setItem(SESS_ID_KEY,id);
-  sessionStorage.setItem(SESS_KEY,JSON.stringify({exp:Date.now()+SESS_MS,id}));
-}
-function validSession(){
-  const s=JSON.parse(sessionStorage.getItem(SESS_KEY)||'{}');
-  const validId=localStorage.getItem(SESS_ID_KEY);
-  if(!s.exp||Date.now()>s.exp||s.id!==validId){sessionStorage.removeItem(SESS_KEY);return false;}
-  s.exp=Date.now()+SESS_MS; sessionStorage.setItem(SESS_KEY,JSON.stringify(s)); return true;
-}
-function logout(){
-  sessionStorage.removeItem(SESS_KEY);
-  document.getElementById('adm').style.display='none';
-  document.getElementById('gate').style.display='flex';
-  document.getElementById('pw-in').value='';
-  document.getElementById('pw-err').textContent='';
-}
-
-// Expire check every 60 s
-setInterval(()=>{ if(document.getElementById('adm').style.display==='flex' && !validSession()) logout(); },60000);
-// Refresh session on any click inside admin
-document.addEventListener('click',()=>{ if(document.getElementById('adm').style.display==='flex') validSession(); });
-
-// First-run flag: true when no password has ever been set
-let isFirstRun = false;
-function initGate(){
-  isFirstRun = storedHash()===DEFAULT_HASH && !localStorage.getItem(HASH_KEY);
-  if(isFirstRun){
-    document.getElementById('gate-h1').textContent='Create Admin Password';
-    document.getElementById('gate-sub').textContent='First-time setup — choose a strong password (min. 8 characters)';
-    document.getElementById('pw-confirm-wrap').style.display='block';
-    document.getElementById('pw-in').placeholder='New password (min. 8 chars)';
-    document.getElementById('login-btn').textContent='Create Password';
-  }
-}
-
-async function checkPw(e){
-  e.preventDefault();
-  const errEl=document.getElementById('pw-err');
-  const btn=document.getElementById('login-btn');
-
-  // First-run: set a new password
-  if(isFirstRun){
-    const pw1=document.getElementById('pw-in').value;
-    const pw2=document.getElementById('pw-confirm-in').value;
-    errEl.textContent='';
-    if(pw1.length<8){errEl.textContent='Password must be at least 8 characters.';return;}
-    if(pw1!==pw2){errEl.textContent='Passwords do not match.';return;}
-    btn.disabled=true; btn.textContent='Setting up…';
-    const hash=await sha256(pw1);
-    localStorage.setItem(HASH_KEY,hash);
-    isFirstRun=false;
-    clearLock(); createSession(); loadCfg();
-    document.getElementById('gate').style.display='none';
-    document.getElementById('adm').style.display='flex';
-    document.getElementById('hdr-name').textContent=cfg.name||'My Church';
-    showSec('general');
-    btn.disabled=false; btn.textContent='Login';
-    return;
-  }
-
-  const mins=minsLocked();
-  if(mins){ errEl.textContent=`Too many failed attempts. Try again in ${mins} min${mins>1?'s':''}.`; return; }
-  btn.disabled=true; btn.textContent='Checking…';
-  // Minimum 600 ms delay per attempt so rate-limiting holds even if lockout storage is cleared
-  const [hash]=await Promise.all([sha256(document.getElementById('pw-in').value),new Promise(r=>setTimeout(r,600))]);
-  if(hash===storedHash()){
-    clearLock(); createSession(); loadCfg();
-    document.getElementById('gate').style.display='none';
-    document.getElementById('adm').style.display='flex';
-    document.getElementById('hdr-name').textContent=cfg.name||'My Church';
-    showSec('general');
-  }else{
-    const d=recordFail();
-    const left=MAX_TRIES-d.tries;
-    errEl.textContent=d.until
-      ? `Account locked for ${LOCK_MS/60000} minutes.`
-      : `Incorrect password. ${left} attempt${left!==1?'s':''} remaining.`;
-    document.getElementById('pw-in').value='';
-  }
-  btn.disabled=false; btn.textContent='Login';
-}
-
-// ═══════════════════════ SECTION PANELS ═══════════════════════
-let curSec='general';
-function showSec(name){
-  curSec=name;
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.sec===name));
-  document.getElementById('panels').innerHTML=renderPanel(name);
-}
-
-function f(label,key,placeholder='',type='text'){
-  const v=(cfg[key]||'').toString();
-  return `<div class="field"><label>${label}</label><input type="${type}" value="${esc(v)}" placeholder="${esc(placeholder)}" oninput="set('${key}',this.value)"/></div>`;
-}
-function ft(label,key,placeholder=''){
-  return `<div class="field"><label>${label}</label><textarea oninput="set('${key}',this.value)" placeholder="${esc(placeholder)}">${esc(cfg[key]||'')}</textarea></div>`;
-}
-function fcolor(label,key){
-  const v=cfg[key]||'#000000';
-  return `<div class="field"><label>${label}</label><div class="color-field"><input type="color" value="${esc(v)}" oninput="set('${key}',this.value);this.nextElementSibling.value=this.value"/><input type="text" value="${esc(v)}" oninput="set('${key}',this.value);this.previousElementSibling.value=this.value" maxlength="7" style="max-width:120px"/></div></div>`;
-}
-function ftoggle(label,key){
-  const chk=cfg[key]!==false?'checked':'';
-  return `<div class="toggle-row"><span>${label}</span><label class="toggle"><input type="checkbox" ${chk} onchange="setBool('${key}',this.checked)"/><span class="toggle-slider"></span></label></div>`;
-}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-
-function renderPanel(name){
-  const panels={
-    general:`
-      <div class="panel-hdr"><div class="panel-h1">General</div><div class="panel-sub">Core identity shown throughout the site</div></div>
-      ${f('Church Name','name','Grace Community Church')}
-      ${f('Denomination / Badge','badge','Non-Denominational')}
-      ${f('Tagline','tagline','A Place to Belong, Believe & Grow')}
-      ${f('Navigation CTA Button','navCtaText','Join Us Sunday')}
-      <hr style="border-color:var(--bdr);margin:16px 0"/>
-      ${f('Nav Logo Image URL (replaces text name)','logoUrl','https://example.com/logo.png')}
-      ${f('Announcement Banner (leave blank to hide)','announcementBanner','Special service this Sunday at 10 AM!')}`,
-
-    hero:`
-      <div class="panel-hdr"><div class="panel-h1">Hero Section</div><div class="panel-sub">The first thing visitors see — make it count</div></div>
-      <div class="field"><label>Background Type</label><select onchange="set('heroType',this.value)">
-        <option value="color" ${cfg.heroType==='color'?'selected':''}>Solid Color</option>
-        <option value="gradient" ${cfg.heroType==='gradient'?'selected':''}>Gradient</option>
-        <option value="image" ${cfg.heroType==='image'?'selected':''}>Image</option>
-      </select></div>
-      ${cfg.heroType==='image'?f('Background Image URL','heroImage','https://example.com/church.jpg'):''}
-      ${cfg.heroType!=='gradient'?fcolor('Background Color','heroColor'):''}
-      ${cfg.heroType==='gradient'?fcolor('Gradient From','heroGradFrom')+''+fcolor('Gradient To','heroGradTo'):''}
-      <div class="field"><label>Overlay Opacity (${Math.round((cfg.heroOverlay||0.4)*100)}%)</label><input type="range" min="0" max="1" step="0.05" value="${cfg.heroOverlay||0.4}" oninput="setNum('heroOverlay',this.value);this.previousElementSibling.textContent='Overlay Opacity ('+Math.round(this.value*100)+'%)'"/></div>
-      ${f('Heading','heroHeading','Welcome Home')}
-      ${ft('Subheading','heroSub','You don\'t have to be perfect...')}
-      <div class="col2">${f('Button 1 Text','heroCta1','Join Us Sunday')}${f('Button 1 Link','heroCta1Link','#services')}</div>
-      <div class="col2">${f('Button 2 Text (optional)','heroCta2','Learn More')}${f('Button 2 Link','heroCta2Link','#about')}</div>`,
-
-    infobar:`
-      <div class="panel-hdr"><div class="panel-h1">Info Bar</div><div class="panel-sub">The colored strip below the hero with quick facts</div></div>
-      ${ftoggle('Show Info Bar','showInfoBar')}
-      ${f('Address','infoAddress','123 Faith Ave, Springfield, IL')}
-      ${f('Service Times Text','infoService','Sundays at 9 AM & 11 AM')}
-      ${f('Phone Number','infoPhone','(555) 123-4567')}`,
-
-    about:`
-      <div class="panel-hdr"><div class="panel-h1">About Section</div><div class="panel-sub">Tell your church's story</div></div>
-      ${ftoggle('Show About Section','showAbout')}
-      ${f('Section Heading','aboutHeading','About Our Church')}
-      ${f('Subtitle / Tagline','aboutSub','Faith · Community · Purpose')}
-      ${ft('Body Text (double line-break = new paragraph)','aboutBody','')}
-      ${f('Image URL (optional)','aboutImage','https://example.com/photo.jpg')}
-      ${f('Image Alt Text (for screen readers & SEO)','aboutImageAlt','Our congregation gathered for Sunday worship')}`,
-
-    services:`
-      <div class="panel-hdr"><div class="panel-h1">Service Times</div><div class="panel-sub">Add all weekly services</div></div>
-      ${ftoggle('Show Services Section','showServices')}
-      ${f('Section Heading','servicesHeading','Join Us for Worship')}
-      ${f('Section Subtitle','servicesSub','Everyone is welcome — come as you are')}
-      <div style="margin-top:8px">${(cfg.services||[]).map((s,i)=>`
-        <div class="item-card">
-          <div class="item-card-head" onclick="toggleCard(this)">
-            <span class="item-card-label">${esc(s.day||'Service '+(i+1))} — ${esc(s.time||'')}</span>
-            <div class="item-card-actions"><button class="ic-del" onclick="event.stopPropagation();delItem('services',${i})">✕</button><span class="ic-arr">›</span></div>
+        <!-- ── HERO ── -->
+        <div x-show="section==='hero'">
+          <div class="panel-hdr"><div class="panel-h1">Hero Section</div><div class="panel-sub">The first thing visitors see — make it count</div></div>
+          <div class="field"><label>Background Type</label>
+            <select x-model="cfg.heroType" @change="debouncedSave()">
+              <option value="color">Solid Color</option>
+              <option value="gradient">Gradient</option>
+              <option value="image">Image</option>
+            </select>
           </div>
-          <div class="item-card-body">
-            <div class="col2">
-              <div class="field"><label>Day</label><input value="${esc(s.day)}" oninput="setArr('services',${i},'day',this.value)" placeholder="Sunday"/></div>
-              <div class="field"><label>Time</label><input value="${esc(s.time)}" oninput="setArr('services',${i},'time',this.value)" placeholder="9:00 AM"/></div>
+          <div class="field" x-show="cfg.heroType==='image'"><label>Background Image URL</label><input type="text" x-model="cfg.heroImage" @input="debouncedSave()" placeholder="https://example.com/church.jpg"/></div>
+          <div class="field" x-show="cfg.heroType!=='gradient'">
+            <label>Background Color</label>
+            <div class="color-field">
+              <input type="color" x-model="cfg.heroColor" @input="debouncedSave()"/>
+              <input type="text" x-model="cfg.heroColor" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
             </div>
-            <div class="field"><label>Service Name</label><input value="${esc(s.name)}" oninput="setArr('services',${i},'name',this.value)" placeholder="Morning Worship"/></div>
-            <div class="field"><label>Description (optional)</label><input value="${esc(s.desc)}" oninput="setArr('services',${i},'desc',this.value)" placeholder="Traditional service with hymns"/></div>
           </div>
-        </div>`).join('')}
-      <button class="btn-add" onclick="addItem('services',{day:'',time:'',name:'',desc:''})">+ Add Service</button></div>`,
-
-    events:`
-      <div class="panel-hdr"><div class="panel-h1">Upcoming Events</div><div class="panel-sub">Highlight 3 upcoming events</div></div>
-      ${ftoggle('Show Events Section','showEvents')}
-      ${f('Section Heading','eventsHeading','Upcoming Events')}
-      ${f('Section Subtitle','eventsSub','Stay connected with your church family')}
-      <div style="margin-top:8px">${(cfg.events||[]).map((ev,i)=>`
-        <div class="item-card">
-          <div class="item-card-head" onclick="toggleCard(this)">
-            <span class="item-card-label">${esc(ev.month||'')} ${esc(ev.day||'')} — ${esc(ev.title||'Event '+(i+1))}</span>
-            <div class="item-card-actions"><button class="ic-del" onclick="event.stopPropagation();delItem('events',${i})">✕</button><span class="ic-arr">›</span></div>
-          </div>
-          <div class="item-card-body">
-            <div class="col2">
-              <div class="field"><label>Month (3 letters)</label><input value="${esc(ev.month)}" oninput="setArr('events',${i},'month',this.value)" placeholder="JUN"/></div>
-              <div class="field"><label>Day Number</label><input value="${esc(ev.day)}" oninput="setArr('events',${i},'day',this.value)" placeholder="15"/></div>
+          <div x-show="cfg.heroType==='gradient'">
+            <div class="field"><label>Gradient From</label>
+              <div class="color-field">
+                <input type="color" x-model="cfg.heroGradFrom" @input="debouncedSave()"/>
+                <input type="text" x-model="cfg.heroGradFrom" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
+              </div>
             </div>
-            <div class="field"><label>Event Title</label><input value="${esc(ev.title)}" oninput="setArr('events',${i},'title',this.value)" placeholder="Summer BBQ"/></div>
-            <div class="field"><label>Description</label><input value="${esc(ev.desc)}" oninput="setArr('events',${i},'desc',this.value)" placeholder="Family fun for everyone"/></div>
-            <div class="field"><label>Badge Color</label><div class="color-field"><input type="color" value="${esc(ev.color||'#6c4ecb')}" oninput="setArr('events',${i},'color',this.value)"/><input type="text" value="${esc(ev.color||'#6c4ecb')}" oninput="setArr('events',${i},'color',this.value)" maxlength="7" style="max-width:100px"/></div></div>
-          </div>
-        </div>`).join('')}
-      <button class="btn-add" onclick="addItem('events',{month:'',day:'',title:'',desc:'',color:'#6c4ecb'})">+ Add Event</button></div>`,
-
-    pastor:`
-      <div class="panel-hdr"><div class="panel-h1">Pastor Section</div><div class="panel-sub">Introduce your lead pastor</div></div>
-      ${ftoggle('Show Pastor Section','showPastor')}
-      ${f('Section Label','pastorTitle','Meet Our Pastor')}
-      ${f('Pastor Name','pastorName','Pastor John Smith')}
-      ${f('Photo URL (optional)','pastorImage','https://example.com/pastor.jpg')}
-      ${f('Photo Alt Text','pastorImageAlt','Pastor smiling in front of the church')}
-      ${ft('Bio','pastorBio','Brief biography...')}`,
-
-    ministries:`
-      <div class="panel-hdr"><div class="panel-h1">Ministries</div><div class="panel-sub">Showcase your ministry areas</div></div>
-      ${ftoggle('Show Ministries Section','showMinistries')}
-      ${f('Section Heading','ministriesHeading','Our Ministries')}
-      ${f('Section Subtitle','ministriesSub','Find your place to serve and grow')}
-      <div style="margin-top:8px">${(cfg.ministries||[]).map((m,i)=>`
-        <div class="item-card">
-          <div class="item-card-head" onclick="toggleCard(this)">
-            <span class="item-card-label">${esc(m.icon||'•')} ${esc(m.name||'Ministry '+(i+1))}</span>
-            <div class="item-card-actions"><button class="ic-del" onclick="event.stopPropagation();delItem('ministries',${i})">✕</button><span class="ic-arr">›</span></div>
-          </div>
-          <div class="item-card-body">
-            <div class="col2">
-              <div class="field"><label>Emoji Icon</label><input value="${esc(m.icon)}" oninput="setArr('ministries',${i},'icon',this.value)" placeholder="👶"/></div>
-              <div class="field"><label>Name</label><input value="${esc(m.name)}" oninput="setArr('ministries',${i},'name',this.value)" placeholder="Children's Ministry"/></div>
+            <div class="field"><label>Gradient To</label>
+              <div class="color-field">
+                <input type="color" x-model="cfg.heroGradTo" @input="debouncedSave()"/>
+                <input type="text" x-model="cfg.heroGradTo" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
+              </div>
             </div>
-            <div class="field"><label>Description</label><input value="${esc(m.desc)}" oninput="setArr('ministries',${i},'desc',this.value)" placeholder="Safe, engaging programs..."/></div>
           </div>
-        </div>`).join('')}
-      <button class="btn-add" onclick="addItem('ministries',{icon:'✝',name:'',desc:''})">+ Add Ministry</button></div>`,
+          <div class="field">
+            <label>Overlay Opacity (<span x-text="Math.round((cfg.heroOverlay||0.4)*100)"></span>%)</label>
+            <input type="range" min="0" max="1" step="0.05" x-model.number="cfg.heroOverlay" @input="debouncedSave()"/>
+          </div>
+          <div class="field"><label>Heading</label><input type="text" x-model="cfg.heroHeading" @input="debouncedSave()" placeholder="Welcome Home"/></div>
+          <div class="field"><label>Subheading</label><textarea x-model="cfg.heroSub" @input="debouncedSave()" placeholder="You don't have to be perfect..."></textarea></div>
+          <div class="col2">
+            <div class="field"><label>Button 1 Text</label><input type="text" x-model="cfg.heroCta1" @input="debouncedSave()" placeholder="Join Us Sunday"/></div>
+            <div class="field"><label>Button 1 Link</label><input type="text" x-model="cfg.heroCta1Link" @input="debouncedSave()" placeholder="#services"/></div>
+          </div>
+          <div class="col2">
+            <div class="field"><label>Button 2 Text (optional)</label><input type="text" x-model="cfg.heroCta2" @input="debouncedSave()" placeholder="Learn More"/></div>
+            <div class="field"><label>Button 2 Link</label><input type="text" x-model="cfg.heroCta2Link" @input="debouncedSave()" placeholder="#about"/></div>
+          </div>
+        </div>
 
-    mapcontact:`
-      <div class="panel-hdr"><div class="panel-h1">Map &amp; Contact</div><div class="panel-sub">Where to find you and how to reach you</div></div>
-      ${ftoggle('Show Map','showMap')}
-      ${f('Map Section Heading','mapHeading','Find Us')}
-      ${f('Map Address (auto-generates map)','mapAddress','123 Faith Ave, Springfield, IL 62701')}
-      <div class="info-box"><p><strong>Custom map embed:</strong> In Google Maps, search your church → Share → Embed a map → copy the <code>src="..."</code> URL and paste below to override the auto-generated map.</p></div>
-      ${f('Custom Map Embed URL (optional)','mapEmbedUrl','https://www.google.com/maps/embed?...')}
-      <hr style="border-color:var(--bdr);margin:16px 0"/>
-      ${ftoggle('Show Contact Panel','showContact')}
-      ${f('Contact Heading','contactHeading','Get In Touch')}
-      ${f('Contact Subtitle','contactSub','We\'d love to hear from you')}
-      ${f('Address','contactAddress','123 Faith Ave, Springfield, IL 62701')}
-      <div class="col2">${f('Phone','contactPhone','(555) 123-4567')}${f('Email','contactEmail','info@church.org')}</div>
-      ${f('Website URL (optional)','contactWeb','https://yourchurch.org')}
-      <div class="info-box"><p><strong>Contact form (free):</strong> Go to <strong>formspree.io</strong> → sign up free → New Form → copy the ID from the URL (letters after <code>/f/</code>) and paste below.</p></div>
-      ${f('Formspree Form ID (optional)','formspreeId','xyzabcde')}`,
+        <!-- ── INFO BAR ── -->
+        <div x-show="section==='infobar'">
+          <div class="panel-hdr"><div class="panel-h1">Info Bar</div><div class="panel-sub">The colored strip below the hero with quick facts</div></div>
+          <div class="toggle-row"><span>Show Info Bar</span><label class="toggle"><input type="checkbox" x-model="cfg.showInfoBar" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Address</label><input type="text" x-model="cfg.infoAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL"/></div>
+          <div class="field"><label>Service Times Text</label><input type="text" x-model="cfg.infoService" @input="debouncedSave()" placeholder="Sundays at 9 AM &amp; 11 AM"/></div>
+          <div class="field"><label>Phone Number</label><input type="text" x-model="cfg.infoPhone" @input="debouncedSave()" placeholder="(555) 123-4567"/></div>
+        </div>
 
-    social:`
-      <div class="panel-hdr"><div class="panel-h1">Social &amp; Footer</div><div class="panel-sub">Social media links and footer text</div></div>
-      ${f('Facebook URL','facebook','https://facebook.com/yourchurch')}
-      ${f('Instagram URL','instagram','https://instagram.com/yourchurch')}
-      ${f('YouTube URL','youtube','https://youtube.com/@yourchurch')}
-      ${f('Twitter / X URL','twitter','https://x.com/yourchurch')}
-      <hr style="border-color:var(--bdr);margin:16px 0"/>
-      ${f('Footer Text (leave blank for auto)','footerText','© 2026 My Church. All rights reserved.')}
-      <hr style="border-color:var(--bdr);margin:16px 0"/>
-      <div class="col2">${f('Donation / Giving Page URL','donationUrl','https://giving.example.com')}${f('Donation Button Label','donationText','Give')}</div>`,
+        <!-- ── ABOUT ── -->
+        <div x-show="section==='about'">
+          <div class="panel-hdr"><div class="panel-h1">About Section</div><div class="panel-sub">Tell your church's story</div></div>
+          <div class="toggle-row"><span>Show About Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showAbout" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.aboutHeading" @input="debouncedSave()" placeholder="About Our Church"/></div>
+          <div class="field"><label>Subtitle / Tagline</label><input type="text" x-model="cfg.aboutSub" @input="debouncedSave()" placeholder="Faith · Community · Purpose"/></div>
+          <div class="field"><label>Body Text (double line-break = new paragraph)</label><textarea x-model="cfg.aboutBody" @input="debouncedSave()" style="min-height:120px"></textarea></div>
+          <div class="field"><label>Image URL (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="https://example.com/photo.jpg"/></div>
+          <div class="field"><label>Image Alt Text (for screen readers &amp; SEO)</label><input type="text" x-model="cfg.aboutImageAlt" @input="debouncedSave()" placeholder="Our congregation gathered for Sunday worship"/></div>
+        </div>
 
-    seo:`
-      <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media find and preview your site</div></div>
-      ${f('Site URL (your Netlify URL — no trailing slash)','siteUrl','https://yourchurch.netlify.app')}
-      ${f('Meta Description (50–160 characters)','metaDesc','A welcoming church family in [City]. Join us every Sunday.')}
-      ${f('Social Share Image URL (1200×630 px recommended)','ogImage','https://example.com/share-image.jpg')}
-      <div class="info-box"><p>The <strong>Social Share Image</strong> appears when someone shares your site on Facebook, WhatsApp, or iMessage. Use a landscape photo (1200 × 630 px) that represents your church well.</p></div>
-      ${f('Favicon URL (.png or .ico)','favicon','https://example.com/favicon.png')}`,
+        <!-- ── SERVICES ── -->
+        <div x-show="section==='services'">
+          <div class="panel-hdr"><div class="panel-h1">Service Times</div><div class="panel-sub">Add all weekly services</div></div>
+          <div class="toggle-row"><span>Show Services Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showServices" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.servicesHeading" @input="debouncedSave()" placeholder="Join Us for Worship"/></div>
+          <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.servicesSub" @input="debouncedSave()" placeholder="Everyone is welcome — come as you are"/></div>
+          <div style="margin-top:8px">
+            <template x-for="(item, i) in cfg.services" :key="i">
+              <div class="item-card">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+                  <span class="item-card-label" x-text="(item.day || ('Service '+(i+1))) + (item.time ? ' — '+item.time : '')"></span>
+                  <div class="item-card-actions">
+                    <button class="ic-del" @click.stop="removeService(i)">✕</button>
+                  </div>
+                </div>
+                <div class="item-card-body" style="display:none">
+                  <div class="col2">
+                    <div class="field"><label>Day</label><input type="text" x-model="cfg.services[i].day" @input="debouncedSave()" placeholder="Sunday"/></div>
+                    <div class="field"><label>Time</label><input type="text" x-model="cfg.services[i].time" @input="debouncedSave()" placeholder="9:00 AM"/></div>
+                  </div>
+                  <div class="field"><label>Service Name</label><input type="text" x-model="cfg.services[i].name" @input="debouncedSave()" placeholder="Morning Worship"/></div>
+                  <div class="field"><label>Description (optional)</label><input type="text" x-model="cfg.services[i].desc" @input="debouncedSave()" placeholder="Traditional service with hymns"/></div>
+                </div>
+              </div>
+            </template>
+            <button class="btn-add" @click="addService()">+ Add Service</button>
+          </div>
+        </div>
 
-    compliance:`
-      <div class="panel-hdr"><div class="panel-h1">Legal &amp; Compliance</div><div class="panel-sub">Privacy policy, GDPR cookie notice, and donation link</div></div>
-      ${f('Privacy Policy URL','privacyPolicyUrl','https://example.com/privacy')}
-      <div class="info-box"><p>A privacy policy is legally required if you collect any visitor data (contact forms, analytics, embedded maps). Generate a free one at <strong>privacypolicygenerator.info</strong> or <strong>termly.io</strong>.</p></div>
-      <hr style="border-color:var(--bdr);margin:16px 0"/>
-      ${ft('Cookie / GDPR Notice Text (leave blank to hide banner)','cookieNotice','This site uses cookies to improve your experience. By continuing to browse, you agree to our use of cookies.')}
-      <div class="info-box"><p>Required if you use analytics or third-party embeds (Google Maps, YouTube). The banner appears at the bottom of the page until the visitor dismisses it.</p></div>`,
+        <!-- ── EVENTS ── -->
+        <div x-show="section==='events'">
+          <div class="panel-hdr"><div class="panel-h1">Upcoming Events</div><div class="panel-sub">Highlight upcoming events</div></div>
+          <div class="toggle-row"><span>Show Events Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showEvents" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.eventsHeading" @input="debouncedSave()" placeholder="Upcoming Events"/></div>
+          <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.eventsSub" @input="debouncedSave()" placeholder="Stay connected with your church family"/></div>
+          <div style="margin-top:8px">
+            <template x-for="(item, i) in cfg.events" :key="i">
+              <div class="item-card">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+                  <span class="item-card-label" x-text="(item.month||'') + ' ' + (item.day||'') + (item.title ? ' — '+item.title : ('Event '+(i+1)))"></span>
+                  <div class="item-card-actions">
+                    <button class="ic-del" @click.stop="removeEvent(i)">✕</button>
+                  </div>
+                </div>
+                <div class="item-card-body" style="display:none">
+                  <div class="col2">
+                    <div class="field"><label>Month (3 letters)</label><input type="text" x-model="cfg.events[i].month" @input="debouncedSave()" placeholder="JUN"/></div>
+                    <div class="field"><label>Day Number</label><input type="text" x-model="cfg.events[i].day" @input="debouncedSave()" placeholder="15"/></div>
+                  </div>
+                  <div class="field"><label>Event Title</label><input type="text" x-model="cfg.events[i].title" @input="debouncedSave()" placeholder="Summer BBQ"/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="cfg.events[i].desc" @input="debouncedSave()" placeholder="Family fun for everyone"/></div>
+                  <div class="field"><label>Badge Color</label>
+                    <div class="color-field">
+                      <input type="color" x-model="cfg.events[i].color" @input="debouncedSave()"/>
+                      <input type="text" x-model="cfg.events[i].color" @input="debouncedSave()" maxlength="7" style="max-width:100px"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <button class="btn-add" @click="addEvent()">+ Add Event</button>
+          </div>
+        </div>
 
-    theme:`
-      <div class="panel-hdr"><div class="panel-h1">Theme</div><div class="panel-sub">Colors and typography</div></div>
-      ${fcolor('Accent Color (buttons, highlights)','accent')}
-      <div class="field"><label>Heading Font</label><select onchange="set('headingFont',this.value)">
-        <option value="'Playfair Display', serif" ${ cfg.headingFont===`'Playfair Display', serif`?'selected':''}>Playfair Display — Classic &amp; Elegant</option>
-        <option value="Georgia, serif" ${cfg.headingFont==='Georgia, serif'?'selected':''}>Georgia — Traditional</option>
-        <option value="'Inter', sans-serif" ${cfg.headingFont===`'Inter', sans-serif`?'selected':''}>Inter — Modern &amp; Clean</option>
-        <option value="'Times New Roman', serif" ${cfg.headingFont===`'Times New Roman', serif`?'selected':''}>Times New Roman — Formal</option>
-      </select></div>`,
+        <!-- ── PASTOR ── -->
+        <div x-show="section==='pastor'">
+          <div class="panel-hdr"><div class="panel-h1">Pastor Section</div><div class="panel-sub">Introduce your lead pastor</div></div>
+          <div class="toggle-row"><span>Show Pastor Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showPastor" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Section Label</label><input type="text" x-model="cfg.pastorTitle" @input="debouncedSave()" placeholder="Meet Our Pastor"/></div>
+          <div class="field"><label>Pastor Name</label><input type="text" x-model="cfg.pastorName" @input="debouncedSave()" placeholder="Pastor John Smith"/></div>
+          <div class="field"><label>Photo URL (optional)</label><input type="text" x-model="cfg.pastorImage" @input="debouncedSave()" placeholder="https://example.com/pastor.jpg"/></div>
+          <div class="field"><label>Photo Alt Text</label><input type="text" x-model="cfg.pastorImageAlt" @input="debouncedSave()" placeholder="Pastor smiling in front of the church"/></div>
+          <div class="field"><label>Bio</label><textarea x-model="cfg.pastorBio" @input="debouncedSave()" placeholder="Brief biography..."></textarea></div>
+        </div>
 
-    security:`
-      <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Password management and GitHub publish settings</div></div>
-      <div class="info-box" style="background:rgba(232,90,106,.1);border-color:rgba(232,90,106,.35)"><p style="color:#f87171">
-        <strong>Your password is hashed (SHA-256)</strong> and never stored or transmitted in plain text.
-        After changing it, click <strong>🚀 Publish to GitHub</strong> so the new hash is saved in the deployed admin panel.
-      </p></div>
-      <div class="field"><label>Current Password</label><input type="password" id="pw-cur" placeholder="Enter current password"/></div>
-      <div class="col2">
-        <div class="field"><label>New Password</label><input type="password" id="pw-new" placeholder="Min. 8 characters"/></div>
-        <div class="field"><label>Confirm New Password</label><input type="password" id="pw-confirm" placeholder="Repeat new password"/></div>
-      </div>
-      <button onclick="changePassword()" style="padding:9px 20px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px">Update Password</button>
-      <p id="pw-change-msg" style="font-size:12px;margin-top:4px"></p>
-      <hr style="border-color:var(--bdr);margin:20px 0"/>
-      <div class="panel-hdr" style="margin-bottom:12px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:15px">Session</div></div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Auto-logout after <strong style="color:var(--txt)">30 minutes</strong> of inactivity. Account locks for <strong style="color:var(--txt)">15 minutes</strong> after 5 wrong password attempts.</div>
-      <button onclick="logout()" style="padding:9px 20px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;font-weight:600;cursor:pointer">Logout Now</button>
-      <hr style="border-color:var(--bdr);margin:20px 0"/>
-      <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
-      <div class="info-box"><p>
-        <strong>Setup (one time):</strong><br/>
-        1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br/>
-        2. Click <strong>Generate new token</strong><br/>
-        3. Set repository access to <strong>Rivaldo1123/Good_News</strong><br/>
-        4. Under Permissions → Repository → <strong>Contents: Read and Write</strong><br/>
-        5. Generate &amp; paste the token below<br/><br/>
-        <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
-      </p></div>
-      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(sessionStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." onchange="sessionStorage.setItem('gh_token',this.value)"/></div>
-      <div class="field"><label>GitHub Repo (owner/repo)</label><input type="text" value="${esc(localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News')}" placeholder="Rivaldo1123/Good_News" oninput="localStorage.setItem('gh_repo',this.value)"/></div>`
-  };
-  return `<div class="panel active">${panels[name]||''}</div>`;
-}
+        <!-- ── MINISTRIES ── -->
+        <div x-show="section==='ministries'">
+          <div class="panel-hdr"><div class="panel-h1">Ministries</div><div class="panel-sub">Showcase your ministry areas</div></div>
+          <div class="toggle-row"><span>Show Ministries Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showMinistries" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.ministriesHeading" @input="debouncedSave()" placeholder="Our Ministries"/></div>
+          <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.ministriesSub" @input="debouncedSave()" placeholder="Find your place to serve and grow"/></div>
+          <div style="margin-top:8px">
+            <template x-for="(item, i) in cfg.ministries" :key="i">
+              <div class="item-card">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+                  <span class="item-card-label" x-text="(item.icon||'•') + ' ' + (item.name || ('Ministry '+(i+1)))"></span>
+                  <div class="item-card-actions">
+                    <button class="ic-del" @click.stop="removeMinistry(i)">✕</button>
+                  </div>
+                </div>
+                <div class="item-card-body" style="display:none">
+                  <div class="col2">
+                    <div class="field"><label>Emoji Icon</label><input type="text" x-model="cfg.ministries[i].icon" @input="debouncedSave()" placeholder="👶"/></div>
+                    <div class="field"><label>Name</label><input type="text" x-model="cfg.ministries[i].name" @input="debouncedSave()" placeholder="Children's Ministry"/></div>
+                  </div>
+                  <div class="field"><label>Description</label><input type="text" x-model="cfg.ministries[i].desc" @input="debouncedSave()" placeholder="Safe, engaging programs..."/></div>
+                </div>
+              </div>
+            </template>
+            <button class="btn-add" @click="addMinistry()">+ Add Ministry</button>
+          </div>
+        </div>
 
-// ═══════════════════════ CHANGE PASSWORD ═══════════════════════
-async function changePassword(){
-  const cur=document.getElementById('pw-cur').value;
-  const nw=document.getElementById('pw-new').value;
-  const conf=document.getElementById('pw-confirm').value;
-  const msg=document.getElementById('pw-change-msg');
-  msg.style.color='#f87171';
-  if(!cur||!nw||!conf){msg.textContent='All three fields are required.';return;}
-  if(nw.length<8){msg.textContent='New password must be at least 8 characters.';return;}
-  if(nw!==conf){msg.textContent='New passwords do not match.';return;}
-  const curHash=await sha256(cur);
-  if(curHash!==storedHash()){msg.textContent='Current password is incorrect.';return;}
-  const newHash=await sha256(nw);
-  localStorage.setItem(HASH_KEY,newHash);
-  // Rotate session ID so any other open tabs are invalidated on their next activity check
-  localStorage.removeItem(SESS_ID_KEY);
-  createSession();
-  document.getElementById('pw-cur').value='';
-  document.getElementById('pw-new').value='';
-  document.getElementById('pw-confirm').value='';
-  msg.style.color='var(--green)';
-  msg.textContent='Password updated. Click 🚀 Publish to GitHub to save it to your live site.';
-}
+        <!-- ── MAP & CONTACT ── -->
+        <div x-show="section==='mapcontact'">
+          <div class="panel-hdr"><div class="panel-h1">Map &amp; Contact</div><div class="panel-sub">Where to find you and how to reach you</div></div>
+          <div class="toggle-row"><span>Show Map</span><label class="toggle"><input type="checkbox" x-model="cfg.showMap" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Map Section Heading</label><input type="text" x-model="cfg.mapHeading" @input="debouncedSave()" placeholder="Find Us"/></div>
+          <div class="field"><label>Map Address (auto-generates map)</label><input type="text" x-model="cfg.mapAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL 62701"/></div>
+          <div class="info-box"><p><strong>Custom map embed:</strong> In Google Maps, search your church → Share → Embed a map → copy the <code>src="..."</code> URL and paste below to override the auto-generated map.</p></div>
+          <div class="field"><label>Custom Map Embed URL (optional)</label><input type="text" x-model="cfg.mapEmbedUrl" @input="debouncedSave()" placeholder="https://www.google.com/maps/embed?..."/></div>
+          <hr style="border-color:var(--bdr);margin:16px 0"/>
+          <div class="toggle-row"><span>Show Contact Panel</span><label class="toggle"><input type="checkbox" x-model="cfg.showContact" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+          <div class="field"><label>Contact Heading</label><input type="text" x-model="cfg.contactHeading" @input="debouncedSave()" placeholder="Get In Touch"/></div>
+          <div class="field"><label>Contact Subtitle</label><input type="text" x-model="cfg.contactSub" @input="debouncedSave()" placeholder="We'd love to hear from you"/></div>
+          <div class="field"><label>Address</label><input type="text" x-model="cfg.contactAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL 62701"/></div>
+          <div class="col2">
+            <div class="field"><label>Phone</label><input type="text" x-model="cfg.contactPhone" @input="debouncedSave()" placeholder="(555) 123-4567"/></div>
+            <div class="field"><label>Email</label><input type="text" x-model="cfg.contactEmail" @input="debouncedSave()" placeholder="info@church.org"/></div>
+          </div>
+          <div class="field"><label>Website URL (optional)</label><input type="text" x-model="cfg.contactWeb" @input="debouncedSave()" placeholder="https://yourchurch.org"/></div>
+          <div class="info-box"><p><strong>Contact form (free):</strong> Go to <strong>formspree.io</strong> → sign up free → New Form → copy the ID from the URL (letters after <code>/f/</code>) and paste below.</p></div>
+          <div class="field"><label>Formspree Form ID (optional)</label><input type="text" x-model="cfg.formspreeId" @input="debouncedSave()" placeholder="xyzabcde"/></div>
+        </div>
 
-// ═══════════════════════ PUBLISH TO GITHUB ═══════════════════════
+        <!-- ── SOCIAL & FOOTER ── -->
+        <div x-show="section==='social'">
+          <div class="panel-hdr"><div class="panel-h1">Social &amp; Footer</div><div class="panel-sub">Social media links and footer text</div></div>
+          <div class="field"><label>Facebook URL</label><input type="text" x-model="cfg.facebook" @input="debouncedSave()" placeholder="https://facebook.com/yourchurch"/></div>
+          <div class="field"><label>Instagram URL</label><input type="text" x-model="cfg.instagram" @input="debouncedSave()" placeholder="https://instagram.com/yourchurch"/></div>
+          <div class="field"><label>YouTube URL</label><input type="text" x-model="cfg.youtube" @input="debouncedSave()" placeholder="https://youtube.com/@yourchurch"/></div>
+          <div class="field"><label>Twitter / X URL</label><input type="text" x-model="cfg.twitter" @input="debouncedSave()" placeholder="https://x.com/yourchurch"/></div>
+          <hr style="border-color:var(--bdr);margin:16px 0"/>
+          <div class="field"><label>Footer Text (leave blank for auto)</label><input type="text" x-model="cfg.footerText" @input="debouncedSave()" placeholder="© 2026 My Church. All rights reserved."/></div>
+          <hr style="border-color:var(--bdr);margin:16px 0"/>
+          <div class="col2">
+            <div class="field"><label>Donation / Giving Page URL</label><input type="text" x-model="cfg.donationUrl" @input="debouncedSave()" placeholder="https://giving.example.com"/></div>
+            <div class="field"><label>Donation Button Label</label><input type="text" x-model="cfg.donationText" @input="debouncedSave()" placeholder="Give"/></div>
+          </div>
+        </div>
 
-// UTF-8-safe base64 encode/decode (replaces deprecated escape/unescape)
-function toBase64(str){
-  const bytes=new TextEncoder().encode(str);
-  let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-function fromBase64(b64){
-  const bin=atob(b64.replace(/\n/g,''));
-  const bytes=new Uint8Array(bin.length);
-  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
-}
+        <!-- ── SEO ── -->
+        <div x-show="section==='seo'">
+          <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media find and preview your site</div></div>
+          <div class="field"><label>Site URL (your Netlify URL — no trailing slash)</label><input type="text" x-model="cfg.siteUrl" @input="debouncedSave()" placeholder="https://yourchurch.netlify.app"/></div>
+          <div class="field"><label>Meta Description (50–160 characters)</label><input type="text" x-model="cfg.metaDesc" @input="debouncedSave()" placeholder="A welcoming church family in [City]. Join us every Sunday."/></div>
+          <div class="field"><label>Social Share Image URL (1200×630 px recommended)</label><input type="text" x-model="cfg.ogImage" @input="debouncedSave()" placeholder="https://example.com/share-image.jpg"/></div>
+          <div class="info-box"><p>The <strong>Social Share Image</strong> appears when someone shares your site on Facebook, WhatsApp, or iMessage. Use a landscape photo (1200 × 630 px) that represents your church well.</p></div>
+          <div class="field"><label>Favicon URL (.png or .ico)</label><input type="text" x-model="cfg.favicon" @input="debouncedSave()" placeholder="https://example.com/favicon.png"/></div>
+        </div>
 
-function pubToast(msg, type, dur=3500){
-  const t=document.getElementById('pub-status');
-  t.textContent=msg; t.className='pub-status '+type+' show';
-  if(dur) setTimeout(()=>t.classList.remove('show'), dur);
-}
+        <!-- ── COMPLIANCE ── -->
+        <div x-show="section==='compliance'">
+          <div class="panel-hdr"><div class="panel-h1">Legal &amp; Compliance</div><div class="panel-sub">Privacy policy, GDPR cookie notice, and donation link</div></div>
+          <div class="field"><label>Privacy Policy URL</label><input type="text" x-model="cfg.privacyPolicyUrl" @input="debouncedSave()" placeholder="https://example.com/privacy"/></div>
+          <div class="info-box"><p>A privacy policy is legally required if you collect any visitor data (contact forms, analytics, embedded maps). Generate a free one at <strong>privacypolicygenerator.info</strong> or <strong>termly.io</strong>.</p></div>
+          <hr style="border-color:var(--bdr);margin:16px 0"/>
+          <div class="field"><label>Cookie / GDPR Notice Text (leave blank to hide banner)</label><textarea x-model="cfg.cookieNotice" @input="debouncedSave()" placeholder="This site uses cookies to improve your experience. By continuing to browse, you agree to our use of cookies."></textarea></div>
+          <div class="info-box"><p>Required if you use analytics or third-party embeds (Google Maps, YouTube). The banner appears at the bottom of the page until the visitor dismisses it.</p></div>
+        </div>
 
-async function ghPushFile(repo, path, content, hdrs, message){
-  const apiUrl=`https://api.github.com/repos/${repo}/contents/${path}`;
-  const getRes=await fetch(apiUrl,{headers:hdrs});
-  let sha=undefined;
-  if(getRes.ok){ sha=(await getRes.json()).sha; }
-  else if(getRes.status!==404){ const e=await getRes.json(); throw new Error(e.message||`Cannot read ${path}`); }
-  const encoded=toBase64(content);
-  const body={message,content:encoded}; if(sha) body.sha=sha;
-  const putRes=await fetch(apiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify(body)});
-  if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||`Push of ${path} failed`);}
-}
+        <!-- ── THEME ── -->
+        <div x-show="section==='theme'">
+          <div class="panel-hdr"><div class="panel-h1">Theme</div><div class="panel-sub">Colors and typography</div></div>
+          <div class="field"><label>Accent Color (buttons, highlights)</label>
+            <div class="color-field">
+              <input type="color" x-model="cfg.accent" @input="debouncedSave()"/>
+              <input type="text" x-model="cfg.accent" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
+            </div>
+          </div>
+          <div class="field"><label>Heading Font</label>
+            <select x-model="cfg.headingFont" @change="debouncedSave()">
+              <option value="'Playfair Display', serif">Playfair Display — Classic &amp; Elegant</option>
+              <option value="Georgia, serif">Georgia — Traditional</option>
+              <option value="'Inter', sans-serif">Inter — Modern &amp; Clean</option>
+              <option value="'Times New Roman', serif">Times New Roman — Formal</option>
+            </select>
+          </div>
+        </div>
 
-async function publishToGitHub(){
-  const token = sessionStorage.getItem('gh_token')||'';
-  const repo  = localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News';
-  if(!token){ alert('Add your GitHub Personal Access Token in the Security section first.'); showSec('security'); return; }
+        <!-- ── SECURITY ── -->
+        <div x-show="section==='security'">
+          <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Authentication and GitHub publish settings</div></div>
+          <div class="info-box" style="background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3)">
+            <p><strong>Authentication</strong> is handled by Netlify Identity — no passwords are stored client-side. Manage users in your Netlify dashboard under Identity.</p>
+          </div>
+          <button @click="logout()" style="padding:9px 20px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:16px">Logout Now</button>
+          <hr style="border-color:var(--bdr);margin:20px 0"/>
+          <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
+          <div class="info-box"><p>
+            <strong>Setup (one time):</strong><br/>
+            1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br/>
+            2. Click <strong>Generate new token</strong><br/>
+            3. Set repository access to <strong>Rivaldo1123/Good_News</strong><br/>
+            4. Under Permissions → Repository → <strong>Contents: Read and Write</strong><br/>
+            5. Generate &amp; paste the token below<br/><br/>
+            <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
+          </p></div>
+          <div class="field"><label>GitHub Personal Access Token</label>
+            <input type="password" id="gh-token-input"
+              placeholder="github_pat_..."
+              @change="sessionStorage.setItem('gh_token', $event.target.value)"
+              x-init="$el.value = sessionStorage.getItem('gh_token') || ''"/>
+          </div>
+          <div class="field"><label>GitHub Repo (owner/repo)</label>
+            <input type="text" id="gh-repo-input"
+              placeholder="Rivaldo1123/Good_News"
+              @input="localStorage.setItem('gh_repo', $event.target.value)"
+              x-init="$el.value = localStorage.getItem('gh_repo') || 'Rivaldo1123/Good_News'"/>
+          </div>
+        </div>
 
-  const btn = document.getElementById('pub-btn');
-  btn.disabled = true; btn.textContent = '⏳ Publishing…';
-  pubToast('Pushing to GitHub…', 'busy', 0);
+      </div><!-- /.panels -->
+    </div><!-- /.layout -->
+  </div><!-- /#adm -->
 
-  const hdrs = { Authorization:`Bearer ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' };
+  <!-- SAVE TOAST -->
+  <div class="saved" :class="{show: saveStatus==='saved'}">Saved ✓</div>
 
-  try {
-    // 1. Push updated landing page
-    pubToast('Pushing index.html…', 'busy', 0);
-    await ghPushFile(repo, 'index.html', buildPageHTML(), hdrs, 'Update church landing page via admin panel');
+  <!-- PUBLISH STATUS -->
+  <div class="pub-status"
+    :class="{show: publishStatus!=='idle', ok: publishStatus==='ok', err: publishStatus==='error', busy: publishStatus==='busy'}"
+    x-text="publishMessage"></div>
 
-    // 2. Push admin.html with current password hash baked in (so hash survives localStorage clears)
-    pubToast('Pushing admin.html…', 'busy', 0);
-    const adminApiUrl=`https://api.github.com/repos/${repo}/contents/admin.html`;
-    const adminRes=await fetch(adminApiUrl,{headers:hdrs});
-    if(adminRes.ok){
-      const {sha, content}=await adminRes.json();
-      let adminHTML=fromBase64(content);
-      const liveHash=(localStorage.getItem(HASH_KEY)||DEFAULT_HASH).replace(/[^a-f0-9]/gi,'').slice(0,64).padEnd(64,'0');
-      adminHTML=adminHTML.replace(/const DEFAULT_HASH = '[a-f0-9]{64}'/,`const DEFAULT_HASH = '${liveHash}'`);
-      const encoded=toBase64(adminHTML);
-      const putRes=await fetch(adminApiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message:'Update admin security config',content:encoded,sha})});
-      if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'Push of admin.html failed');}
-    }
+</div><!-- /x-data -->
 
-    // 3. Push robots.txt
-    pubToast('Pushing robots.txt…', 'busy', 0);
-    const _siteBase=(cfg.siteUrl||'').replace(/\/$/,'')||'https://yourchurch.netlify.app';
-    const robotsTxt=`User-agent: *\nDisallow: /admin.html\n\nSitemap: ${_siteBase}/sitemap.xml\n`;
-    await ghPushFile(repo, 'robots.txt', robotsTxt, hdrs, 'Update robots.txt');
-
-    // 4. Push sitemap.xml
-    pubToast('Pushing sitemap.xml…', 'busy', 0);
-    const _today=new Date().toISOString().slice(0,10);
-    const sitemapXml=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${_siteBase}/</loc><lastmod>${_today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>\n`;
-    await ghPushFile(repo, 'sitemap.xml', sitemapXml, hdrs, 'Update sitemap.xml');
-
-    pubToast('✅ Published! Netlify will update in ~30 seconds.', 'ok');
-  } catch(err) {
-    pubToast('❌ '+err.message, 'err');
-  } finally {
-    btn.disabled=false; btn.innerHTML='🚀 Publish to GitHub';
-  }
-}
-
-// ═══════════════════════ DOWNLOAD ═══════════════════════
-function buildPageHTML(){
-  const tpl=document.getElementById('tpl').textContent;
-  // Unicode-escape < > & so script-close sequences in config values cannot break out of the script tag
-  const safeJson=JSON.stringify(cfg).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
-  return tpl
-    .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+safeJson+';')
-    .replace(/<\/SCRIPTEND>/g,'<\/script>');
-}
-
-function dlPage(){
-  const html=buildPageHTML();
-  const fname=(cfg.name||'church').toLowerCase().replace(/\s+/g,'-')+'-landing.html';
-  const blob=new Blob([html],{type:'text/html'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=fname;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-initGate();
-</script>
+<script type="module" src="/src/admin/main.ts"></script>
 </body>
 </html>
