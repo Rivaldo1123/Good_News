@@ -989,7 +989,7 @@ async function publishToGitHub(){
 // ═══════════════════════ DOWNLOAD ═══════════════════════
 function buildPageHTML(){
   const tpl=document.getElementById('tpl').textContent;
-  // Unicode-escape < > & so </script> sequences in config values cannot break out of the script tag
+  // Unicode-escape < > & so script-close sequences in config values cannot break out of the script tag
   const safeJson=JSON.stringify(cfg).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
   return tpl
     .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+safeJson+';')
