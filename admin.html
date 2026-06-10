@@ -149,7 +149,7 @@
       <span class="hdr-church" id="hdr-name">My Church</span>
     </div>
     <div class="hdr-actions">
-      <a class="btn-preview" href="index.html" target="_blank">👁 Preview</a>
+      <a class="btn-preview" href="index.html" target="_blank" rel="noopener noreferrer">👁 Preview</a>
       <button class="btn-dl" onclick="dlPage()">⬇ Download</button>
       <button class="btn-pub" id="pub-btn" onclick="publishToGitHub()">🚀 Publish to GitHub</button>
       <button class="btn-preview" onclick="logout()" style="color:var(--red);border-color:var(--red)">⏻ Logout</button>
@@ -412,7 +412,7 @@
       <h2 class="sec-h2" id="loc-h2"></h2>
     </div>
     <div class="mc-grid">
-      <iframe id="map-frame" class="map-frame" allowfullscreen="" loading="lazy" title="Church Location"></iframe>
+      <iframe id="map-frame" class="map-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" allowfullscreen="" loading="lazy" title="Church Location"></iframe>
       <div class="cp-pane">
         <h3 class="cp-h2" id="cp-h2"></h3>
         <p class="cp-sub" id="cp-sub"></p>
@@ -525,7 +525,7 @@ const DEFAULTS = {
 let cfg = JSON.parse(JSON.stringify(DEFAULTS));
 let saveTimer = null;
 
-function loadCfg(){const s=localStorage.getItem('church_cfg');if(s){try{cfg={...DEFAULTS,...JSON.parse(s)};}catch(e){}}}
+function loadCfg(){const s=localStorage.getItem('church_cfg');if(s){try{const p=JSON.parse(s);cfg={...DEFAULTS};Object.keys(DEFAULTS).forEach(k=>{if(k in p)cfg[k]=p[k];});}catch(e){}}}
 function saveCfg(){localStorage.setItem('church_cfg',JSON.stringify(cfg));showToast();}
 function showToast(){const t=document.getElementById('saved-toast');t.classList.add('show');clearTimeout(saveTimer);saveTimer=setTimeout(()=>t.classList.remove('show'),1800);}
 function set(k,v){cfg[k]=v;saveCfg();document.getElementById('hdr-name').textContent=cfg.name||'My Church';}
@@ -887,7 +887,7 @@ function renderPanel(name){
         5. Generate &amp; paste the token below<br/><br/>
         <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
       </p></div>
-      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(sessionStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." oninput="sessionStorage.setItem('gh_token',this.value)"/></div>
+      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(sessionStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." onchange="sessionStorage.setItem('gh_token',this.value)"/></div>
       <div class="field"><label>GitHub Repo (owner/repo)</label><input type="text" value="${esc(localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News')}" placeholder="Rivaldo1123/Good_News" oninput="localStorage.setItem('gh_repo',this.value)"/></div>`
   };
   return `<div class="panel active">${panels[name]||''}</div>`;
@@ -973,7 +973,7 @@ async function publishToGitHub(){
     if(adminRes.ok){
       const {sha, content}=await adminRes.json();
       let adminHTML=fromBase64(content);
-      const liveHash=localStorage.getItem(HASH_KEY)||DEFAULT_HASH;
+      const liveHash=(localStorage.getItem(HASH_KEY)||DEFAULT_HASH).replace(/[^a-f0-9]/gi,'').slice(0,64).padEnd(64,'0');
       adminHTML=adminHTML.replace(/const DEFAULT_HASH = '[a-f0-9]{64}'/,`const DEFAULT_HASH = '${liveHash}'`);
       const encoded=toBase64(adminHTML);
       const putRes=await fetch(adminApiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message:'Update admin security config',content:encoded,sha})});
