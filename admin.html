@@ -133,10 +133,9 @@
     <div class="gate-sub">Enter your admin password to continue</div>
     <form onsubmit="checkPw(event)">
       <input id="pw-in" type="password" class="gate-input" placeholder="Password" autofocus/>
-      <button class="gate-btn" type="submit">Login</button>
+      <button class="gate-btn" id="login-btn" type="submit">Login</button>
     </form>
     <p class="gate-err" id="pw-err"></p>
-    <p class="gate-hint">Default password: <strong>admin123</strong><br/>Change it in the Security section</p>
   </div>
 </div>
 
@@ -152,6 +151,7 @@
       <a class="btn-preview" href="index.html" target="_blank">👁 Preview</a>
       <button class="btn-dl" onclick="dlPage()">⬇ Download</button>
       <button class="btn-pub" id="pub-btn" onclick="publishToGitHub()">🚀 Publish to GitHub</button>
+      <button class="btn-preview" onclick="logout()" style="color:var(--red);border-color:var(--red)">⏻ Logout</button>
     </div>
   </header>
   <div class="layout">
@@ -479,7 +479,7 @@ const DEFAULTS = {
   showContact:true,contactHeading:"Get In Touch",contactSub:"We'd love to hear from you",
   contactAddress:"123 Faith Ave, Springfield, IL 62701",contactPhone:"(555) 123-4567",contactEmail:"info@gracechurch.org",contactWeb:"",formspreeId:"",
   facebook:"",instagram:"",youtube:"",twitter:"",footerText:"",
-  accent:"#6c4ecb",headingFont:"'Playfair Display', serif",adminPassword:"admin123"
+  accent:"#6c4ecb",headingFont:"'Playfair Display', serif"
 };
 
 let cfg = JSON.parse(JSON.stringify(DEFAULTS));
@@ -496,19 +496,80 @@ function addItem(k,tpl){cfg[k].push({...tpl});saveCfg();showSec(curSec);}
 function delItem(k,i){cfg[k].splice(i,1);saveCfg();showSec(curSec);}
 function toggleCard(el){const b=el.nextElementSibling;const a=el.querySelector('.ic-arr');b.classList.toggle('open');a.style.transform=b.classList.contains('open')?'rotate(90deg)':'';}
 
-// PASSWORD
-function checkPw(e){
+// ═══════════════════════ SECURITY ENGINE ═══════════════════════
+// SHA-256 of 'admin123' — updated when user changes password
+const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831d7fffda9940d6ed880f12';
+const HASH_KEY  = 'adm_pwd_hash';
+const LOCK_KEY  = 'adm_lock';
+const SESS_KEY  = 'adm_sess';
+const MAX_TRIES = 5;
+const LOCK_MS   = 15 * 60 * 1000;   // 15 minutes
+const SESS_MS   = 30 * 60 * 1000;   // 30 minutes
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function storedHash(){ return localStorage.getItem(HASH_KEY) || DEFAULT_HASH; }
+
+// Brute-force lockout
+function lockData(){ return JSON.parse(localStorage.getItem(LOCK_KEY)||'{"tries":0}'); }
+function minsLocked(){
+  const d=lockData();
+  if(d.until && Date.now()<d.until) return Math.ceil((d.until-Date.now())/60000);
+  if(d.until) localStorage.removeItem(LOCK_KEY);
+  return 0;
+}
+function recordFail(){
+  const d=lockData(); d.tries=(d.tries||0)+1;
+  if(d.tries>=MAX_TRIES) d.until=Date.now()+LOCK_MS;
+  localStorage.setItem(LOCK_KEY,JSON.stringify(d)); return d;
+}
+function clearLock(){ localStorage.removeItem(LOCK_KEY); }
+
+// Session
+function createSession(){ sessionStorage.setItem(SESS_KEY,JSON.stringify({exp:Date.now()+SESS_MS})); }
+function validSession(){
+  const s=JSON.parse(sessionStorage.getItem(SESS_KEY)||'{}');
+  if(!s.exp||Date.now()>s.exp){ sessionStorage.removeItem(SESS_KEY); return false; }
+  s.exp=Date.now()+SESS_MS; sessionStorage.setItem(SESS_KEY,JSON.stringify(s)); return true;
+}
+function logout(){
+  sessionStorage.removeItem(SESS_KEY);
+  document.getElementById('adm').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('pw-in').value='';
+  document.getElementById('pw-err').textContent='';
+}
+
+// Expire check every 60 s
+setInterval(()=>{ if(document.getElementById('adm').style.display==='flex' && !validSession()) logout(); },60000);
+// Refresh session on any click inside admin
+document.addEventListener('click',()=>{ if(document.getElementById('adm').style.display==='flex') validSession(); });
+
+async function checkPw(e){
   e.preventDefault();
-  const v=document.getElementById('pw-in').value;
-  loadCfg();
-  if(v===cfg.adminPassword){
+  const errEl=document.getElementById('pw-err');
+  const btn=document.getElementById('login-btn');
+  const mins=minsLocked();
+  if(mins){ errEl.textContent=`Too many failed attempts. Try again in ${mins} min${mins>1?'s':''}.`; return; }
+  btn.disabled=true; btn.textContent='Checking…';
+  const hash=await sha256(document.getElementById('pw-in').value);
+  if(hash===storedHash()){
+    clearLock(); createSession(); loadCfg();
     document.getElementById('gate').style.display='none';
     document.getElementById('adm').style.display='flex';
     document.getElementById('hdr-name').textContent=cfg.name||'My Church';
     showSec('general');
   }else{
-    document.getElementById('pw-err').textContent='Incorrect password. Try: admin123';
+    const d=recordFail();
+    const left=MAX_TRIES-d.tries;
+    errEl.textContent=d.until
+      ? `Account locked for ${LOCK_MS/60000} minutes.`
+      : `Incorrect password. ${left} attempt${left!==1?'s':''} remaining.`;
+    document.getElementById('pw-in').value='';
   }
+  btn.disabled=false; btn.textContent='Login';
 }
 
 // ═══════════════════════ SECTION PANELS ═══════════════════════
@@ -687,8 +748,22 @@ function renderPanel(name){
       </select></div>`,
 
     security:`
-      <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Admin password and GitHub publish settings</div></div>
-      ${f('Admin Password','adminPassword','admin123')}
+      <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Password management and GitHub publish settings</div></div>
+      <div class="info-box" style="background:rgba(232,90,106,.1);border-color:rgba(232,90,106,.35)"><p style="color:#f87171">
+        <strong>Your password is hashed (SHA-256)</strong> and never stored or transmitted in plain text.
+        After changing it, click <strong>🚀 Publish to GitHub</strong> so the new hash is saved in the deployed admin panel.
+      </p></div>
+      <div class="field"><label>Current Password</label><input type="password" id="pw-cur" placeholder="Enter current password"/></div>
+      <div class="col2">
+        <div class="field"><label>New Password</label><input type="password" id="pw-new" placeholder="Min. 8 characters"/></div>
+        <div class="field"><label>Confirm New Password</label><input type="password" id="pw-confirm" placeholder="Repeat new password"/></div>
+      </div>
+      <button onclick="changePassword()" style="padding:9px 20px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px">Update Password</button>
+      <p id="pw-change-msg" style="font-size:12px;margin-top:4px"></p>
+      <hr style="border-color:var(--bdr);margin:20px 0"/>
+      <div class="panel-hdr" style="margin-bottom:12px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:15px">Session</div></div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Auto-logout after <strong style="color:var(--txt)">30 minutes</strong> of inactivity. Account locks for <strong style="color:var(--txt)">15 minutes</strong> after 5 wrong password attempts.</div>
+      <button onclick="logout()" style="padding:9px 20px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;font-weight:600;cursor:pointer">Logout Now</button>
       <hr style="border-color:var(--bdr);margin:20px 0"/>
       <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
       <div class="info-box"><p>
@@ -706,11 +781,42 @@ function renderPanel(name){
   return `<div class="panel active">${panels[name]||''}</div>`;
 }
 
+// ═══════════════════════ CHANGE PASSWORD ═══════════════════════
+async function changePassword(){
+  const cur=document.getElementById('pw-cur').value;
+  const nw=document.getElementById('pw-new').value;
+  const conf=document.getElementById('pw-confirm').value;
+  const msg=document.getElementById('pw-change-msg');
+  msg.style.color='#f87171';
+  if(!cur||!nw||!conf){msg.textContent='All three fields are required.';return;}
+  if(nw.length<8){msg.textContent='New password must be at least 8 characters.';return;}
+  if(nw!==conf){msg.textContent='New passwords do not match.';return;}
+  const curHash=await sha256(cur);
+  if(curHash!==storedHash()){msg.textContent='Current password is incorrect.';return;}
+  const newHash=await sha256(nw);
+  localStorage.setItem(HASH_KEY,newHash);
+  document.getElementById('pw-cur').value='';
+  document.getElementById('pw-new').value='';
+  document.getElementById('pw-confirm').value='';
+  msg.style.color='var(--green)';
+  msg.textContent='Password updated. Click 🚀 Publish to GitHub to save it to your live site.';
+}
+
 // ═══════════════════════ PUBLISH TO GITHUB ═══════════════════════
 function pubToast(msg, type, dur=3500){
   const t=document.getElementById('pub-status');
   t.textContent=msg; t.className='pub-status '+type+' show';
   if(dur) setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+async function ghPushFile(repo, path, content, hdrs, message){
+  const apiUrl=`https://api.github.com/repos/${repo}/contents/${path}`;
+  const getRes=await fetch(apiUrl,{headers:hdrs});
+  if(!getRes.ok){const e=await getRes.json();throw new Error(e.message||`Cannot read ${path}`);}
+  const {sha}=await getRes.json();
+  const encoded=btoa(unescape(encodeURIComponent(content)));
+  const putRes=await fetch(apiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message,content:encoded,sha})});
+  if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||`Push of ${path} failed`);}
 }
 
 async function publishToGitHub(){
@@ -722,25 +828,26 @@ async function publishToGitHub(){
   btn.disabled = true; btn.textContent = '⏳ Publishing…';
   pubToast('Pushing to GitHub…', 'busy', 0);
 
+  const hdrs = { Authorization:`Bearer ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' };
+
   try {
-    const apiUrl = `https://api.github.com/repos/${repo}/contents/index.html`;
-    const headers = { Authorization:`Bearer ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' };
+    // 1. Push updated landing page
+    pubToast('Pushing index.html…', 'busy', 0);
+    await ghPushFile(repo, 'index.html', buildPageHTML(), hdrs, 'Update church landing page via admin panel');
 
-    // 1. Get current file SHA (required for updates)
-    const getRes = await fetch(apiUrl, { headers });
-    if(!getRes.ok){ const e=await getRes.json(); throw new Error(e.message||'Could not read file from GitHub'); }
-    const { sha } = await getRes.json();
-
-    // 2. Build the page and base64-encode it
-    const html = buildPageHTML();
-    const encoded = btoa(unescape(encodeURIComponent(html)));
-
-    // 3. Commit the update
-    const putRes = await fetch(apiUrl, {
-      method:'PUT', headers,
-      body: JSON.stringify({ message:'Update church landing page via admin panel', content:encoded, sha })
-    });
-    if(!putRes.ok){ const e=await putRes.json(); throw new Error(e.message||'Push failed'); }
+    // 2. Push admin.html with current password hash baked in (so hash survives localStorage clears)
+    pubToast('Pushing admin.html…', 'busy', 0);
+    const adminApiUrl=`https://api.github.com/repos/${repo}/contents/admin.html`;
+    const adminRes=await fetch(adminApiUrl,{headers:hdrs});
+    if(adminRes.ok){
+      const {sha, content}=await adminRes.json();
+      let adminHTML=decodeURIComponent(escape(atob(content.replace(/\n/g,''))));
+      const liveHash=localStorage.getItem(HASH_KEY)||DEFAULT_HASH;
+      adminHTML=adminHTML.replace(/const DEFAULT_HASH = '[a-f0-9]{64}'/,`const DEFAULT_HASH = '${liveHash}'`);
+      const encoded=btoa(unescape(encodeURIComponent(adminHTML)));
+      const putRes=await fetch(adminApiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message:'Update admin security config',content:encoded,sha})});
+      if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'Push of admin.html failed');}
+    }
 
     pubToast('✅ Published! Netlify will update in ~30 seconds.', 'ok');
   } catch(err) {
