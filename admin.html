@@ -177,6 +177,8 @@
       </div>
       <div class="nav-group">
         <div class="nav-group-label">Settings</div>
+        <div class="nav-item" data-sec="seo" onclick="showSec('seo')"><span class="nav-icon">🔍</span>SEO &amp; Sharing</div>
+        <div class="nav-item" data-sec="compliance" onclick="showSec('compliance')"><span class="nav-icon">⚖️</span>Legal &amp; Compliance</div>
         <div class="nav-item" data-sec="theme" onclick="showSec('theme')"><span class="nav-icon">🎨</span>Theme</div>
         <div class="nav-item" data-sec="security" onclick="showSec('security')"><span class="nav-icon">🔒</span>Security</div>
       </div>
@@ -198,6 +200,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script id="site-config">
   /* BEGIN_CONFIG */
@@ -317,9 +321,17 @@
   @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:40px}.about-vis{order:-1}.mc-grid{grid-template-columns:1fr}.cp-pane{padding:32px 24px}}
   @media(max-width:768px){#nav{padding:16px 20px}#nav.scrolled{padding:12px 20px}.nav-links{display:none}.hamburger{display:block}.sec{padding:56px 20px}#pastor{padding:56px 20px}.ib-item{padding:12px 20px;border-right:none;border-bottom:1px solid rgba(255,255,255,.2)}.ib-item:last-child{border-bottom:none}}
   @media(max-width:480px){.cf-2{grid-template-columns:1fr}.hero-btns{flex-direction:column;align-items:center}}
+  .skip-link{position:absolute;top:-100px;left:0;background:var(--accent);color:#fff;padding:8px 16px;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;font-size:14px;font-weight:600}
+  .skip-link:focus{top:0}
+  #ann-banner{background:var(--accent);color:#fff;text-align:center;padding:12px 24px;font-size:13px;font-weight:500;display:none}
+  #cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:rgba(255,255,255,.85);font-size:13px;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:2000;border-top:1px solid rgba(255,255,255,.1);gap:16px}
+  #cookie-banner button{flex-shrink:0;padding:7px 18px;background:var(--accent);border:none;border-radius:6px;color:#fff;cursor:pointer;font-size:12px;font-weight:600}
+  .cf-consent{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#666;cursor:pointer;margin-bottom:8px;line-height:1.5}
+  .cf-consent input[type=checkbox]{margin-top:2px;flex-shrink:0}
   </style>
 </head>
 <body>
+<a href="#hero" class="skip-link">Skip to main content</a>
 <nav id="nav">
   <div class="nav-logo" id="nav-logo"></div>
   <div class="nav-links" id="nav-links"></div>
@@ -329,7 +341,7 @@
   <button class="mob-close" onclick="closeMob()">✕</button>
   <div id="mob-links"></div>
 </div>
-<section id="hero">
+<section id="hero" tabindex="-1">
   <div class="hero-bg" id="hero-bg"></div>
   <div class="hero-ov" id="hero-ov"></div>
   <div class="hero-cnt">
@@ -341,6 +353,7 @@
   <div class="scroll-hint">Scroll</div>
 </section>
 <div id="info-bar"></div>
+<div id="ann-banner"></div>
 <section class="sec" id="about">
   <div class="sec-inner">
     <div class="about-grid">
@@ -437,7 +450,7 @@
   g('hero-sub').textContent=c.heroSub||'';
   g('hero-btns').innerHTML=`<a href="${e(c.heroCta1Link||'#services')}" class="btn btn-p">${e(c.heroCta1||'Join Us')}</a>`+(c.heroCta2?`<a href="${e(c.heroCta2Link||'#about')}" class="btn btn-o">${e(c.heroCta2)}</a>`:'');
   if(c.showInfoBar!==false){g('info-bar').innerHTML=[c.infoAddress?`<div class="ib-item">📍 ${e(c.infoAddress)}</div>`:'',c.infoService?`<div class="ib-item">🕐 ${e(c.infoService)}</div>`:'',c.infoPhone?`<div class="ib-item">📞 ${e(c.infoPhone)}</div>`:''].join('');}else{g('info-bar').style.display='none';}
-  if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="About"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';g('about-body').innerHTML=(c.aboutBody||'').split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
+  if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="${e(c.aboutImageAlt||c.aboutHeading||'Our Church')}"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';g('about-body').innerHTML=(c.aboutBody||'').split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
   if(c.showServices!==false){g('svc-h2').textContent=c.servicesHeading||'Join Us';g('svc-sub').textContent=c.servicesSub||'';g('svc-grid').innerHTML=(c.services||[]).map(s=>`<div class="svc-card"><div class="svc-day">${e(s.day)}</div><div class="svc-time">${e(s.time)}</div><div class="svc-name">${e(s.name)}</div>${s.desc?`<div class="svc-desc">${e(s.desc)}</div>`:''}</div>`).join('');}else{g('services').style.display='none';}
   const EC=['#6c4ecb','#e8507a','#20b2aa','#f59e0b'];
   if(c.showEvents!==false){g('evt-h2').textContent=c.eventsHeading||'Events';g('evt-sub').textContent=c.eventsSub||'';g('evt-grid').innerHTML=(c.events||[]).map((ev,i)=>`<div class="evt-card"><div class="evt-head"><div class="evt-badge" style="background:${e(ev.color||EC[i%4])}"><span class="evt-mo">${e(ev.month)}</span><span class="evt-dy">${e(ev.day)}</span></div><div class="evt-title">${e(ev.title)}</div></div><div class="evt-body"><p>${e(ev.desc)}</p></div></div>`).join('');}else{g('events').style.display='none';}
@@ -445,12 +458,33 @@
   if(c.showMinistries!==false){g('min-h2').textContent=c.ministriesHeading||'Our Ministries';g('min-sub').textContent=c.ministriesSub||'';g('min-grid').innerHTML=(c.ministries||[]).map(m=>`<div class="min-card"><div class="min-icon">${e(m.icon)}</div><div><div class="min-name">${e(m.name)}</div><div class="min-desc">${e(m.desc)}</div></div></div>`).join('');}else{g('ministries').style.display='none';}
   g('loc-h2').textContent=c.mapHeading||'Find Us';
   if(c.showMap!==false){const src=c.mapEmbedUrl||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
-  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(c.contactWeb)}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea><button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
+  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(c.contactWeb)}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(c.privacyPolicyUrl)}" target="_blank" rel="noopener" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
   const socs=[['Facebook',c.facebook,'f'],['Instagram',c.instagram,'ig'],['YouTube',c.youtube,'▶'],['Twitter/X',c.twitter,'𝕏']].filter(s=>s[1]);
   if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(s[1])}" class="soc-a" target="_blank" rel="noopener" title="${e(s[0])}">${s[2]}</a>`).join('');}
   g('foot-copy').textContent=c.footerText||`© ${new Date().getFullYear()} ${c.name}. All rights reserved.`;
   window.openMob=()=>g('mob-nav').classList.add('open');
   window.closeMob=()=>g('mob-nav').classList.remove('open');
+  // FAVICON
+  if(c.favicon){const _fl=document.createElement('link');_fl.rel='icon';_fl.href=c.favicon;document.head.appendChild(_fl);}
+  // SEO META + OPEN GRAPH + TWITTER CARD
+  const _desc=c.metaDesc||c.heroSub||c.tagline||'';
+  const _metas=[['name','description',_desc],['property','og:type','website'],['property','og:title',c.name||''],['property','og:description',_desc],['property','og:image',c.ogImage||''],['property','og:url',c.siteUrl||''],['name','twitter:card','summary_large_image'],['name','twitter:title',c.name||''],['name','twitter:description',_desc],['name','twitter:image',c.ogImage||'']].filter(t=>t[2]);
+  _metas.forEach(t=>{const m=document.createElement('meta');m.setAttribute(t[0],t[1]);m.content=t[2];document.head.appendChild(m);});
+  if(c.siteUrl){const _cl=document.createElement('link');_cl.rel='canonical';_cl.href=c.siteUrl;document.head.appendChild(_cl);}
+  // SCHEMA.ORG JSON-LD
+  const _schema={"@context":"https://schema.org","@type":"Church","name":c.name||"","description":_desc,"url":c.siteUrl||"","telephone":c.contactPhone||"","email":c.contactEmail||"","address":{"@type":"PostalAddress","streetAddress":c.contactAddress||""}};
+  if(c.ogImage){_schema.image=c.ogImage;}
+  const _sl=document.createElement('script');_sl.type='application/ld+json';_sl.textContent=JSON.stringify(_schema);document.head.appendChild(_sl);
+  // NAV LOGO IMAGE (overrides text name when logoUrl is set)
+  if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(c.logoUrl)}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
+  // DONATION BUTTON IN NAV
+  if(c.donationUrl){const _db=document.createElement('a');_db.href=c.donationUrl;_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
+  // ANNOUNCEMENT BANNER
+  if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
+  // PRIVACY LINK IN FOOTER
+  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=c.privacyPolicyUrl;_ppl.target='_blank';_ppl.rel='noopener';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
+  // COOKIE CONSENT BANNER
+  if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
 </SCRIPTEND>
 </body>
@@ -479,7 +513,11 @@ const DEFAULTS = {
   showContact:true,contactHeading:"Get In Touch",contactSub:"We'd love to hear from you",
   contactAddress:"123 Faith Ave, Springfield, IL 62701",contactPhone:"(555) 123-4567",contactEmail:"info@gracechurch.org",contactWeb:"",formspreeId:"",
   facebook:"",instagram:"",youtube:"",twitter:"",footerText:"",
-  accent:"#6c4ecb",headingFont:"'Playfair Display', serif"
+  accent:"#6c4ecb",headingFont:"'Playfair Display', serif",
+  siteUrl:"",metaDesc:"",ogImage:"",favicon:"",logoUrl:"",
+  aboutImageAlt:"",pastorImageAlt:"",
+  donationUrl:"",donationText:"Give",
+  privacyPolicyUrl:"",cookieNotice:"",announcementBanner:""
 };
 
 let cfg = JSON.parse(JSON.stringify(DEFAULTS));
@@ -604,7 +642,10 @@ function renderPanel(name){
       ${f('Church Name','name','Grace Community Church')}
       ${f('Denomination / Badge','badge','Non-Denominational')}
       ${f('Tagline','tagline','A Place to Belong, Believe & Grow')}
-      ${f('Navigation CTA Button','navCtaText','Join Us Sunday')}`,
+      ${f('Navigation CTA Button','navCtaText','Join Us Sunday')}
+      <hr style="border-color:var(--bdr);margin:16px 0"/>
+      ${f('Nav Logo Image URL (replaces text name)','logoUrl','https://example.com/logo.png')}
+      ${f('Announcement Banner (leave blank to hide)','announcementBanner','Special service this Sunday at 10 AM!')}`,
 
     hero:`
       <div class="panel-hdr"><div class="panel-h1">Hero Section</div><div class="panel-sub">The first thing visitors see — make it count</div></div>
@@ -635,7 +676,8 @@ function renderPanel(name){
       ${f('Section Heading','aboutHeading','About Our Church')}
       ${f('Subtitle / Tagline','aboutSub','Faith · Community · Purpose')}
       ${ft('Body Text (double line-break = new paragraph)','aboutBody','')}
-      ${f('Image URL (optional)','aboutImage','https://example.com/photo.jpg')}`,
+      ${f('Image URL (optional)','aboutImage','https://example.com/photo.jpg')}
+      ${f('Image Alt Text (for screen readers & SEO)','aboutImageAlt','Our congregation gathered for Sunday worship')}`,
 
     services:`
       <div class="panel-hdr"><div class="panel-h1">Service Times</div><div class="panel-sub">Add all weekly services</div></div>
@@ -688,6 +730,7 @@ function renderPanel(name){
       ${f('Section Label','pastorTitle','Meet Our Pastor')}
       ${f('Pastor Name','pastorName','Pastor John Smith')}
       ${f('Photo URL (optional)','pastorImage','https://example.com/pastor.jpg')}
+      ${f('Photo Alt Text','pastorImageAlt','Pastor smiling in front of the church')}
       ${ft('Bio','pastorBio','Brief biography...')}`,
 
     ministries:`
@@ -735,7 +778,25 @@ function renderPanel(name){
       ${f('YouTube URL','youtube','https://youtube.com/@yourchurch')}
       ${f('Twitter / X URL','twitter','https://x.com/yourchurch')}
       <hr style="border-color:var(--bdr);margin:16px 0"/>
-      ${f('Footer Text (leave blank for auto)','footerText','© 2026 My Church. All rights reserved.')}`,
+      ${f('Footer Text (leave blank for auto)','footerText','© 2026 My Church. All rights reserved.')}
+      <hr style="border-color:var(--bdr);margin:16px 0"/>
+      <div class="col2">${f('Donation / Giving Page URL','donationUrl','https://giving.example.com')}${f('Donation Button Label','donationText','Give')}</div>`,
+
+    seo:`
+      <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media find and preview your site</div></div>
+      ${f('Site URL (your Netlify URL — no trailing slash)','siteUrl','https://yourchurch.netlify.app')}
+      ${f('Meta Description (50–160 characters)','metaDesc','A welcoming church family in [City]. Join us every Sunday.')}
+      ${f('Social Share Image URL (1200×630 px recommended)','ogImage','https://example.com/share-image.jpg')}
+      <div class="info-box"><p>The <strong>Social Share Image</strong> appears when someone shares your site on Facebook, WhatsApp, or iMessage. Use a landscape photo (1200 × 630 px) that represents your church well.</p></div>
+      ${f('Favicon URL (.png or .ico)','favicon','https://example.com/favicon.png')}`,
+
+    compliance:`
+      <div class="panel-hdr"><div class="panel-h1">Legal &amp; Compliance</div><div class="panel-sub">Privacy policy, GDPR cookie notice, and donation link</div></div>
+      ${f('Privacy Policy URL','privacyPolicyUrl','https://example.com/privacy')}
+      <div class="info-box"><p>A privacy policy is legally required if you collect any visitor data (contact forms, analytics, embedded maps). Generate a free one at <strong>privacypolicygenerator.info</strong> or <strong>termly.io</strong>.</p></div>
+      <hr style="border-color:var(--bdr);margin:16px 0"/>
+      ${ft('Cookie / GDPR Notice Text (leave blank to hide banner)','cookieNotice','This site uses cookies to improve your experience. By continuing to browse, you agree to our use of cookies.')}
+      <div class="info-box"><p>Required if you use analytics or third-party embeds (Google Maps, YouTube). The banner appears at the bottom of the page until the visitor dismisses it.</p></div>`,
 
     theme:`
       <div class="panel-hdr"><div class="panel-h1">Theme</div><div class="panel-sub">Colors and typography</div></div>
@@ -812,10 +873,12 @@ function pubToast(msg, type, dur=3500){
 async function ghPushFile(repo, path, content, hdrs, message){
   const apiUrl=`https://api.github.com/repos/${repo}/contents/${path}`;
   const getRes=await fetch(apiUrl,{headers:hdrs});
-  if(!getRes.ok){const e=await getRes.json();throw new Error(e.message||`Cannot read ${path}`);}
-  const {sha}=await getRes.json();
+  let sha=undefined;
+  if(getRes.ok){ sha=(await getRes.json()).sha; }
+  else if(getRes.status!==404){ const e=await getRes.json(); throw new Error(e.message||`Cannot read ${path}`); }
   const encoded=btoa(unescape(encodeURIComponent(content)));
-  const putRes=await fetch(apiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message,content:encoded,sha})});
+  const body={message,content:encoded}; if(sha) body.sha=sha;
+  const putRes=await fetch(apiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify(body)});
   if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||`Push of ${path} failed`);}
 }
 
@@ -848,6 +911,18 @@ async function publishToGitHub(){
       const putRes=await fetch(adminApiUrl,{method:'PUT',headers:hdrs,body:JSON.stringify({message:'Update admin security config',content:encoded,sha})});
       if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'Push of admin.html failed');}
     }
+
+    // 3. Push robots.txt
+    pubToast('Pushing robots.txt…', 'busy', 0);
+    const _siteBase=(cfg.siteUrl||'').replace(/\/$/,'')||'https://yourchurch.netlify.app';
+    const robotsTxt=`User-agent: *\nDisallow: /admin.html\n\nSitemap: ${_siteBase}/sitemap.xml\n`;
+    await ghPushFile(repo, 'robots.txt', robotsTxt, hdrs, 'Update robots.txt');
+
+    // 4. Push sitemap.xml
+    pubToast('Pushing sitemap.xml…', 'busy', 0);
+    const _today=new Date().toISOString().slice(0,10);
+    const sitemapXml=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${_siteBase}/</loc><lastmod>${_today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>\n`;
+    await ghPushFile(repo, 'sitemap.xml', sitemapXml, hdrs, 'Update sitemap.xml');
 
     pubToast('✅ Published! Netlify will update in ~30 seconds.', 'ok');
   } catch(err) {
