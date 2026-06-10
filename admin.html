@@ -129,10 +129,11 @@
 <div id="gate">
   <div class="gate-card">
     <div class="gate-icon">⛪</div>
-    <div class="gate-h1">Church Admin</div>
-    <div class="gate-sub">Enter your admin password to continue</div>
+    <div class="gate-h1" id="gate-h1">Church Admin</div>
+    <div class="gate-sub" id="gate-sub">Enter your admin password to continue</div>
     <form onsubmit="checkPw(event)">
       <input id="pw-in" type="password" class="gate-input" placeholder="Password" autofocus/>
+      <div id="pw-confirm-wrap" style="display:none"><input id="pw-confirm-in" type="password" class="gate-input" placeholder="Confirm password"/></div>
       <button class="gate-btn" id="login-btn" type="submit">Login</button>
     </form>
     <p class="gate-err" id="pw-err"></p>
@@ -430,6 +431,7 @@
   const c=window.C,g=id=>document.getElementById(id);
   function shade(hex,amt){let r=parseInt(hex.slice(1,3),16),gv=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return '#'+[r,gv,b].map(v=>Math.min(255,Math.max(0,v+amt)).toString(16).padStart(2,'0')).join('')}
   function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function u(s){s=String(s||'').trim();return /^javascript:/i.test(s)?'#':s;}
   document.documentElement.style.setProperty('--accent',c.accent||'#6c4ecb');
   document.documentElement.style.setProperty('--accent-dark',shade(c.accent||'#6c4ecb',-20));
   document.documentElement.style.setProperty('--hf',c.headingFont||"'Playfair Display',serif");
@@ -448,7 +450,7 @@
   if(c.badge){hbadge.textContent=c.badge;}else{hbadge.style.display='none';}
   g('hero-h1').textContent=c.heroHeading||c.name||'';
   g('hero-sub').textContent=c.heroSub||'';
-  g('hero-btns').innerHTML=`<a href="${e(c.heroCta1Link||'#services')}" class="btn btn-p">${e(c.heroCta1||'Join Us')}</a>`+(c.heroCta2?`<a href="${e(c.heroCta2Link||'#about')}" class="btn btn-o">${e(c.heroCta2)}</a>`:'');
+  g('hero-btns').innerHTML=`<a href="${e(u(c.heroCta1Link||'#services'))}" class="btn btn-p">${e(c.heroCta1||'Join Us')}</a>`+(c.heroCta2?`<a href="${e(u(c.heroCta2Link||'#about'))}" class="btn btn-o">${e(c.heroCta2)}</a>`:'');
   if(c.showInfoBar!==false){g('info-bar').innerHTML=[c.infoAddress?`<div class="ib-item">📍 ${e(c.infoAddress)}</div>`:'',c.infoService?`<div class="ib-item">🕐 ${e(c.infoService)}</div>`:'',c.infoPhone?`<div class="ib-item">📞 ${e(c.infoPhone)}</div>`:''].join('');}else{g('info-bar').style.display='none';}
   if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="${e(c.aboutImageAlt||c.aboutHeading||'Our Church')}"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';g('about-body').innerHTML=(c.aboutBody||'').split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
   if(c.showServices!==false){g('svc-h2').textContent=c.servicesHeading||'Join Us';g('svc-sub').textContent=c.servicesSub||'';g('svc-grid').innerHTML=(c.services||[]).map(s=>`<div class="svc-card"><div class="svc-day">${e(s.day)}</div><div class="svc-time">${e(s.time)}</div><div class="svc-name">${e(s.name)}</div>${s.desc?`<div class="svc-desc">${e(s.desc)}</div>`:''}</div>`).join('');}else{g('services').style.display='none';}
@@ -457,10 +459,10 @@
   if(c.showPastor!==false){g('pstr-eyebrow').textContent=c.pastorTitle||'Meet Our Pastor';const pp=g('pstr-photo');if(c.pastorImage){pp.innerHTML=`<img src="${e(c.pastorImage)}" alt="${e(c.pastorName)}"/>`;}else{pp.textContent='✝';}g('pstr-name').textContent=c.pastorName||'';g('pstr-bio').textContent=c.pastorBio||'';}else{g('pastor').style.display='none';}
   if(c.showMinistries!==false){g('min-h2').textContent=c.ministriesHeading||'Our Ministries';g('min-sub').textContent=c.ministriesSub||'';g('min-grid').innerHTML=(c.ministries||[]).map(m=>`<div class="min-card"><div class="min-icon">${e(m.icon)}</div><div><div class="min-name">${e(m.name)}</div><div class="min-desc">${e(m.desc)}</div></div></div>`).join('');}else{g('ministries').style.display='none';}
   g('loc-h2').textContent=c.mapHeading||'Find Us';
-  if(c.showMap!==false){const src=c.mapEmbedUrl||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
-  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(c.contactWeb)}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(c.privacyPolicyUrl)}" target="_blank" rel="noopener" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
+  if(c.showMap!==false){const src=u(c.mapEmbedUrl)||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
+  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(c.privacyPolicyUrl)}" target="_blank" rel="noopener" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
   const socs=[['Facebook',c.facebook,'f'],['Instagram',c.instagram,'ig'],['YouTube',c.youtube,'▶'],['Twitter/X',c.twitter,'𝕏']].filter(s=>s[1]);
-  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(s[1])}" class="soc-a" target="_blank" rel="noopener" title="${e(s[0])}">${s[2]}</a>`).join('');}
+  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener" title="${e(s[0])}">${s[2]}</a>`).join('');}
   g('foot-copy').textContent=c.footerText||`© ${new Date().getFullYear()} ${c.name}. All rights reserved.`;
   window.openMob=()=>g('mob-nav').classList.add('open');
   window.closeMob=()=>g('mob-nav').classList.remove('open');
@@ -476,13 +478,13 @@
   if(c.ogImage){_schema.image=c.ogImage;}
   const _sl=document.createElement('script');_sl.type='application/ld+json';_sl.textContent=JSON.stringify(_schema);document.head.appendChild(_sl);
   // NAV LOGO IMAGE (overrides text name when logoUrl is set)
-  if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(c.logoUrl)}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
+  if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(u(c.logoUrl))}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
   // DONATION BUTTON IN NAV
-  if(c.donationUrl){const _db=document.createElement('a');_db.href=c.donationUrl;_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
+  if(c.donationUrl){const _db=document.createElement('a');_db.href=u(c.donationUrl);_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
   // ANNOUNCEMENT BANNER
   if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
   // PRIVACY LINK IN FOOTER
-  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=c.privacyPolicyUrl;_ppl.target='_blank';_ppl.rel='noopener';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
+  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
   // COOKIE CONSENT BANNER
   if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
@@ -535,14 +537,17 @@ function delItem(k,i){cfg[k].splice(i,1);saveCfg();showSec(curSec);}
 function toggleCard(el){const b=el.nextElementSibling;const a=el.querySelector('.ic-arr');b.classList.toggle('open');a.style.transform=b.classList.contains('open')?'rotate(90deg)':'';}
 
 // ═══════════════════════ SECURITY ENGINE ═══════════════════════
-// SHA-256 of 'admin123' — updated when user changes password
-const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-const HASH_KEY  = 'adm_pwd_hash';
-const LOCK_KEY  = 'adm_lock';
-const SESS_KEY  = 'adm_sess';
-const MAX_TRIES = 5;
-const LOCK_MS   = 15 * 60 * 1000;   // 15 minutes
-const SESS_MS   = 30 * 60 * 1000;   // 30 minutes
+// DEFAULT_HASH is a sentinel (all-zeros) that triggers first-run password setup.
+// After the user sets a password, the hash is stored in localStorage.
+// On GitHub publish the live hash is baked into this constant so it survives localStorage clears.
+const DEFAULT_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
+const HASH_KEY    = 'adm_pwd_hash';
+const LOCK_KEY    = 'adm_lock';
+const SESS_KEY    = 'adm_sess';
+const SESS_ID_KEY = 'adm_sess_id';
+const MAX_TRIES   = 5;
+const LOCK_MS     = 15 * 60 * 1000;   // 15 minutes
+const SESS_MS     = 30 * 60 * 1000;   // 30 minutes
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -550,26 +555,37 @@ async function sha256(str) {
 }
 function storedHash(){ return localStorage.getItem(HASH_KEY) || DEFAULT_HASH; }
 
-// Brute-force lockout
-function lockData(){ return JSON.parse(localStorage.getItem(LOCK_KEY)||'{"tries":0}'); }
+// Brute-force lockout — mirrored in both storages so clearing one alone does not reset the counter
+function lockData(){
+  const ls=JSON.parse(localStorage.getItem(LOCK_KEY)||'{"tries":0}');
+  const ss=JSON.parse(sessionStorage.getItem(LOCK_KEY)||'{"tries":0}');
+  return {tries:Math.max(ls.tries||0,ss.tries||0),until:Math.max(ls.until||0,ss.until||0)||undefined};
+}
 function minsLocked(){
   const d=lockData();
   if(d.until && Date.now()<d.until) return Math.ceil((d.until-Date.now())/60000);
-  if(d.until) localStorage.removeItem(LOCK_KEY);
+  if(d.until){ localStorage.removeItem(LOCK_KEY); sessionStorage.removeItem(LOCK_KEY); }
   return 0;
 }
 function recordFail(){
   const d=lockData(); d.tries=(d.tries||0)+1;
   if(d.tries>=MAX_TRIES) d.until=Date.now()+LOCK_MS;
-  localStorage.setItem(LOCK_KEY,JSON.stringify(d)); return d;
+  const payload=JSON.stringify(d);
+  localStorage.setItem(LOCK_KEY,payload); sessionStorage.setItem(LOCK_KEY,payload); return d;
 }
-function clearLock(){ localStorage.removeItem(LOCK_KEY); }
+function clearLock(){ localStorage.removeItem(LOCK_KEY); sessionStorage.removeItem(LOCK_KEY); }
 
-// Session
-function createSession(){ sessionStorage.setItem(SESS_KEY,JSON.stringify({exp:Date.now()+SESS_MS})); }
+// Session — includes a random ID stored in localStorage so changing the password
+// invalidates sessions in other tabs on their next activity check.
+function createSession(){
+  const id=crypto.randomUUID?crypto.randomUUID():(Math.random().toString(36).slice(2)+Date.now().toString(36));
+  localStorage.setItem(SESS_ID_KEY,id);
+  sessionStorage.setItem(SESS_KEY,JSON.stringify({exp:Date.now()+SESS_MS,id}));
+}
 function validSession(){
   const s=JSON.parse(sessionStorage.getItem(SESS_KEY)||'{}');
-  if(!s.exp||Date.now()>s.exp){ sessionStorage.removeItem(SESS_KEY); return false; }
+  const validId=localStorage.getItem(SESS_ID_KEY);
+  if(!s.exp||Date.now()>s.exp||s.id!==validId){sessionStorage.removeItem(SESS_KEY);return false;}
   s.exp=Date.now()+SESS_MS; sessionStorage.setItem(SESS_KEY,JSON.stringify(s)); return true;
 }
 function logout(){
@@ -585,14 +601,49 @@ setInterval(()=>{ if(document.getElementById('adm').style.display==='flex' && !v
 // Refresh session on any click inside admin
 document.addEventListener('click',()=>{ if(document.getElementById('adm').style.display==='flex') validSession(); });
 
+// First-run flag: true when no password has ever been set
+let isFirstRun = false;
+function initGate(){
+  isFirstRun = storedHash()===DEFAULT_HASH && !localStorage.getItem(HASH_KEY);
+  if(isFirstRun){
+    document.getElementById('gate-h1').textContent='Create Admin Password';
+    document.getElementById('gate-sub').textContent='First-time setup — choose a strong password (min. 8 characters)';
+    document.getElementById('pw-confirm-wrap').style.display='block';
+    document.getElementById('pw-in').placeholder='New password (min. 8 chars)';
+    document.getElementById('login-btn').textContent='Create Password';
+  }
+}
+
 async function checkPw(e){
   e.preventDefault();
   const errEl=document.getElementById('pw-err');
   const btn=document.getElementById('login-btn');
+
+  // First-run: set a new password
+  if(isFirstRun){
+    const pw1=document.getElementById('pw-in').value;
+    const pw2=document.getElementById('pw-confirm-in').value;
+    errEl.textContent='';
+    if(pw1.length<8){errEl.textContent='Password must be at least 8 characters.';return;}
+    if(pw1!==pw2){errEl.textContent='Passwords do not match.';return;}
+    btn.disabled=true; btn.textContent='Setting up…';
+    const hash=await sha256(pw1);
+    localStorage.setItem(HASH_KEY,hash);
+    isFirstRun=false;
+    clearLock(); createSession(); loadCfg();
+    document.getElementById('gate').style.display='none';
+    document.getElementById('adm').style.display='flex';
+    document.getElementById('hdr-name').textContent=cfg.name||'My Church';
+    showSec('general');
+    btn.disabled=false; btn.textContent='Login';
+    return;
+  }
+
   const mins=minsLocked();
   if(mins){ errEl.textContent=`Too many failed attempts. Try again in ${mins} min${mins>1?'s':''}.`; return; }
   btn.disabled=true; btn.textContent='Checking…';
-  const hash=await sha256(document.getElementById('pw-in').value);
+  // Minimum 600 ms delay per attempt so rate-limiting holds even if lockout storage is cleared
+  const [hash]=await Promise.all([sha256(document.getElementById('pw-in').value),new Promise(r=>setTimeout(r,600))]);
   if(hash===storedHash()){
     clearLock(); createSession(); loadCfg();
     document.getElementById('gate').style.display='none';
@@ -836,7 +887,7 @@ function renderPanel(name){
         5. Generate &amp; paste the token below<br/><br/>
         <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
       </p></div>
-      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(localStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." oninput="localStorage.setItem('gh_token',this.value)"/></div>
+      <div class="field"><label>GitHub Personal Access Token</label><input type="password" value="${esc(sessionStorage.getItem('gh_token')||'')}" placeholder="github_pat_..." oninput="sessionStorage.setItem('gh_token',this.value)"/></div>
       <div class="field"><label>GitHub Repo (owner/repo)</label><input type="text" value="${esc(localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News')}" placeholder="Rivaldo1123/Good_News" oninput="localStorage.setItem('gh_repo',this.value)"/></div>`
   };
   return `<div class="panel active">${panels[name]||''}</div>`;
@@ -856,6 +907,9 @@ async function changePassword(){
   if(curHash!==storedHash()){msg.textContent='Current password is incorrect.';return;}
   const newHash=await sha256(nw);
   localStorage.setItem(HASH_KEY,newHash);
+  // Rotate session ID so any other open tabs are invalidated on their next activity check
+  localStorage.removeItem(SESS_ID_KEY);
+  createSession();
   document.getElementById('pw-cur').value='';
   document.getElementById('pw-new').value='';
   document.getElementById('pw-confirm').value='';
@@ -883,7 +937,7 @@ async function ghPushFile(repo, path, content, hdrs, message){
 }
 
 async function publishToGitHub(){
-  const token = localStorage.getItem('gh_token')||'';
+  const token = sessionStorage.getItem('gh_token')||'';
   const repo  = localStorage.getItem('gh_repo')||'Rivaldo1123/Good_News';
   if(!token){ alert('Add your GitHub Personal Access Token in the Security section first.'); showSec('security'); return; }
 
@@ -935,8 +989,10 @@ async function publishToGitHub(){
 // ═══════════════════════ DOWNLOAD ═══════════════════════
 function buildPageHTML(){
   const tpl=document.getElementById('tpl').textContent;
+  // Unicode-escape < > & so </script> sequences in config values cannot break out of the script tag
+  const safeJson=JSON.stringify(cfg).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
   return tpl
-    .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+JSON.stringify(cfg)+';')
+    .replace('window.C = CHURCH_CONFIG_PLACEHOLDER;','window.C = '+safeJson+';')
     .replace(/<\/SCRIPTEND>/g,'<\/script>');
 }
 
@@ -950,6 +1006,8 @@ function dlPage(){
   a.click();
   URL.revokeObjectURL(a.href);
 }
+
+initGate();
 </script>
 </body>
 </html>
