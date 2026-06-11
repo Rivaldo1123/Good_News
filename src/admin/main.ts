@@ -9,7 +9,8 @@ Alpine.data('admin', adminStore)
 // falls back to the current site's identity endpoint)
 netlifyIdentity.init()
 
-// Expose Alpine on window so Alpine devtools can find it
+// Expose on window so Alpine templates can call netlifyIdentity.open() etc.
+;(window as any).netlifyIdentity = netlifyIdentity
 ;(window as any).Alpine = Alpine
 
 Alpine.start()
