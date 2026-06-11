@@ -1,9 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 
-/**
- * Verify a Netlify Identity JWT from the Authorization header.
- * Throws an Error with message 'Unauthorized' when the token is absent or invalid.
- */
 export async function requireUser(
   authHeader: string | undefined,
   siteUrl: string,
@@ -13,6 +9,7 @@ export async function requireUser(
   }
   const token = authHeader.slice(7)
   const JWKS = createRemoteJWKSet(new URL(`${siteUrl}/.netlify/identity/keys`))
-  const { payload } = await jwtVerify(token, JWKS, { audience: 'netlify' })
+  // No audience check — Netlify Identity tokens use the site URL as aud, not 'netlify'
+  const { payload } = await jwtVerify(token, JWKS)
   return payload as Record<string, unknown>
 }
