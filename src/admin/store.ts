@@ -46,6 +46,11 @@ export function adminStore() {
     // Mobile nav drawer
     navOpen: false,
 
+    // User management (admin only)
+    identityUsers: [] as Array<{ id: string; email: string; roles: string[]; confirmed: boolean; last_sign_in_at: string | null }>,
+    usersLoading: false,
+    usersError: '',
+
     // Drag-to-reorder
     dragSrcIdx: -1 as number,
     dragListName: '' as string,
@@ -284,6 +289,49 @@ export function adminStore() {
     syncRte(field: string, el: HTMLElement) {
       ;(this.cfg as any)[field] = el.innerHTML
       this.debouncedSave()
+    },
+
+    async loadUsers() {
+      this.usersLoading = true
+      this.usersError = ''
+      try {
+        const res = await fetch('/api/identity-users', {
+          headers: { Authorization: `Bearer ${this.getToken()}` },
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          this.usersError = data.error ?? `HTTP ${res.status}`
+          return
+        }
+        this.identityUsers = data.users ?? []
+      } catch (err: any) {
+        this.usersError = err.message ?? 'Failed to load users'
+      } finally {
+        this.usersLoading = false
+      }
+    },
+
+    async toggleUserRole(userId: string, role: string) {
+      const user = this.identityUsers.find((u) => u.id === userId)
+      if (!user) return
+      const has = user.roles.includes(role)
+      const newRoles = has ? user.roles.filter((r) => r !== role) : [...user.roles, role]
+      try {
+        const res = await fetch('/api/identity-users', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.getToken()}`,
+          },
+          body: JSON.stringify({ userId, roles: newRoles }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+        user.roles = data.roles ?? newRoles
+        this.showToast(`${user.email} — roles updated`, 'ok')
+      } catch (err: any) {
+        this.showToast(err.message ?? 'Role update failed', 'err')
+      }
     },
 
     logout() {
