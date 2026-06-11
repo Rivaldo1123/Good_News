@@ -42,6 +42,10 @@ export function adminStore() {
         const res = await fetch('/api/config', {
           headers: { Authorization: `Bearer ${this.getToken()}` },
         })
+        if (res.status === 401) {
+          netlifyIdentity.logout()
+          return
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const { config } = await res.json()
         this.cfg = { ...DEFAULTS, ...config } as ChurchConfig
