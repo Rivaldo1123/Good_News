@@ -1,18 +1,20 @@
-import type { Context } from '@netlify/functions'
+import type { Handler } from '@netlify/functions'
 import { getStore } from '@netlify/blobs'
-import { requireUser } from './_shared/auth'
 import { DEFAULTS } from '../../src/types/config'
 
-export default async (req: Request, _context: Context) => {
-  try {
-    await requireUser(req.headers.get('authorization') ?? undefined)
-  } catch {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+export const handler: Handler = async (event, context) => {
+  const { user } = (context as any).clientContext ?? {}
+  if (!user) {
+    return {
+      statusCode: 401,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    }
   }
 
   const store = getStore('church-config')
 
-  if (req.method === 'GET') {
+  if (event.httpMethod === 'GET') {
     try {
       const raw = await store.get('config')
       const saved: Record<string, unknown> = raw ? JSON.parse(raw) : {}
@@ -24,31 +26,53 @@ export default async (req: Request, _context: Context) => {
             .map((k) => [k, saved[k]]),
         ),
       }
-      return Response.json({ config })
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config }),
+      }
     } catch (e: any) {
-      return Response.json({ error: e.message }, { status: 500 })
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: e.message }),
+      }
     }
   }
 
-  if (req.method === 'POST') {
+  if (event.httpMethod === 'POST') {
     try {
-      let incoming: Record<string, unknown>
-      try {
-        incoming = await req.json()
-      } catch {
-        return Response.json({ error: 'Request body is required' }, { status: 400 })
+      if (!event.body) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: 'Request body is required' }),
+        }
       }
+      const incoming: Record<string, unknown> = JSON.parse(event.body)
       const config = Object.fromEntries(
         (Object.keys(DEFAULTS) as Array<keyof typeof DEFAULTS>)
           .filter((k) => k in incoming)
           .map((k) => [k, incoming[k]]),
       )
       await store.set('config', JSON.stringify(config))
-      return Response.json({ ok: true })
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ok: true }),
+      }
     } catch (e: any) {
-      return Response.json({ error: e.message }, { status: 500 })
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: e.message }),
+      }
     }
   }
 
-  return Response.json({ error: 'Method not allowed' }, { status: 405 })
+  return {
+    statusCode: 405,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ error: 'Method not allowed' }),
+  }
 }
