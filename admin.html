@@ -279,11 +279,11 @@
                 </div>
                 <div class="item-card-body" style="display:none">
                   <div class="col2">
-                    <div class="field"><label>Day</label><input type="text" x-model="cfg.services[i].day" @input="debouncedSave()" placeholder="Sunday"/></div>
-                    <div class="field"><label>Time</label><input type="text" x-model="cfg.services[i].time" @input="debouncedSave()" placeholder="9:00 AM"/></div>
+                    <div class="field"><label>Day</label><input type="text" x-model="item.day" @input="debouncedSave()" placeholder="Sunday"/></div>
+                    <div class="field"><label>Time</label><input type="text" x-model="item.time" @input="debouncedSave()" placeholder="9:00 AM"/></div>
                   </div>
-                  <div class="field"><label>Service Name</label><input type="text" x-model="cfg.services[i].name" @input="debouncedSave()" placeholder="Morning Worship"/></div>
-                  <div class="field"><label>Description (optional)</label><input type="text" x-model="cfg.services[i].desc" @input="debouncedSave()" placeholder="Traditional service with hymns"/></div>
+                  <div class="field"><label>Service Name</label><input type="text" x-model="item.name" @input="debouncedSave()" placeholder="Morning Worship"/></div>
+                  <div class="field"><label>Description (optional)</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Traditional service with hymns"/></div>
                 </div>
               </div>
             </template>
@@ -308,15 +308,15 @@
                 </div>
                 <div class="item-card-body" style="display:none">
                   <div class="col2">
-                    <div class="field"><label>Month (3 letters)</label><input type="text" x-model="cfg.events[i].month" @input="debouncedSave()" placeholder="JUN"/></div>
-                    <div class="field"><label>Day Number</label><input type="text" x-model="cfg.events[i].day" @input="debouncedSave()" placeholder="15"/></div>
+                    <div class="field"><label>Month (3 letters)</label><input type="text" x-model="item.month" @input="debouncedSave()" placeholder="JUN"/></div>
+                    <div class="field"><label>Day Number</label><input type="text" x-model="item.day" @input="debouncedSave()" placeholder="15"/></div>
                   </div>
-                  <div class="field"><label>Event Title</label><input type="text" x-model="cfg.events[i].title" @input="debouncedSave()" placeholder="Summer BBQ"/></div>
-                  <div class="field"><label>Description</label><input type="text" x-model="cfg.events[i].desc" @input="debouncedSave()" placeholder="Family fun for everyone"/></div>
+                  <div class="field"><label>Event Title</label><input type="text" x-model="item.title" @input="debouncedSave()" placeholder="Summer BBQ"/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Family fun for everyone"/></div>
                   <div class="field"><label>Badge Color</label>
                     <div class="color-field">
-                      <input type="color" x-model="cfg.events[i].color" @input="debouncedSave()"/>
-                      <input type="text" x-model="cfg.events[i].color" @input="debouncedSave()" maxlength="7" style="max-width:100px"/>
+                      <input type="color" x-model="item.color" @input="debouncedSave()"/>
+                      <input type="text" x-model="item.color" @input="debouncedSave()" maxlength="7" style="max-width:100px"/>
                     </div>
                   </div>
                 </div>
@@ -354,10 +354,10 @@
                 </div>
                 <div class="item-card-body" style="display:none">
                   <div class="col2">
-                    <div class="field"><label>Emoji Icon</label><input type="text" x-model="cfg.ministries[i].icon" @input="debouncedSave()" placeholder="👶"/></div>
-                    <div class="field"><label>Name</label><input type="text" x-model="cfg.ministries[i].name" @input="debouncedSave()" placeholder="Children's Ministry"/></div>
+                    <div class="field"><label>Emoji Icon</label><input type="text" x-model="item.icon" @input="debouncedSave()" placeholder="👶"/></div>
+                    <div class="field"><label>Name</label><input type="text" x-model="item.name" @input="debouncedSave()" placeholder="Children's Ministry"/></div>
                   </div>
-                  <div class="field"><label>Description</label><input type="text" x-model="cfg.ministries[i].desc" @input="debouncedSave()" placeholder="Safe, engaging programs..."/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Safe, engaging programs..."/></div>
                 </div>
               </div>
             </template>
