@@ -5,9 +5,29 @@ import { requireUser } from './_shared/auth'
 
 const json = (statusCode: number, body: unknown) => ({
   statusCode,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   body: JSON.stringify(body),
 })
+
+async function bootstrapFromGitHub(repo: string, token: string): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/dist/index.html`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'good-news-admin',
+      },
+    })
+    if (!res.ok) return null
+    const file = await res.json()
+    const html = Buffer.from(file.content, 'base64').toString('utf-8')
+    const m = html.match(/window\.C\s*=\s*(\{.*\});/)
+    if (!m) return null
+    return JSON.parse(m[1])
+  } catch {
+    return null
+  }
+}
 
 export const handler: Handler = async (event, context) => {
   try {
@@ -29,7 +49,22 @@ export const handler: Handler = async (event, context) => {
 
     if (event.httpMethod === 'GET') {
       const raw = await store.get(storeKey)
-      const saved: Record<string, unknown> = raw ? JSON.parse(raw) : {}
+      let saved: Record<string, unknown> = raw ? JSON.parse(raw) : {}
+
+      // Blobs empty for live config → bootstrap from the deployed dist/index.html
+      // so the admin always reflects the actual live site on first load / after a reset.
+      if (!raw && !isDraft) {
+        const token = process.env.GITHUB_TOKEN
+        const repo = process.env.GITHUB_REPO || 'Rivaldo1123/Good_News'
+        if (token) {
+          const live = await bootstrapFromGitHub(repo, token)
+          if (live) {
+            saved = live
+            await store.set('config', JSON.stringify(live))
+          }
+        }
+      }
+
       const config = {
         ...DEFAULTS,
         ...Object.fromEntries(
