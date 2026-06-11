@@ -493,28 +493,15 @@
           </div>
           <button @click="logout()" style="padding:9px 20px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:16px">Logout Now</button>
           <hr style="border-color:var(--bdr);margin:20px 0"/>
-          <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
+          <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Publishing and image uploads are handled server-side</div></div>
           <div class="info-box"><p>
-            <strong>Setup (one time):</strong><br/>
-            1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br/>
-            2. Click <strong>Generate new token</strong><br/>
-            3. Set repository access to <strong>Rivaldo1123/Good_News</strong><br/>
-            4. Under Permissions → Repository → <strong>Contents: Read and Write</strong><br/>
-            5. Generate &amp; paste the token below<br/><br/>
-            <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
+            <strong>The GitHub token is configured securely on the server</strong> — it never touches your browser.<br/><br/>
+            <strong>One-time setup (Netlify dashboard):</strong><br/>
+            1. Create a fine-grained Personal Access Token at <strong>github.com → Settings → Developer settings → Personal access tokens</strong> with <strong>Contents: Read and Write</strong> on <strong>Rivaldo1123/Good_News</strong><br/>
+            2. In <strong>Netlify → Site configuration → Environment variables</strong>, add <strong>GITHUB_TOKEN</strong> = your token<br/>
+            3. (Optional) add <strong>GITHUB_REPO</strong> = owner/repo to publish to a different repo<br/><br/>
+            Once set, <strong>Publish to GitHub</strong> and image uploads work automatically for anyone signed in.
           </p></div>
-          <div class="field"><label>GitHub Personal Access Token</label>
-            <input type="password" id="gh-token-input"
-              placeholder="github_pat_..."
-              @change="sessionStorage.setItem('gh_token', $event.target.value)"
-              x-init="$el.value = sessionStorage.getItem('gh_token') || ''"/>
-          </div>
-          <div class="field"><label>GitHub Repo (owner/repo)</label>
-            <input type="text" id="gh-repo-input"
-              placeholder="Rivaldo1123/Good_News"
-              @input="localStorage.setItem('gh_repo', $event.target.value)"
-              x-init="$el.value = localStorage.getItem('gh_repo') || 'Rivaldo1123/Good_News'"/>
-          </div>
         </div>
 
       </div><!-- /.panels -->

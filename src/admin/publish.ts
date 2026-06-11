@@ -1,36 +1,28 @@
 import { buildPageHTML } from './buildPage'
-import { toBase64, fromBase64 } from '../utils/base64'
+import { fromBase64 } from '../utils/base64'
 import type { ChurchConfig } from '../types/config'
 
 type ProgressCallback = (message: string) => void
 
+// Push a file through the server-side /api/github function, which holds the
+// GitHub token as an env var. The Identity access token authorizes the call.
 async function ghPushFile(
-  repo: string,
   path: string,
   content: string,
-  headers: Record<string, string>,
   message: string,
+  identityToken: string,
 ): Promise<void> {
-  const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`
-  const getRes = await fetch(apiUrl, { headers })
-  let sha: string | undefined
-  if (getRes.ok) {
-    sha = (await getRes.json()).sha
-  } else if (getRes.status !== 404) {
-    const err = await getRes.json()
-    throw new Error(err.message ?? `Cannot read ${path}`)
-  }
-  const encoded = toBase64(content)
-  const body: Record<string, string> = { message, content: encoded }
-  if (sha) body.sha = sha
-  const putRes = await fetch(apiUrl, {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify(body),
+  const res = await fetch('/api/github', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${identityToken}`,
+    },
+    body: JSON.stringify({ path, content, encoding: 'utf-8', message }),
   })
-  if (!putRes.ok) {
-    const err = await putRes.json()
-    throw new Error(err.message ?? `Push of ${path} failed`)
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error ?? `Push of ${path} failed`)
   }
 }
 
@@ -38,35 +30,26 @@ export async function pushToGitHub(
   cfg: ChurchConfig,
   _initialMessage: string,
   onProgress: ProgressCallback,
+  identityToken: string,
 ): Promise<void> {
-  const token = sessionStorage.getItem('gh_token') ?? ''
-  const repo = localStorage.getItem('gh_repo') ?? 'Rivaldo1123/Good_News'
-
-  if (!token) {
-    throw new Error('Add your GitHub Personal Access Token in the Security section first.')
+  if (!identityToken) {
+    throw new Error('You must be logged in to publish.')
   }
 
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json',
-  }
-
-  // 1. Push landing page to dist/index.html (Netlify now serves from dist/)
+  // 1. Push landing page to dist/index.html (Netlify serves from dist/)
   onProgress('Pushing dist/index.html…')
   await ghPushFile(
-    repo,
     'dist/index.html',
     buildPageHTML(cfg),
-    headers,
     'Update church landing page via admin panel',
+    identityToken,
   )
 
   // 2. Push robots.txt
   onProgress('Pushing robots.txt…')
   const siteBase = (cfg.siteUrl ?? '').replace(/\/$/, '') || 'https://yourchurch.netlify.app'
   const robotsTxt = `User-agent: *\nDisallow: /admin.html\n\nSitemap: ${siteBase}/sitemap.xml\n`
-  await ghPushFile(repo, 'robots.txt', robotsTxt, headers, 'Update robots.txt')
+  await ghPushFile('robots.txt', robotsTxt, 'Update robots.txt', identityToken)
 
   // 3. Push sitemap.xml
   onProgress('Pushing sitemap.xml…')
@@ -76,7 +59,7 @@ export async function pushToGitHub(
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     `  <url><loc>${siteBase}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n` +
     `</urlset>\n`
-  await ghPushFile(repo, 'sitemap.xml', sitemapXml, headers, 'Update sitemap.xml')
+  await ghPushFile('sitemap.xml', sitemapXml, 'Update sitemap.xml', identityToken)
 }
 
 // Re-export fromBase64 so it is tree-shaken together with the publish module

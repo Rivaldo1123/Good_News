@@ -49,7 +49,7 @@ export function adminStore() {
       this.imgPreview[field as string] = URL.createObjectURL(file)
       this.imgStatus[field as string] = 'uploading'
       try {
-        const url = await uploadImageToRepo(file)
+        const url = await uploadImageToRepo(file, this.getToken())
         ;(this.cfg as any)[field] = url
         this.imgStatus[field as string] = 'done'
         this.debouncedSave()
@@ -113,7 +113,7 @@ export function adminStore() {
       try {
         await pushToGitHub(this.cfg, this.publishMessage, (msg) => {
           this.publishMessage = msg
-        })
+        }, this.getToken())
         this.publishStatus = 'ok'
         this.publishMessage = 'Published! Netlify will update in ~30 seconds.'
         setTimeout(() => {
