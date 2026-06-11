@@ -187,7 +187,7 @@
       <div class="gate-icon">&#9962;</div>
       <div class="gate-h1">Church Admin</div>
       <div class="gate-sub">Sign in to manage your church website</div>
-      <button class="gate-btn" @click="netlifyIdentity.open()">Sign In</button>
+      <button class="gate-btn" @click="netlifyIdentity.open('login')">Sign In</button>
     </div>
   </div>
   <div id="gate" x-show="user && !isEditor" style="display:none">

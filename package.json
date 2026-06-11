@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp _headers dist/_headers && cp _redirects dist/_redirects",
+    "build": "vite build && cp _headers dist/_headers && cp _redirects dist/_redirects && (cp robots.txt dist/robots.txt 2>/dev/null || true) && (cp sitemap.xml dist/sitemap.xml 2>/dev/null || true)",
     "preview": "vite preview"
   },
   "dependencies": {

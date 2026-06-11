@@ -49,7 +49,7 @@ export async function pushToGitHub(
   onProgress('Pushing robots.txt…')
   const siteBase = (cfg.siteUrl ?? '').replace(/\/$/, '') || 'https://yourchurch.netlify.app'
   const robotsTxt = `User-agent: *\nDisallow: /admin.html\n\nSitemap: ${siteBase}/sitemap.xml\n`
-  await ghPushFile('robots.txt', robotsTxt, 'Update robots.txt', identityToken)
+  await ghPushFile('dist/robots.txt', robotsTxt, 'Update robots.txt', identityToken)
 
   // 3. Push sitemap.xml
   onProgress('Pushing sitemap.xml…')
@@ -59,7 +59,7 @@ export async function pushToGitHub(
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     `  <url><loc>${siteBase}/</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n` +
     `</urlset>\n`
-  await ghPushFile('sitemap.xml', sitemapXml, 'Update sitemap.xml', identityToken)
+  await ghPushFile('dist/sitemap.xml', sitemapXml, 'Update sitemap.xml', identityToken)
 }
 
 // Re-export fromBase64 so it is tree-shaken together with the publish module

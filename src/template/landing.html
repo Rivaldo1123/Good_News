@@ -170,6 +170,7 @@ CHURCH_HEAD_META_PLACEHOLDER
   <div class="scroll-hint">Scroll</div>
 </section>
 <div id="info-bar"></div>
+<div id="ann-items"></div>
 <div id="visit-bar"><div class="sec-inner"><div class="vb-eyebrow">Plan Your Visit</div><h2 class="vb-heading" id="vb-heading">First Time Here?</h2><p class="vb-text" id="vb-text"></p></div></div>
 <div id="ann-banner"></div>
 <section class="sec" id="about">
@@ -293,6 +294,7 @@ CHURCH_HEAD_META_PLACEHOLDER
   if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(u(c.logoUrl))}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
   if(c.donationUrl){const _db=document.createElement('a');_db.href=u(c.donationUrl);_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
   if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
+  (function(){const now=Date.now();const anns=(c.announcements||[]).filter(a=>{if(!a.active)return false;if(a.expiresAt){const t=new Date(a.expiresAt).getTime();if(!isNaN(t)&&now>t)return false;}return true;});if(!anns.length)return;const BG={info:'#eff6ff',warning:'#fffbeb',celebration:'#f5f3ff'};const BD={info:'#bfdbfe',warning:'#fde68a',celebration:'#ddd6fe'};const TX={info:'#1e40af',warning:'#92400e',celebration:'#5b21b6'};const IC={info:'ℹ️',warning:'⚠️',celebration:'🎉'};g('ann-items').innerHTML=anns.map(a=>{const t=a.type||'info';return `<div style="background:${BG[t]||BG.info};border-bottom:1px solid ${BD[t]||BD.info};padding:10px 24px;text-align:center;font-size:13px;font-weight:500;color:${TX[t]||TX.info}">${IC[t]||IC.info} ${e(a.text)}</div>`;}).join('');})();
   if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener noreferrer';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.45)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
   if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
