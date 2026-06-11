@@ -151,6 +151,33 @@
   .ann-type.info{background:rgba(59,130,246,.2);color:#93c5fd}
   .ann-type.warning{background:rgba(245,185,66,.2);color:var(--yellow)}
   .ann-type.celebration{background:rgba(108,99,255,.2);color:var(--acc2)}
+  /* ── Mobile nav ─────────────────────────────────────────── */
+  .mob-menu-btn{display:none;background:none;border:none;color:var(--txt);font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1;flex-shrink:0}
+  .mob-menu-btn:hover{background:var(--surf2)}
+  .nav-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:none}
+  @media(max-width:639px){
+    .gate-card{width:calc(100vw - 32px);padding:32px 20px}
+    header{padding:0 12px;gap:6px}
+    .hdr-title,.hdr-church,.role-badge{display:none!important}
+    .mob-menu-btn{display:block}
+    .preview-btn{display:none!important}
+    .btn-pub{padding:7px 10px;font-size:11px}
+    .mode-pill{font-size:9px;padding:2px 7px}
+    aside{position:fixed;top:56px;left:0;height:calc(100dvh - 56px);z-index:200;transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.5);width:220px;padding-bottom:40px}
+    aside.mob-open{transform:translateX(0)}
+    .nav-backdrop{display:block}
+    .panels{padding:20px 16px}
+    .col2,.col3{grid-template-columns:1fr!important}
+    .analytics-grid{grid-template-columns:1fr 1fr}
+    .seo-preview{max-width:100%}
+    .media-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))}
+    .field input,.field textarea,.field select{font-size:16px}
+    .saved{right:12px;bottom:70px}
+    .pub-status{right:12px;max-width:calc(100vw - 24px)}
+    .toast-stack{max-width:calc(100vw - 24px)}
+    .modal-overlay{padding:0;align-items:flex-end}
+    .modal-box{border-radius:12px 12px 0 0;max-height:92dvh}
+  }
   </style>
 </head>
 <body>
@@ -166,6 +193,7 @@
   <div id="adm" x-show="user" style="display:none">
     <header>
       <div class="hdr-left">
+        <button class="mob-menu-btn" @click="navOpen=!navOpen">&#9776;</button>
         <span class="hdr-icon">&#9962;</span>
         <span class="hdr-title">Church Admin</span>
         <span class="hdr-church" x-text="cfg.name || 'My Church'"></span>
@@ -176,7 +204,7 @@
         <button class="mode-pill" :class="draftMode ? 'draft' : 'live'" @click="toggleDraftMode()">
           <span x-text="draftMode ? '&#128203; Draft' : '&#128994; Live'"></span>
         </button>
-        <button class="btn-ghost" @click="openPreview()">&#128065; Preview</button>
+        <button class="btn-ghost preview-btn" @click="openPreview()">&#128065; Preview</button>
         <button class="btn-pub" :disabled="publishStatus === 'busy'" @click="publish()">
           <span x-text="publishStatus === 'busy' ? '&#9203; Publishing&#8230;' : (draftMode ? '&#128640; Publish Draft' : '&#128640; Publish')"></span>
         </button>
@@ -184,7 +212,8 @@
       </div>
     </header>
     <div class="layout">
-      <aside>
+      <aside :class="{'mob-open': navOpen}">
+        <div @click.capture="navOpen=false">
         <div class="nav-group">
           <div class="nav-group-label">Site</div>
           <div class="nav-item" :class="{active: section==='general'}" @click="section='general'"><span class="nav-icon">&#127963;</span>General</div>
@@ -217,6 +246,7 @@
           <div class="nav-group-label">Insights</div>
           <div class="nav-item" :class="{active: section==='media'}" @click="section='media'; loadMediaFiles()"><span class="nav-icon">&#128247;</span>Media Library</div>
           <div class="nav-item" x-show="isAdmin" :class="{active: section==='analytics'}" @click="section='analytics'; if(!analyticsData && !analyticsLoading) loadAnalytics()"><span class="nav-icon">&#128202;</span>Analytics</div>
+        </div>
         </div>
       </aside>
       <div class="panels">
@@ -654,6 +684,7 @@
       <iframe style="flex:1;width:100%;border:none;background:#fff;min-height:70vh" :srcdoc="previewHtml" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
   </div>
+  <div class="nav-backdrop" x-show="navOpen" @click="navOpen=false" style="display:none"></div>
 </div>
 <script type="module" src="/src/admin/main.ts"></script>
 </body>
