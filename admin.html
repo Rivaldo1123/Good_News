@@ -348,6 +348,11 @@
             </div>
             <p class="field-note">Use toolbar for formatting. Changes auto-save on blur.</p>
           </div>
+          <div class="field">
+            <label>Plan Your Visit <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea x-model="cfg.visitInfo" @input="debouncedSave()" placeholder="e.g. We're so glad you're considering joining us! Parking is available on-site, our service runs about 90 minutes, and there's a dedicated children's program during the message. Dress casually and come as you are." style="min-height:80px"></textarea>
+            <p class="field-note">If filled in, displays as a highlighted callout section between the info bar and About.</p>
+          </div>
           <div class="field"><label>Image (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="URL or upload below"/>
             <div class="img-upload">
               <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('aboutImage', $event)" hidden/><span x-text="imgStatus['aboutImage']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
@@ -521,6 +526,7 @@
           <div class="field"><label>Contact Heading</label><input type="text" x-model="cfg.contactHeading" @input="debouncedSave()" placeholder="Get In Touch"/></div>
           <div class="field"><label>Contact Subtitle</label><input type="text" x-model="cfg.contactSub" @input="debouncedSave()" placeholder="We'd love to hear from you"/></div>
           <div class="field"><label>Address</label><input type="text" x-model="cfg.contactAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL 62701"/></div>
+          <div class="field"><label>Office Hours <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text" x-model="cfg.officeHours" @input="debouncedSave()" placeholder="e.g. Mon–Fri 9am–5pm"/><p class="field-note">Shown as a clock icon row in the contact panel.</p></div>
           <div class="col2">
             <div class="field"><label>Phone</label><input type="text" x-model="cfg.contactPhone" @input="debouncedSave()" placeholder="(555) 123-4567"/></div>
             <div class="field"><label>Email</label><input type="text" x-model="cfg.contactEmail" @input="debouncedSave()" placeholder="info@church.org"/></div>

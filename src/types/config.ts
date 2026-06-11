@@ -117,6 +117,8 @@ export interface ChurchConfig {
   announcementBanner: string;
   announcements: AnnouncementItem[];
   scheduledPublishAt: string;
+  visitInfo: string;
+  officeHours: string;
 }
 
 export const DEFAULTS: ChurchConfig = {
@@ -223,4 +225,6 @@ export const DEFAULTS: ChurchConfig = {
   announcementBanner: "",
   announcements: [],
   scheduledPublishAt: "",
+  visitInfo: "",
+  officeHours: "",
 };
