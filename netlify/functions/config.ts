@@ -1,6 +1,7 @@
 import type { Handler } from '@netlify/functions'
 import { connectLambda, getStore } from '@netlify/blobs'
 import { DEFAULTS } from '../../src/types/config'
+import { requireUser } from './_shared/auth'
 
 const json = (statusCode: number, body: unknown) => ({
   statusCode,
@@ -8,14 +9,14 @@ const json = (statusCode: number, body: unknown) => ({
   body: JSON.stringify(body),
 })
 
-function userRoles(context: any): string[] {
-  return ((context?.clientContext?.user?.app_metadata?.roles) as string[]) ?? []
-}
-
 export const handler: Handler = async (event, context) => {
   try {
-    const { user } = (context as any).clientContext ?? {}
-    if (!user) return json(401, { error: 'Unauthorized' })
+    let payload: Record<string, unknown>
+    try {
+      payload = await requireUser(event.headers.authorization)
+    } catch {
+      return json(401, { error: 'Unauthorized' })
+    }
 
     connectLambda(event as any)
     const store = getStore('church-config')
@@ -41,7 +42,7 @@ export const handler: Handler = async (event, context) => {
 
     if (event.httpMethod === 'POST') {
       if (isPublish) {
-        const roles = userRoles(context)
+        const roles: string[] = ((payload.app_metadata as any)?.roles) ?? []
         if (!roles.includes('admin')) {
           return json(403, { error: 'Admin role required to publish' })
         }
