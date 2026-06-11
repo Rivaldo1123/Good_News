@@ -2,20 +2,20 @@ import type { Handler } from '@netlify/functions'
 import { getStore } from '@netlify/blobs'
 import { DEFAULTS } from '../../src/types/config'
 
+const json = (statusCode: number, body: unknown) => ({
+  statusCode,
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+})
+
 export const handler: Handler = async (event, context) => {
-  const { user } = (context as any).clientContext ?? {}
-  if (!user) {
-    return {
-      statusCode: 401,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Unauthorized' }),
-    }
-  }
+  try {
+    const { user } = (context as any).clientContext ?? {}
+    if (!user) return json(401, { error: 'Unauthorized' })
 
-  const store = getStore('church-config')
+    const store = getStore('church-config')
 
-  if (event.httpMethod === 'GET') {
-    try {
+    if (event.httpMethod === 'GET') {
       const raw = await store.get('config')
       const saved: Record<string, unknown> = raw ? JSON.parse(raw) : {}
       const config = {
@@ -26,29 +26,11 @@ export const handler: Handler = async (event, context) => {
             .map((k) => [k, saved[k]]),
         ),
       }
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ config }),
-      }
-    } catch (e: any) {
-      return {
-        statusCode: 500,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: e.message }),
-      }
+      return json(200, { config })
     }
-  }
 
-  if (event.httpMethod === 'POST') {
-    try {
-      if (!event.body) {
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error: 'Request body is required' }),
-        }
-      }
+    if (event.httpMethod === 'POST') {
+      if (!event.body) return json(400, { error: 'Request body is required' })
       const incoming: Record<string, unknown> = JSON.parse(event.body)
       const config = Object.fromEntries(
         (Object.keys(DEFAULTS) as Array<keyof typeof DEFAULTS>)
@@ -56,23 +38,11 @@ export const handler: Handler = async (event, context) => {
           .map((k) => [k, incoming[k]]),
       )
       await store.set('config', JSON.stringify(config))
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ok: true }),
-      }
-    } catch (e: any) {
-      return {
-        statusCode: 500,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: e.message }),
-      }
+      return json(200, { ok: true })
     }
-  }
 
-  return {
-    statusCode: 405,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ error: 'Method not allowed' }),
+    return json(405, { error: 'Method not allowed' })
+  } catch (e: any) {
+    return json(500, { error: e?.message ?? String(e), stack: e?.stack })
   }
 }
