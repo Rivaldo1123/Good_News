@@ -7,14 +7,10 @@
   node_bundler = "esbuild"
 
 [[redirects]]
-  from   = "/api/config"
-  to     = "/.netlify/functions/config"
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
   status = 200
-
-[[redirects]]
-  from   = "/api/ping"
-  to     = "/.netlify/functions/ping"
-  status = 200
+  force  = true
 
 [[redirects]]
   from   = "/admin"
