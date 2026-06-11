@@ -190,7 +190,15 @@
       <button class="gate-btn" @click="netlifyIdentity.open()">Sign In</button>
     </div>
   </div>
-  <div id="adm" x-show="user" style="display:none">
+  <div id="gate" x-show="user && !isEditor" style="display:none">
+    <div class="gate-card">
+      <div class="gate-icon">&#128683;</div>
+      <div class="gate-h1">No Access</div>
+      <div class="gate-sub">Your account hasn't been assigned a role yet. Ask your site administrator to grant you <strong>editor</strong> or <strong>admin</strong> access in the Netlify Identity dashboard.</div>
+      <button class="gate-btn" style="background:var(--surf2);color:var(--muted);margin-top:8px" @click="logout()">Sign Out</button>
+    </div>
+  </div>
+  <div id="adm" x-show="user && isEditor" style="display:none">
     <header>
       <div class="hdr-left">
         <button class="mob-menu-btn" @click="navOpen=!navOpen">&#9776;</button>
