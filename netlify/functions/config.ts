@@ -5,7 +5,7 @@ import { DEFAULTS } from '../../src/types/config'
 
 export default async (req: Request, _context: Context) => {
   try {
-    await requireUser(req.headers.get('authorization') ?? undefined, process.env.URL!)
+    await requireUser(req.headers.get('authorization') ?? undefined)
   } catch {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }

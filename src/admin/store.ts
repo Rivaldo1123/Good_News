@@ -34,7 +34,7 @@ export function adminStore() {
     },
 
     getToken(): string {
-      return (netlifyIdentity.currentUser() as any)?.token?.access_token ?? ''
+      return (this.user as any)?.token?.access_token ?? ''
     },
 
     async loadConfig() {
