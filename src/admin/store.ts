@@ -43,6 +43,9 @@ export function adminStore() {
     analyticsLoading: false,
     analyticsError: '',
 
+    // Mobile nav drawer
+    navOpen: false,
+
     // Drag-to-reorder
     dragSrcIdx: -1 as number,
     dragListName: '' as string,
