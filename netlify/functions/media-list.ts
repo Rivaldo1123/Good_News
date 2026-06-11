@@ -1,4 +1,5 @@
 import type { Handler } from '@netlify/functions'
+import { requireUser } from './_shared/auth'
 
 const json = (statusCode: number, body: unknown) => ({
   statusCode,
@@ -8,8 +9,11 @@ const json = (statusCode: number, body: unknown) => ({
 
 export const handler: Handler = async (event, context) => {
   try {
-    const { user } = (context as any).clientContext ?? {}
-    if (!user) return json(401, { error: 'Unauthorized' })
+    try {
+      requireUser(event.headers.authorization, (context as any).clientContext)
+    } catch {
+      return json(401, { error: 'Unauthorized' })
+    }
 
     if (event.httpMethod !== 'GET') return json(405, { error: 'Method not allowed' })
 
