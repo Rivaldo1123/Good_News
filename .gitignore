@@ -5,3 +5,5 @@
 node_modules/
 dist/assets/
 dist/admin.html
+dist/_headers
+dist/_redirects

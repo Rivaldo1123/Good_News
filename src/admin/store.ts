@@ -1,6 +1,7 @@
 import netlifyIdentity from 'netlify-identity-widget'
 import { DEFAULTS, type ChurchConfig } from '../types/config'
 import { pushToGitHub } from './publish'
+import { uploadImage as uploadImageToRepo } from './upload'
 
 export function adminStore() {
   return {
@@ -11,6 +12,9 @@ export function adminStore() {
     publishStatus: 'idle' as 'idle' | 'busy' | 'ok' | 'error',
     publishMessage: '',
     saveTimer: null as ReturnType<typeof setTimeout> | null,
+    // Per-field image upload state and instant local previews.
+    imgStatus: {} as Record<string, 'idle' | 'uploading' | 'done' | 'error'>,
+    imgPreview: {} as Record<string, string>,
 
     async init() {
       netlifyIdentity.on('login', (user: any) => {
@@ -35,6 +39,27 @@ export function adminStore() {
 
     getToken(): string {
       return (this.user as any)?.token?.access_token ?? ''
+    },
+
+    async uploadImage(field: keyof ChurchConfig, event: Event) {
+      const input = event.target as HTMLInputElement
+      const file = input.files?.[0]
+      if (!file) return
+      // Show the picked image instantly while it uploads/deploys.
+      this.imgPreview[field as string] = URL.createObjectURL(file)
+      this.imgStatus[field as string] = 'uploading'
+      try {
+        const url = await uploadImageToRepo(file)
+        ;(this.cfg as any)[field] = url
+        this.imgStatus[field as string] = 'done'
+        this.debouncedSave()
+      } catch (err: any) {
+        this.imgStatus[field as string] = 'error'
+        this.imgPreview[field as string] = ''
+        alert(err?.message ?? 'Upload failed')
+      } finally {
+        input.value = ''
+      }
     },
 
     async loadConfig() {

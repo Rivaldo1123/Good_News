@@ -100,6 +100,13 @@
   .info-box p{font-size:12px;color:var(--acc2);line-height:1.6}
   .info-box strong{font-weight:600}
 
+  /* IMAGE UPLOAD */
+  .img-upload{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .img-upload-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;font-weight:600;cursor:pointer;transition:border-color .2s}
+  .img-upload-btn:hover{border-color:var(--acc)}
+  .img-thumb{height:48px;width:auto;max-width:140px;object-fit:cover;border-radius:6px;border:1px solid var(--bdr);background:var(--inp)}
+  .img-hint{font-size:11px;color:var(--green)}
+
   /* COLOR + TEXT ROW */
   .color-field{display:flex;align-items:center;gap:10px}
   .color-field input[type="color"]{flex-shrink:0}
@@ -190,7 +197,13 @@
           <div class="field"><label>Tagline</label><input type="text" x-model="cfg.tagline" @input="debouncedSave()" placeholder="A Place to Belong, Believe &amp; Grow"/></div>
           <div class="field"><label>Navigation CTA Button</label><input type="text" x-model="cfg.navCtaText" @input="debouncedSave()" placeholder="Join Us Sunday"/></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
-          <div class="field"><label>Nav Logo Image URL (replaces text name)</label><input type="text" x-model="cfg.logoUrl" @input="debouncedSave()" placeholder="https://example.com/logo.png"/></div>
+          <div class="field"><label>Nav Logo Image (replaces text name)</label><input type="text" x-model="cfg.logoUrl" @input="debouncedSave()" placeholder="https://example.com/logo.png or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('logoUrl', $event)" hidden/><span x-text="imgStatus['logoUrl']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['logoUrl'] || cfg.logoUrl"><img class="img-thumb" :src="imgPreview['logoUrl'] || cfg.logoUrl" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['logoUrl']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
           <div class="field"><label>Announcement Banner (leave blank to hide)</label><input type="text" x-model="cfg.announcementBanner" @input="debouncedSave()" placeholder="Special service this Sunday at 10 AM!"/></div>
         </div>
 
@@ -204,7 +217,13 @@
               <option value="image">Image</option>
             </select>
           </div>
-          <div class="field" x-show="cfg.heroType==='image'"><label>Background Image URL</label><input type="text" x-model="cfg.heroImage" @input="debouncedSave()" placeholder="https://example.com/church.jpg"/></div>
+          <div class="field" x-show="cfg.heroType==='image'"><label>Background Image</label><input type="text" x-model="cfg.heroImage" @input="debouncedSave()" placeholder="https://example.com/church.jpg or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('heroImage', $event)" hidden/><span x-text="imgStatus['heroImage']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['heroImage'] || cfg.heroImage"><img class="img-thumb" :src="imgPreview['heroImage'] || cfg.heroImage" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['heroImage']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
           <div class="field" x-show="cfg.heroType!=='gradient'">
             <label>Background Color</label>
             <div class="color-field">
@@ -258,7 +277,13 @@
           <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.aboutHeading" @input="debouncedSave()" placeholder="About Our Church"/></div>
           <div class="field"><label>Subtitle / Tagline</label><input type="text" x-model="cfg.aboutSub" @input="debouncedSave()" placeholder="Faith · Community · Purpose"/></div>
           <div class="field"><label>Body Text (double line-break = new paragraph)</label><textarea x-model="cfg.aboutBody" @input="debouncedSave()" style="min-height:120px"></textarea></div>
-          <div class="field"><label>Image URL (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="https://example.com/photo.jpg"/></div>
+          <div class="field"><label>Image (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="https://example.com/photo.jpg or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('aboutImage', $event)" hidden/><span x-text="imgStatus['aboutImage']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['aboutImage'] || cfg.aboutImage"><img class="img-thumb" :src="imgPreview['aboutImage'] || cfg.aboutImage" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['aboutImage']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
           <div class="field"><label>Image Alt Text (for screen readers &amp; SEO)</label><input type="text" x-model="cfg.aboutImageAlt" @input="debouncedSave()" placeholder="Our congregation gathered for Sunday worship"/></div>
         </div>
 
@@ -332,7 +357,13 @@
           <div class="toggle-row"><span>Show Pastor Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showPastor" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Label</label><input type="text" x-model="cfg.pastorTitle" @input="debouncedSave()" placeholder="Meet Our Pastor"/></div>
           <div class="field"><label>Pastor Name</label><input type="text" x-model="cfg.pastorName" @input="debouncedSave()" placeholder="Pastor John Smith"/></div>
-          <div class="field"><label>Photo URL (optional)</label><input type="text" x-model="cfg.pastorImage" @input="debouncedSave()" placeholder="https://example.com/pastor.jpg"/></div>
+          <div class="field"><label>Photo (optional)</label><input type="text" x-model="cfg.pastorImage" @input="debouncedSave()" placeholder="https://example.com/pastor.jpg or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('pastorImage', $event)" hidden/><span x-text="imgStatus['pastorImage']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['pastorImage'] || cfg.pastorImage"><img class="img-thumb" :src="imgPreview['pastorImage'] || cfg.pastorImage" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['pastorImage']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
           <div class="field"><label>Photo Alt Text</label><input type="text" x-model="cfg.pastorImageAlt" @input="debouncedSave()" placeholder="Pastor smiling in front of the church"/></div>
           <div class="field"><label>Bio</label><textarea x-model="cfg.pastorBio" @input="debouncedSave()" placeholder="Brief biography..."></textarea></div>
         </div>
@@ -408,9 +439,21 @@
           <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media find and preview your site</div></div>
           <div class="field"><label>Site URL (your Netlify URL — no trailing slash)</label><input type="text" x-model="cfg.siteUrl" @input="debouncedSave()" placeholder="https://yourchurch.netlify.app"/></div>
           <div class="field"><label>Meta Description (50–160 characters)</label><input type="text" x-model="cfg.metaDesc" @input="debouncedSave()" placeholder="A welcoming church family in [City]. Join us every Sunday."/></div>
-          <div class="field"><label>Social Share Image URL (1200×630 px recommended)</label><input type="text" x-model="cfg.ogImage" @input="debouncedSave()" placeholder="https://example.com/share-image.jpg"/></div>
+          <div class="field"><label>Social Share Image (1200×630 px recommended)</label><input type="text" x-model="cfg.ogImage" @input="debouncedSave()" placeholder="https://example.com/share-image.jpg or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('ogImage', $event)" hidden/><span x-text="imgStatus['ogImage']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['ogImage'] || cfg.ogImage"><img class="img-thumb" :src="imgPreview['ogImage'] || cfg.ogImage" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['ogImage']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
           <div class="info-box"><p>The <strong>Social Share Image</strong> appears when someone shares your site on Facebook, WhatsApp, or iMessage. Use a landscape photo (1200 × 630 px) that represents your church well.</p></div>
-          <div class="field"><label>Favicon URL (.png or .ico)</label><input type="text" x-model="cfg.favicon" @input="debouncedSave()" placeholder="https://example.com/favicon.png"/></div>
+          <div class="field"><label>Favicon (.png or .ico)</label><input type="text" x-model="cfg.favicon" @input="debouncedSave()" placeholder="https://example.com/favicon.png or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('favicon', $event)" hidden/><span x-text="imgStatus['favicon']==='uploading' ? 'Uploading…' : '⬆ Upload'"></span></label>
+              <template x-if="imgPreview['favicon'] || cfg.favicon"><img class="img-thumb" :src="imgPreview['favicon'] || cfg.favicon" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['favicon']==='done'">Uploaded ✓ live after publish</span>
+            </div>
+          </div>
         </div>
 
         <!-- ── COMPLIANCE ── -->
