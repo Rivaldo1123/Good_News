@@ -299,6 +299,9 @@
 if(window.netlifyIdentity){
   window.netlifyIdentity.on('init',function(u){
     if(!u){window.netlifyIdentity.on('login',function(){document.location.href='/admin';});}
+    if(location.hash&&(location.hash.includes('invite_token')||location.hash.includes('recovery_token'))){
+      window.netlifyIdentity.open();
+    }
   });
 }
 </script>
