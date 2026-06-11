@@ -634,26 +634,43 @@
           <div x-show="!usersLoading && !identityUsers.length && !usersError" style="color:var(--muted);font-size:13px">No users found.</div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <template x-for="u in identityUsers" :key="u.id">
-              <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                <div style="flex:1;min-width:0">
-                  <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" x-text="u.email"></div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:2px">
-                    <span x-show="u.last_sign_in_at">Last seen <span x-text="new Date(u.last_sign_in_at).toLocaleDateString()"></span></span>
-                    <span x-show="!u.confirmed" style="color:var(--yellow);margin-left:6px">&#9888; Unconfirmed</span>
+              <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" x-text="u.email"></div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                      <span x-show="u.last_sign_in_at">Last seen <span x-text="new Date(u.last_sign_in_at).toLocaleDateString()"></span></span>
+                      <span x-show="!u.confirmed" style="color:var(--yellow);margin-left:6px">&#9888; Unconfirmed</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-shrink:0">
+                    <button
+                      @click="toggleUserRole(u.id,'editor')"
+                      :style="u.roles.includes('editor') ? 'background:rgba(60,201,124,.2);border-color:var(--green);color:var(--green)' : 'background:var(--surf);border-color:var(--bdr);color:var(--muted)'"
+                      style="padding:5px 12px;border:1px solid;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s">
+                      Editor
+                    </button>
+                    <button
+                      @click="toggleUserRole(u.id,'admin')"
+                      :style="u.roles.includes('admin') ? 'background:rgba(108,99,255,.2);border-color:var(--acc);color:var(--acc2)' : 'background:var(--surf);border-color:var(--bdr);color:var(--muted)'"
+                      style="padding:5px 12px;border:1px solid;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s">
+                      Admin
+                    </button>
                   </div>
                 </div>
-                <div style="display:flex;gap:6px;flex-shrink:0">
+                <div style="display:flex;gap:8px;align-items:center">
+                  <input
+                    type="text"
+                    x-model="u.name"
+                    placeholder="Display name"
+                    style="flex:1;background:var(--inp);border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;color:var(--txt);font-size:13px;min-width:0"
+                    @keydown.enter="saveUserName(u.id)"
+                  />
                   <button
-                    @click="toggleUserRole(u.id,'editor')"
-                    :style="u.roles.includes('editor') ? 'background:rgba(60,201,124,.2);border-color:var(--green);color:var(--green)' : 'background:var(--surf);border-color:var(--bdr);color:var(--muted)'"
-                    style="padding:5px 12px;border:1px solid;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s">
-                    Editor
-                  </button>
-                  <button
-                    @click="toggleUserRole(u.id,'admin')"
-                    :style="u.roles.includes('admin') ? 'background:rgba(108,99,255,.2);border-color:var(--acc);color:var(--acc2)' : 'background:var(--surf);border-color:var(--bdr);color:var(--muted)'"
-                    style="padding:5px 12px;border:1px solid;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s">
-                    Admin
+                    @click="saveUserName(u.id)"
+                    style="padding:7px 14px;background:var(--surf);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0"
+                    class="btn-ghost">
+                    Save name
                   </button>
                 </div>
               </div>

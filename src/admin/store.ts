@@ -47,7 +47,7 @@ export function adminStore() {
     navOpen: false,
 
     // User management (admin only)
-    identityUsers: [] as Array<{ id: string; email: string; roles: string[]; confirmed: boolean; last_sign_in_at: string | null }>,
+    identityUsers: [] as Array<{ id: string; email: string; name: string; roles: string[]; confirmed: boolean; last_sign_in_at: string | null }>,
     usersLoading: false,
     usersError: '',
 
@@ -319,10 +319,7 @@ export function adminStore() {
       try {
         const res = await fetch('/api/identity-users', {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.getToken()}`,
-          },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.getToken()}` },
           body: JSON.stringify({ userId, roles: newRoles }),
         })
         const data = await res.json()
@@ -331,6 +328,24 @@ export function adminStore() {
         this.showToast(`${user.email} — roles updated`, 'ok')
       } catch (err: any) {
         this.showToast(err.message ?? 'Role update failed', 'err')
+      }
+    },
+
+    async saveUserName(userId: string) {
+      const user = this.identityUsers.find((u) => u.id === userId)
+      if (!user) return
+      try {
+        const res = await fetch('/api/identity-users', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.getToken()}` },
+          body: JSON.stringify({ userId, name: user.name }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+        user.name = data.name ?? user.name
+        this.showToast(`${user.email} — name saved`, 'ok')
+      } catch (err: any) {
+        this.showToast(err.message ?? 'Name update failed', 'err')
       }
     },
 
