@@ -1,20 +1,32 @@
-import type { Context } from '@netlify/functions'
-import { getStore } from '@netlify/blobs'
-import { requireUser } from './_shared/auth'
+import type { Handler } from '@netlify/functions'
+import { connectLambda, getStore } from '@netlify/blobs'
 import { DEFAULTS } from '../../src/types/config'
 
-export default async (req: Request, _context: Context) => {
+const json = (statusCode: number, body: unknown) => ({
+  statusCode,
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+})
+
+function userRoles(context: any): string[] {
+  return ((context?.clientContext?.user?.app_metadata?.roles) as string[]) ?? []
+}
+
+export const handler: Handler = async (event, context) => {
   try {
-    await requireUser(req.headers.get('authorization') ?? undefined, process.env.URL!)
-  } catch {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+    const { user } = (context as any).clientContext ?? {}
+    if (!user) return json(401, { error: 'Unauthorized' })
 
-  const store = getStore('church-config')
+    connectLambda(event as any)
+    const store = getStore('church-config')
 
-  if (req.method === 'GET') {
-    try {
-      const raw = await store.get('config')
+    const params = event.queryStringParameters ?? {}
+    const isDraft = params.draft === '1'
+    const isPublish = params.publish === '1'
+    const storeKey = isDraft ? 'config-draft' : 'config'
+
+    if (event.httpMethod === 'GET') {
+      const raw = await store.get(storeKey)
       const saved: Record<string, unknown> = raw ? JSON.parse(raw) : {}
       const config = {
         ...DEFAULTS,
@@ -24,31 +36,34 @@ export default async (req: Request, _context: Context) => {
             .map((k) => [k, saved[k]]),
         ),
       }
-      return Response.json({ config })
-    } catch (e: any) {
-      return Response.json({ error: e.message }, { status: 500 })
+      return json(200, { config })
     }
-  }
 
-  if (req.method === 'POST') {
-    try {
-      let incoming: Record<string, unknown>
-      try {
-        incoming = await req.json()
-      } catch {
-        return Response.json({ error: 'Request body is required' }, { status: 400 })
+    if (event.httpMethod === 'POST') {
+      if (isPublish) {
+        const roles = userRoles(context)
+        if (!roles.includes('admin')) {
+          return json(403, { error: 'Admin role required to publish' })
+        }
+        const draftRaw = await store.get('config-draft')
+        if (!draftRaw) return json(404, { error: 'No draft found' })
+        await store.set('config', draftRaw)
+        return json(200, { ok: true })
       }
+
+      if (!event.body) return json(400, { error: 'Request body is required' })
+      const incoming: Record<string, unknown> = JSON.parse(event.body)
       const config = Object.fromEntries(
         (Object.keys(DEFAULTS) as Array<keyof typeof DEFAULTS>)
           .filter((k) => k in incoming)
           .map((k) => [k, incoming[k]]),
       )
-      await store.set('config', JSON.stringify(config))
-      return Response.json({ ok: true })
-    } catch (e: any) {
-      return Response.json({ error: e.message }, { status: 500 })
+      await store.set(storeKey, JSON.stringify(config))
+      return json(200, { ok: true })
     }
-  }
 
-  return Response.json({ error: 'Method not allowed' }, { status: 405 })
+    return json(405, { error: 'Method not allowed' })
+  } catch (e: any) {
+    return json(500, { error: e?.message ?? String(e), stack: e?.stack })
+  }
 }

@@ -1,3 +1,11 @@
+export interface AnnouncementItem {
+  id: string;
+  text: string;
+  type: 'info' | 'warning' | 'celebration';
+  active: boolean;
+  expiresAt?: string;
+}
+
 export interface ServiceItem {
   day: string;
   time: string;
@@ -11,6 +19,7 @@ export interface EventItem {
   title: string;
   desc: string;
   color: string;
+  date?: string;
 }
 
 export interface MinistryItem {
@@ -106,6 +115,8 @@ export interface ChurchConfig {
   privacyPolicyUrl: string;
   cookieNotice: string;
   announcementBanner: string;
+  announcements: AnnouncementItem[];
+  scheduledPublishAt: string;
 }
 
 export const DEFAULTS: ChurchConfig = {
@@ -210,4 +221,6 @@ export const DEFAULTS: ChurchConfig = {
   privacyPolicyUrl: "",
   cookieNotice: "",
   announcementBanner: "",
+  announcements: [],
+  scheduledPublishAt: "",
 };

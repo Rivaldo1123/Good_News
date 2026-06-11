@@ -6,17 +6,6 @@
 [functions]
   node_bundler = "esbuild"
 
-[[redirects]]
-  from   = "/api/config"
-  to     = "/.netlify/functions/config"
-  status = 200
-
-[[redirects]]
-  from   = "/api/ping"
-  to     = "/.netlify/functions/ping"
-  status = 200
-
-[[redirects]]
-  from   = "/admin"
-  to     = "/admin.html"
-  status = 200
+[[functions]]
+  function = "scheduled-publish"
+  schedule = "*/15 * * * *"

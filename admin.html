@@ -8,10 +8,8 @@
   <style>
   [x-cloak]{display:none!important}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--bg:#12141a;--surf:#1c1f27;--surf2:#232730;--bdr:#2a2f3d;--acc:#6c63ff;--acc2:#8a83ff;--txt:#eef0f8;--muted:#7a7f99;--inp:#252933;--red:#e85a6a;--green:#3cc97c}
+  :root{--bg:#12141a;--surf:#1c1f27;--surf2:#232730;--bdr:#2a2f3d;--acc:#6c63ff;--acc2:#8a83ff;--txt:#eef0f8;--muted:#7a7f99;--inp:#252933;--red:#e85a6a;--green:#3cc97c;--yellow:#f5b942;--blue:#3b82f6}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height:100vh;overflow:hidden;display:flex;flex-direction:column}
-
-  /* GATE */
   #gate{display:flex;align-items:center;justify-content:center;height:100vh;background:var(--bg)}
   .gate-card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:48px 40px;text-align:center;width:360px}
   .gate-icon{font-size:48px;margin-bottom:20px}
@@ -19,23 +17,22 @@
   .gate-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
   .gate-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
   .gate-btn:hover{background:var(--acc2)}
-
-  /* ADMIN SHELL */
   #adm{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-
-  header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
-  .hdr-left{display:flex;align-items:center;gap:12px}
-  .hdr-icon{font-size:20px}
-  .hdr-title{font-size:14px;font-weight:600}
-  .hdr-church{font-size:13px;color:var(--muted);background:var(--inp);padding:3px 10px;border-radius:20px}
-  .hdr-actions{display:flex;gap:10px}
-  .btn-dl{padding:8px 18px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
-  .btn-dl:hover{background:var(--acc2)}
-  .btn-preview{padding:8px 18px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
-
+  header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0;gap:8px}
+  .hdr-left{display:flex;align-items:center;gap:10px;min-width:0}
+  .hdr-icon{font-size:20px;flex-shrink:0}
+  .hdr-title{font-size:14px;font-weight:600;white-space:nowrap}
+  .hdr-church{font-size:12px;color:var(--muted);background:var(--inp);padding:3px 10px;border-radius:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+  .role-badge{font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:20px;text-transform:uppercase}
+  .role-badge.admin{background:rgba(108,99,255,.25);color:var(--acc2);border:1px solid rgba(108,99,255,.4)}
+  .role-badge.editor{background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+  .mode-pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;cursor:pointer;border:none;letter-spacing:.5px;transition:all .2s;flex-shrink:0}
+  .mode-pill.live{background:rgba(60,201,124,.15);color:var(--green);border:1px solid rgba(60,201,124,.35)}
+  .mode-pill.draft{background:rgba(245,185,66,.15);color:var(--yellow);border:1px solid rgba(245,185,66,.35)}
+  .hdr-actions{display:flex;gap:8px;flex-shrink:0}
+  .btn-ghost{padding:7px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .btn-ghost:hover{border-color:var(--acc);color:var(--acc2)}
   .layout{display:flex;flex:1;overflow:hidden}
-
-  /* SIDEBAR */
   aside{width:210px;background:var(--surf);border-right:1px solid var(--bdr);overflow-y:auto;padding:12px 0;flex-shrink:0}
   aside::-webkit-scrollbar{width:4px}
   aside::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
@@ -45,17 +42,12 @@
   .nav-item:hover{background:var(--surf2);color:var(--txt)}
   .nav-item.active{background:rgba(108,99,255,.15);color:var(--acc2)}
   .nav-icon{font-size:15px;width:18px;text-align:center}
-
-  /* PANELS */
   .panels{flex:1;overflow-y:auto;padding:28px 32px;background:var(--bg)}
   .panels::-webkit-scrollbar{width:5px}
   .panels::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
-
   .panel-hdr{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)}
   .panel-h1{font-size:20px;font-weight:700;margin-bottom:4px}
   .panel-sub{font-size:13px;color:var(--muted)}
-
-  /* FIELDS */
   .field{margin-bottom:14px}
   .field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
   .field input,.field textarea,.field select{width:100%;padding:9px 12px;background:var(--inp);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
@@ -67,8 +59,6 @@
   .field-note{font-size:11px;color:var(--muted);margin-top:4px}
   .col2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .col3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-
-  /* TOGGLE */
   .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;margin-bottom:16px}
   .toggle-row span{font-size:13px;font-weight:500}
   .toggle{position:relative;width:40px;height:22px;flex-shrink:0}
@@ -77,36 +67,36 @@
   .toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
   .toggle input:checked+.toggle-slider{background:var(--acc)}
   .toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
-
-  /* LIST CARDS */
-  .list-section{margin-bottom:16px}
-  .item-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:8px}
-  .item-card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none}
+  .item-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:8px;transition:border-color .15s}
+  .item-card.drag-over{border-color:var(--acc);background:rgba(108,99,255,.06)}
+  .item-card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;gap:8px}
   .item-card-head:hover{background:var(--surf2)}
-  .item-card-label{font-size:13px;font-weight:500}
+  .drag-handle{cursor:grab;font-size:16px;color:var(--muted);padding:0 4px;opacity:.6;flex-shrink:0}
+  .drag-handle:hover{opacity:1;color:var(--acc2)}
+  .drag-handle:active{cursor:grabbing}
+  .item-card-label{font-size:13px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .item-card-actions{display:flex;gap:8px;align-items:center}
-  .ic-del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;opacity:.7;line-height:1}
+  .ic-del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;opacity:.7;line-height:1;padding:0 2px}
   .ic-del:hover{opacity:1}
   .item-card-body{padding:14px;border-top:1px solid var(--bdr)}
   .btn-add{padding:8px 16px;background:rgba(108,99,255,.15);border:1px dashed var(--acc);border-radius:8px;color:var(--acc2);font-size:13px;font-weight:500;cursor:pointer;width:100%;transition:all .2s;margin-top:4px}
   .btn-add:hover{background:rgba(108,99,255,.25)}
-
-  /* SAVE INDICATOR */
   .saved{position:fixed;bottom:20px;right:24px;background:var(--green);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
   .saved.show{opacity:1}
-
-  /* INSTRUCTIONS BOX */
   .info-box{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px}
   .info-box p{font-size:12px;color:var(--acc2);line-height:1.6}
   .info-box strong{font-weight:600}
-
-  /* COLOR + TEXT ROW */
+  .warn-box{background:rgba(245,185,66,.08);border:1px solid rgba(245,185,66,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+  .warn-box p{font-size:12px;color:var(--yellow);line-height:1.6}
+  .img-upload{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .img-upload-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;font-weight:600;cursor:pointer;transition:border-color .2s}
+  .img-upload-btn:hover{border-color:var(--acc)}
+  .img-thumb{height:48px;width:auto;max-width:140px;object-fit:cover;border-radius:6px;border:1px solid var(--bdr);background:var(--inp)}
+  .img-hint{font-size:11px;color:var(--green)}
   .color-field{display:flex;align-items:center;gap:10px}
   .color-field input[type="color"]{flex-shrink:0}
   .color-field input[type="text"]{flex:1}
-
-  /* PUBLISH BUTTON */
-  .btn-pub{padding:8px 18px;background:#16a34a;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:6px}
+  .btn-pub{padding:8px 16px;background:#16a34a;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
   .btn-pub:hover{background:#15803d}
   .btn-pub:disabled{background:#374151;color:#6b7280;cursor:not-allowed}
   .pub-status{position:fixed;bottom:60px;right:24px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;max-width:280px}
@@ -114,75 +104,123 @@
   .pub-status.ok{background:#16a34a;color:#fff}
   .pub-status.err{background:var(--red);color:#fff}
   .pub-status.busy{background:#2563eb;color:#fff}
+  .toast-stack{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column-reverse;gap:8px;z-index:2000;pointer-events:none;align-items:center}
+  .toast-item{padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;pointer-events:auto;animation:toastIn .25s ease;max-width:340px;text-align:center}
+  .toast-item.ok{background:#16a34a;color:#fff}
+  .toast-item.err{background:var(--red);color:#fff}
+  .toast-item.info{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr);word-break:break-all}
+  @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .rte-wrap{border:1px solid var(--bdr);border-radius:8px;overflow:hidden}
+  .rte-bar{display:flex;gap:2px;padding:6px 8px;background:var(--surf2);border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+  .rte-btn{padding:4px 9px;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;line-height:1.4}
+  .rte-btn:hover{background:var(--inp);color:var(--txt);border-color:var(--bdr)}
+  .rte-body{padding:10px 12px;background:var(--inp);min-height:100px;color:var(--txt);font-size:13px;line-height:1.7;outline:none;font-family:'Inter',sans-serif}
+  .rte-body p{margin-bottom:10px}
+  .rte-body p:last-child{margin-bottom:0}
+  .rte-body ul,.rte-body ol{padding-left:20px;margin-bottom:10px}
+  .seo-preview{background:#fff;border-radius:10px;padding:14px 16px;margin-top:16px;max-width:500px}
+  .seo-domain{font-size:12px;color:#202124;margin-bottom:3px;font-family:Arial,sans-serif}
+  .seo-title{font-size:18px;color:#1a0dab;margin-bottom:3px;font-family:Arial,sans-serif;cursor:pointer;line-height:1.3}
+  .seo-desc{font-size:13px;color:#4d5156;font-family:Arial,sans-serif;line-height:1.5}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal-box{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+  .modal-hdr h2{font-size:15px;font-weight:600}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:6px}
+  .modal-close:hover{background:var(--surf2);color:var(--txt)}
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .media-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--bdr);cursor:pointer;background:var(--inp)}
+  .media-item img{width:100%;height:100%;object-fit:cover;transition:opacity .2s}
+  .media-item:hover img{opacity:.7}
+  .media-item-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;opacity:0;transition:opacity .2s;background:linear-gradient(transparent 40%,rgba(0,0,0,.75))}
+  .media-item:hover .media-item-overlay{opacity:1}
+  .media-item-name{font-size:10px;color:#fff;padding:6px;word-break:break-all;line-height:1.3}
+  .media-upload-area{border:2px dashed var(--bdr);border-radius:10px;padding:24px;text-align:center;margin-bottom:16px;cursor:pointer;transition:border-color .2s;display:block}
+  .media-upload-area:hover{border-color:var(--acc)}
+  .media-upload-area p{font-size:13px;color:var(--muted)}
+  .analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+  .analytics-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:18px;text-align:center}
+  .analytics-num{font-size:28px;font-weight:700;color:var(--acc2);margin-bottom:4px}
+  .analytics-label{font-size:12px;color:var(--muted)}
+  .top-pages-list{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+  .top-page-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--bdr);font-size:13px}
+  .top-page-row:last-child{border-bottom:none}
+  .top-page-path{color:var(--acc2);font-family:monospace;font-size:12px}
+  .top-page-count{color:var(--muted);font-size:12px}
+  .ann-type{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase}
+  .ann-type.info{background:rgba(59,130,246,.2);color:#93c5fd}
+  .ann-type.warning{background:rgba(245,185,66,.2);color:var(--yellow)}
+  .ann-type.celebration{background:rgba(108,99,255,.2);color:var(--acc2)}
   </style>
 </head>
 <body>
-
 <div x-data="admin" x-cloak>
-
-  <!-- ── GATE ── -->
   <div id="gate" x-show="!user" style="display:flex">
     <div class="gate-card">
-      <div class="gate-icon">⛪</div>
+      <div class="gate-icon">&#9962;</div>
       <div class="gate-h1">Church Admin</div>
       <div class="gate-sub">Sign in to manage your church website</div>
       <button class="gate-btn" @click="netlifyIdentity.open()">Sign In</button>
     </div>
   </div>
-
-  <!-- ── ADMIN ── -->
   <div id="adm" x-show="user" style="display:none">
     <header>
       <div class="hdr-left">
-        <span class="hdr-icon">⛪</span>
+        <span class="hdr-icon">&#9962;</span>
         <span class="hdr-title">Church Admin</span>
         <span class="hdr-church" x-text="cfg.name || 'My Church'"></span>
+        <span class="role-badge admin" x-show="isAdmin">Admin</span>
+        <span class="role-badge editor" x-show="isEditor && !isAdmin">Editor</span>
       </div>
       <div class="hdr-actions">
-        <a class="btn-preview" href="index.html" target="_blank" rel="noopener noreferrer">👁 Preview</a>
-        <button class="btn-pub"
-          :disabled="publishStatus === 'busy'"
-          @click="publish()">
-          <span x-text="publishStatus === 'busy' ? '⏳ Publishing…' : '🚀 Publish to GitHub'"></span>
+        <button class="mode-pill" :class="draftMode ? 'draft' : 'live'" @click="toggleDraftMode()">
+          <span x-text="draftMode ? '&#128203; Draft' : '&#128994; Live'"></span>
         </button>
-        <button class="btn-preview" @click="logout()" style="color:var(--red);border-color:var(--red)">⏻ Logout</button>
+        <button class="btn-ghost" @click="openPreview()">&#128065; Preview</button>
+        <button class="btn-pub" :disabled="publishStatus === 'busy'" @click="publish()">
+          <span x-text="publishStatus === 'busy' ? '&#9203; Publishing&#8230;' : (draftMode ? '&#128640; Publish Draft' : '&#128640; Publish')"></span>
+        </button>
+        <button class="btn-ghost" @click="logout()" style="color:var(--red);border-color:rgba(232,90,106,.4)">&#9211;</button>
       </div>
     </header>
     <div class="layout">
-      <!-- SIDEBAR -->
       <aside>
         <div class="nav-group">
           <div class="nav-group-label">Site</div>
-          <div class="nav-item" :class="{active: section==='general'}" @click="section='general'"><span class="nav-icon">🏛</span>General</div>
-          <div class="nav-item" :class="{active: section==='hero'}" @click="section='hero'"><span class="nav-icon">🖼</span>Hero</div>
-          <div class="nav-item" :class="{active: section==='infobar'}" @click="section='infobar'"><span class="nav-icon">📌</span>Info Bar</div>
-          <div class="nav-item" :class="{active: section==='about'}" @click="section='about'"><span class="nav-icon">📖</span>About</div>
+          <div class="nav-item" :class="{active: section==='general'}" @click="section='general'"><span class="nav-icon">&#127963;</span>General</div>
+          <div class="nav-item" :class="{active: section==='hero'}" @click="section='hero'"><span class="nav-icon">&#128444;</span>Hero</div>
+          <div class="nav-item" :class="{active: section==='infobar'}" @click="section='infobar'"><span class="nav-icon">&#128204;</span>Info Bar</div>
+          <div class="nav-item" :class="{active: section==='about'}" @click="section='about'"><span class="nav-icon">&#128214;</span>About</div>
+          <div class="nav-item" :class="{active: section==='announcements'}" @click="section='announcements'"><span class="nav-icon">&#128227;</span>Announcements</div>
         </div>
         <div class="nav-group">
           <div class="nav-group-label">Content</div>
-          <div class="nav-item" :class="{active: section==='services'}" @click="section='services'"><span class="nav-icon">🕐</span>Services</div>
-          <div class="nav-item" :class="{active: section==='events'}" @click="section='events'"><span class="nav-icon">📅</span>Events</div>
-          <div class="nav-item" :class="{active: section==='pastor'}" @click="section='pastor'"><span class="nav-icon">👤</span>Pastor</div>
-          <div class="nav-item" :class="{active: section==='ministries'}" @click="section='ministries'"><span class="nav-icon">🤝</span>Ministries</div>
+          <div class="nav-item" :class="{active: section==='services'}" @click="section='services'"><span class="nav-icon">&#128336;</span>Services</div>
+          <div class="nav-item" :class="{active: section==='events'}" @click="section='events'"><span class="nav-icon">&#128197;</span>Events</div>
+          <div class="nav-item" :class="{active: section==='pastor'}" @click="section='pastor'"><span class="nav-icon">&#128100;</span>Pastor</div>
+          <div class="nav-item" :class="{active: section==='ministries'}" @click="section='ministries'"><span class="nav-icon">&#129309;</span>Ministries</div>
         </div>
         <div class="nav-group">
           <div class="nav-group-label">Contact</div>
-          <div class="nav-item" :class="{active: section==='mapcontact'}" @click="section='mapcontact'"><span class="nav-icon">📍</span>Map &amp; Contact</div>
-          <div class="nav-item" :class="{active: section==='social'}" @click="section='social'"><span class="nav-icon">🔗</span>Social &amp; Footer</div>
+          <div class="nav-item" :class="{active: section==='mapcontact'}" @click="section='mapcontact'"><span class="nav-icon">&#128205;</span>Map &amp; Contact</div>
+          <div class="nav-item" :class="{active: section==='social'}" @click="section='social'"><span class="nav-icon">&#128279;</span>Social &amp; Footer</div>
         </div>
         <div class="nav-group">
           <div class="nav-group-label">Settings</div>
-          <div class="nav-item" :class="{active: section==='seo'}" @click="section='seo'"><span class="nav-icon">🔍</span>SEO &amp; Sharing</div>
-          <div class="nav-item" :class="{active: section==='compliance'}" @click="section='compliance'"><span class="nav-icon">⚖️</span>Legal &amp; Compliance</div>
-          <div class="nav-item" :class="{active: section==='theme'}" @click="section='theme'"><span class="nav-icon">🎨</span>Theme</div>
-          <div class="nav-item" :class="{active: section==='security'}" @click="section='security'"><span class="nav-icon">🔒</span>Security</div>
+          <div class="nav-item" :class="{active: section==='seo'}" @click="section='seo'"><span class="nav-icon">&#128269;</span>SEO &amp; Sharing</div>
+          <div class="nav-item" :class="{active: section==='compliance'}" @click="section='compliance'"><span class="nav-icon">&#9878;&#65039;</span>Legal</div>
+          <div class="nav-item" :class="{active: section==='theme'}" @click="section='theme'"><span class="nav-icon">&#127912;</span>Theme</div>
+          <div class="nav-item" :class="{active: section==='security'}" @click="section='security'"><span class="nav-icon">&#128274;</span>Security</div>
+          <div class="nav-item" x-show="isAdmin" :class="{active: section==='schedule'}" @click="section='schedule'"><span class="nav-icon">&#9200;</span>Schedule</div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-label">Insights</div>
+          <div class="nav-item" :class="{active: section==='media'}" @click="section='media'; loadMediaFiles()"><span class="nav-icon">&#128247;</span>Media Library</div>
+          <div class="nav-item" x-show="isAdmin" :class="{active: section==='analytics'}" @click="section='analytics'; if(!analyticsData && !analyticsLoading) loadAnalytics()"><span class="nav-icon">&#128202;</span>Analytics</div>
         </div>
       </aside>
-
-      <!-- PANELS -->
       <div class="panels">
 
-        <!-- ── GENERAL ── -->
         <div x-show="section==='general'">
           <div class="panel-hdr"><div class="panel-h1">General</div><div class="panel-sub">Core identity shown throughout the site</div></div>
           <div class="field"><label>Church Name</label><input type="text" x-model="cfg.name" @input="debouncedSave()" placeholder="Grace Community Church"/></div>
@@ -190,13 +228,17 @@
           <div class="field"><label>Tagline</label><input type="text" x-model="cfg.tagline" @input="debouncedSave()" placeholder="A Place to Belong, Believe &amp; Grow"/></div>
           <div class="field"><label>Navigation CTA Button</label><input type="text" x-model="cfg.navCtaText" @input="debouncedSave()" placeholder="Join Us Sunday"/></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
-          <div class="field"><label>Nav Logo Image URL (replaces text name)</label><input type="text" x-model="cfg.logoUrl" @input="debouncedSave()" placeholder="https://example.com/logo.png"/></div>
-          <div class="field"><label>Announcement Banner (leave blank to hide)</label><input type="text" x-model="cfg.announcementBanner" @input="debouncedSave()" placeholder="Special service this Sunday at 10 AM!"/></div>
+          <div class="field"><label>Nav Logo Image (replaces text name)</label><input type="text" x-model="cfg.logoUrl" @input="debouncedSave()" placeholder="https://example.com/logo.png or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('logoUrl', $event)" hidden/><span x-text="imgStatus['logoUrl']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['logoUrl'] || cfg.logoUrl"><img class="img-thumb" :src="imgPreview['logoUrl'] || cfg.logoUrl" alt=""/></template>
+              <span class="img-hint" x-show="imgStatus['logoUrl']==='done'">Uploaded &#10003;</span>
+            </div>
+          </div>
         </div>
 
-        <!-- ── HERO ── -->
         <div x-show="section==='hero'">
-          <div class="panel-hdr"><div class="panel-h1">Hero Section</div><div class="panel-sub">The first thing visitors see — make it count</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Hero Section</div><div class="panel-sub">The first thing visitors see</div></div>
           <div class="field"><label>Background Type</label>
             <select x-model="cfg.heroType" @change="debouncedSave()">
               <option value="color">Solid Color</option>
@@ -204,9 +246,13 @@
               <option value="image">Image</option>
             </select>
           </div>
-          <div class="field" x-show="cfg.heroType==='image'"><label>Background Image URL</label><input type="text" x-model="cfg.heroImage" @input="debouncedSave()" placeholder="https://example.com/church.jpg"/></div>
-          <div class="field" x-show="cfg.heroType!=='gradient'">
-            <label>Background Color</label>
+          <div class="field" x-show="cfg.heroType==='image'"><label>Background Image</label><input type="text" x-model="cfg.heroImage" @input="debouncedSave()" placeholder="Upload or enter URL"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('heroImage', $event)" hidden/><span x-text="imgStatus['heroImage']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['heroImage'] || cfg.heroImage"><img class="img-thumb" :src="imgPreview['heroImage'] || cfg.heroImage" alt=""/></template>
+            </div>
+          </div>
+          <div class="field" x-show="cfg.heroType!=='gradient'"><label>Background Color</label>
             <div class="color-field">
               <input type="color" x-model="cfg.heroColor" @input="debouncedSave()"/>
               <input type="text" x-model="cfg.heroColor" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
@@ -214,22 +260,13 @@
           </div>
           <div x-show="cfg.heroType==='gradient'">
             <div class="field"><label>Gradient From</label>
-              <div class="color-field">
-                <input type="color" x-model="cfg.heroGradFrom" @input="debouncedSave()"/>
-                <input type="text" x-model="cfg.heroGradFrom" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
-              </div>
+              <div class="color-field"><input type="color" x-model="cfg.heroGradFrom" @input="debouncedSave()"/><input type="text" x-model="cfg.heroGradFrom" @input="debouncedSave()" maxlength="7" style="max-width:120px"/></div>
             </div>
             <div class="field"><label>Gradient To</label>
-              <div class="color-field">
-                <input type="color" x-model="cfg.heroGradTo" @input="debouncedSave()"/>
-                <input type="text" x-model="cfg.heroGradTo" @input="debouncedSave()" maxlength="7" style="max-width:120px"/>
-              </div>
+              <div class="color-field"><input type="color" x-model="cfg.heroGradTo" @input="debouncedSave()"/><input type="text" x-model="cfg.heroGradTo" @input="debouncedSave()" maxlength="7" style="max-width:120px"/></div>
             </div>
           </div>
-          <div class="field">
-            <label>Overlay Opacity (<span x-text="Math.round((cfg.heroOverlay||0.4)*100)"></span>%)</label>
-            <input type="range" min="0" max="1" step="0.05" x-model.number="cfg.heroOverlay" @input="debouncedSave()"/>
-          </div>
+          <div class="field"><label>Overlay Opacity (<span x-text="Math.round((cfg.heroOverlay||0.4)*100)"></span>%)</label><input type="range" min="0" max="1" step="0.05" x-model.number="cfg.heroOverlay" @input="debouncedSave()"/></div>
           <div class="field"><label>Heading</label><input type="text" x-model="cfg.heroHeading" @input="debouncedSave()" placeholder="Welcome Home"/></div>
           <div class="field"><label>Subheading</label><textarea x-model="cfg.heroSub" @input="debouncedSave()" placeholder="You don't have to be perfect..."></textarea></div>
           <div class="col2">
@@ -237,53 +274,103 @@
             <div class="field"><label>Button 1 Link</label><input type="text" x-model="cfg.heroCta1Link" @input="debouncedSave()" placeholder="#services"/></div>
           </div>
           <div class="col2">
-            <div class="field"><label>Button 2 Text (optional)</label><input type="text" x-model="cfg.heroCta2" @input="debouncedSave()" placeholder="Learn More"/></div>
+            <div class="field"><label>Button 2 Text</label><input type="text" x-model="cfg.heroCta2" @input="debouncedSave()" placeholder="Learn More"/></div>
             <div class="field"><label>Button 2 Link</label><input type="text" x-model="cfg.heroCta2Link" @input="debouncedSave()" placeholder="#about"/></div>
           </div>
         </div>
 
-        <!-- ── INFO BAR ── -->
         <div x-show="section==='infobar'">
-          <div class="panel-hdr"><div class="panel-h1">Info Bar</div><div class="panel-sub">The colored strip below the hero with quick facts</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Info Bar</div><div class="panel-sub">Quick facts strip below the hero</div></div>
           <div class="toggle-row"><span>Show Info Bar</span><label class="toggle"><input type="checkbox" x-model="cfg.showInfoBar" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Address</label><input type="text" x-model="cfg.infoAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL"/></div>
           <div class="field"><label>Service Times Text</label><input type="text" x-model="cfg.infoService" @input="debouncedSave()" placeholder="Sundays at 9 AM &amp; 11 AM"/></div>
           <div class="field"><label>Phone Number</label><input type="text" x-model="cfg.infoPhone" @input="debouncedSave()" placeholder="(555) 123-4567"/></div>
         </div>
 
-        <!-- ── ABOUT ── -->
         <div x-show="section==='about'">
           <div class="panel-hdr"><div class="panel-h1">About Section</div><div class="panel-sub">Tell your church's story</div></div>
           <div class="toggle-row"><span>Show About Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showAbout" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.aboutHeading" @input="debouncedSave()" placeholder="About Our Church"/></div>
-          <div class="field"><label>Subtitle / Tagline</label><input type="text" x-model="cfg.aboutSub" @input="debouncedSave()" placeholder="Faith · Community · Purpose"/></div>
-          <div class="field"><label>Body Text (double line-break = new paragraph)</label><textarea x-model="cfg.aboutBody" @input="debouncedSave()" style="min-height:120px"></textarea></div>
-          <div class="field"><label>Image URL (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="https://example.com/photo.jpg"/></div>
-          <div class="field"><label>Image Alt Text (for screen readers &amp; SEO)</label><input type="text" x-model="cfg.aboutImageAlt" @input="debouncedSave()" placeholder="Our congregation gathered for Sunday worship"/></div>
+          <div class="field"><label>Subtitle</label><input type="text" x-model="cfg.aboutSub" @input="debouncedSave()" placeholder="Faith &#183; Community &#183; Purpose"/></div>
+          <div class="field">
+            <label>Body Text</label>
+            <div class="rte-wrap">
+              <div class="rte-bar">
+                <button class="rte-btn" @mousedown.prevent="rteExec('bold')" type="button"><strong>B</strong></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('italic')" type="button"><em>I</em></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('underline')" type="button"><u>U</u></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('insertUnorderedList')" type="button">&#8226; List</button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('insertOrderedList')" type="button">1. List</button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('removeFormat')" type="button">&#10005; Clear</button>
+              </div>
+              <div class="rte-body" contenteditable="true"
+                x-effect="if ($el !== document.activeElement) $el.innerHTML = cfg.aboutBody || ''"
+                @blur="syncRte('aboutBody', $el)"></div>
+            </div>
+            <p class="field-note">Use toolbar for formatting. Changes auto-save on blur.</p>
+          </div>
+          <div class="field"><label>Image (optional)</label><input type="text" x-model="cfg.aboutImage" @input="debouncedSave()" placeholder="URL or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('aboutImage', $event)" hidden/><span x-text="imgStatus['aboutImage']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['aboutImage'] || cfg.aboutImage"><img class="img-thumb" :src="imgPreview['aboutImage'] || cfg.aboutImage" alt=""/></template>
+            </div>
+          </div>
+          <div class="field"><label>Image Alt Text</label><input type="text" x-model="cfg.aboutImageAlt" @input="debouncedSave()" placeholder="Our congregation gathered for Sunday worship"/></div>
         </div>
 
-        <!-- ── SERVICES ── -->
+        <div x-show="section==='announcements'">
+          <div class="panel-hdr"><div class="panel-h1">Announcements</div><div class="panel-sub">Time-sensitive banners shown at top of page</div></div>
+          <div class="info-box"><p>Active announcements appear on the live site. Set an <strong>Expires At</strong> date so they disappear automatically.</p></div>
+          <template x-for="(item, i) in (cfg.announcements || [])" :key="item.id">
+            <div class="item-card" style="margin-bottom:10px">
+              <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+                <span class="ann-type" :class="item.type" x-text="item.type"></span>
+                <span class="item-card-label" style="margin-left:8px" x-text="item.text || '(empty)'"></span>
+                <div class="item-card-actions">
+                  <span style="font-size:11px;color:var(--green)" x-show="item.active">&#9679; Active</span>
+                  <span style="font-size:11px;color:var(--muted)" x-show="!item.active">&#9675; Hidden</span>
+                  <button class="ic-del" @click.stop="removeAnnouncement(i)">&#10005;</button>
+                </div>
+              </div>
+              <div class="item-card-body" style="display:none">
+                <div class="field"><label>Message Text</label><input type="text" x-model="item.text" @input="debouncedSave()" placeholder="Special service this Sunday at 10 AM!"/></div>
+                <div class="col2">
+                  <div class="field"><label>Type</label>
+                    <select x-model="item.type" @change="debouncedSave()">
+                      <option value="info">Info (blue)</option>
+                      <option value="warning">Warning (yellow)</option>
+                      <option value="celebration">Celebration (purple)</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Expires At (optional)</label><input type="date" x-model="item.expiresAt" @change="debouncedSave()"/></div>
+                </div>
+                <div class="toggle-row" style="margin-bottom:0"><span>Show on website</span><label class="toggle"><input type="checkbox" x-model="item.active" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
+              </div>
+            </div>
+          </template>
+          <button class="btn-add" @click="addAnnouncement()">+ Add Announcement</button>
+        </div>
+
         <div x-show="section==='services'">
-          <div class="panel-hdr"><div class="panel-h1">Service Times</div><div class="panel-sub">Add all weekly services</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Service Times</div><div class="panel-sub">Drag to reorder &#8226; add all weekly services</div></div>
           <div class="toggle-row"><span>Show Services Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showServices" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.servicesHeading" @input="debouncedSave()" placeholder="Join Us for Worship"/></div>
-          <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.servicesSub" @input="debouncedSave()" placeholder="Everyone is welcome — come as you are"/></div>
+          <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.servicesSub" @input="debouncedSave()" placeholder="Everyone is welcome"/></div>
           <div style="margin-top:8px">
             <template x-for="(item, i) in cfg.services" :key="i">
-              <div class="item-card">
-                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-                  <span class="item-card-label" x-text="(item.day || ('Service '+(i+1))) + (item.time ? ' — '+item.time : '')"></span>
-                  <div class="item-card-actions">
-                    <button class="ic-del" @click.stop="removeService(i)">✕</button>
-                  </div>
+              <div class="item-card" draggable="true" @dragstart="dragStart('services',i,$event)" @dragover.prevent="dragOver($event);$el.classList.add('drag-over')" @dragleave="$el.classList.remove('drag-over')" @drop="$el.classList.remove('drag-over');drop('services',i)">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display=$el.nextElementSibling.style.display==='none'?'block':'none'">
+                  <span class="drag-handle" @click.stop title="Drag to reorder">&#10783;</span>
+                  <span class="item-card-label" x-text="(item.day||('Service '+(i+1)))+(item.time?' &#8212; '+item.time:'')"></span>
+                  <div class="item-card-actions"><button class="ic-del" @click.stop="removeService(i)">&#10005;</button></div>
                 </div>
                 <div class="item-card-body" style="display:none">
                   <div class="col2">
-                    <div class="field"><label>Day</label><input type="text" x-model="cfg.services[i].day" @input="debouncedSave()" placeholder="Sunday"/></div>
-                    <div class="field"><label>Time</label><input type="text" x-model="cfg.services[i].time" @input="debouncedSave()" placeholder="9:00 AM"/></div>
+                    <div class="field"><label>Day</label><input type="text" x-model="item.day" @input="debouncedSave()" placeholder="Sunday"/></div>
+                    <div class="field"><label>Time</label><input type="text" x-model="item.time" @input="debouncedSave()" placeholder="9:00 AM"/></div>
                   </div>
-                  <div class="field"><label>Service Name</label><input type="text" x-model="cfg.services[i].name" @input="debouncedSave()" placeholder="Morning Worship"/></div>
-                  <div class="field"><label>Description (optional)</label><input type="text" x-model="cfg.services[i].desc" @input="debouncedSave()" placeholder="Traditional service with hymns"/></div>
+                  <div class="field"><label>Service Name</label><input type="text" x-model="item.name" @input="debouncedSave()" placeholder="Morning Worship"/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Traditional service with hymns"/></div>
                 </div>
               </div>
             </template>
@@ -291,32 +378,34 @@
           </div>
         </div>
 
-        <!-- ── EVENTS ── -->
         <div x-show="section==='events'">
-          <div class="panel-hdr"><div class="panel-h1">Upcoming Events</div><div class="panel-sub">Highlight upcoming events</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Upcoming Events</div><div class="panel-sub">Drag to reorder &#8226; highlight upcoming events</div></div>
           <div class="toggle-row"><span>Show Events Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showEvents" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.eventsHeading" @input="debouncedSave()" placeholder="Upcoming Events"/></div>
           <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.eventsSub" @input="debouncedSave()" placeholder="Stay connected with your church family"/></div>
           <div style="margin-top:8px">
             <template x-for="(item, i) in cfg.events" :key="i">
-              <div class="item-card">
-                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-                  <span class="item-card-label" x-text="(item.month||'') + ' ' + (item.day||'') + (item.title ? ' — '+item.title : ('Event '+(i+1)))"></span>
-                  <div class="item-card-actions">
-                    <button class="ic-del" @click.stop="removeEvent(i)">✕</button>
+              <div class="item-card" draggable="true" @dragstart="dragStart('events',i,$event)" @dragover.prevent="dragOver($event);$el.classList.add('drag-over')" @dragleave="$el.classList.remove('drag-over')" @drop="$el.classList.remove('drag-over');drop('events',i)">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display=$el.nextElementSibling.style.display==='none'?'block':'none'">
+                  <span class="drag-handle" @click.stop title="Drag to reorder">&#10783;</span>
+                  <span class="item-card-label" x-text="(item.month||'')+' '+(item.day||''+(item.title?' &#8212; '+item.title:('Event '+(i+1))))"></span>
+                  <div class="item-card-actions" @click.stop>
+                    <div style="width:14px;height:14px;border-radius:50%;flex-shrink:0" :style="'background:'+item.color"></div>
+                    <button class="ic-del" @click.stop="removeEvent(i)">&#10005;</button>
                   </div>
                 </div>
                 <div class="item-card-body" style="display:none">
+                  <div class="field"><label>Date (auto-fills Month &amp; Day)</label><input type="date" x-model="item.date" @change="if(item.date){const d=new Date(item.date+'T12:00:00');item.month=d.toLocaleString('en-US',{month:'short'}).toUpperCase();item.day=String(d.getDate())};debouncedSave()"/></div>
                   <div class="col2">
-                    <div class="field"><label>Month (3 letters)</label><input type="text" x-model="cfg.events[i].month" @input="debouncedSave()" placeholder="JUN"/></div>
-                    <div class="field"><label>Day Number</label><input type="text" x-model="cfg.events[i].day" @input="debouncedSave()" placeholder="15"/></div>
+                    <div class="field"><label>Month Label</label><input type="text" x-model="item.month" @input="debouncedSave()" placeholder="JUN"/></div>
+                    <div class="field"><label>Day Number</label><input type="text" x-model="item.day" @input="debouncedSave()" placeholder="15"/></div>
                   </div>
-                  <div class="field"><label>Event Title</label><input type="text" x-model="cfg.events[i].title" @input="debouncedSave()" placeholder="Summer BBQ"/></div>
-                  <div class="field"><label>Description</label><input type="text" x-model="cfg.events[i].desc" @input="debouncedSave()" placeholder="Family fun for everyone"/></div>
+                  <div class="field"><label>Event Title</label><input type="text" x-model="item.title" @input="debouncedSave()" placeholder="Summer BBQ"/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Family fun for everyone"/></div>
                   <div class="field"><label>Badge Color</label>
                     <div class="color-field">
-                      <input type="color" x-model="cfg.events[i].color" @input="debouncedSave()"/>
-                      <input type="text" x-model="cfg.events[i].color" @input="debouncedSave()" maxlength="7" style="max-width:100px"/>
+                      <input type="color" x-model="item.color" @input="debouncedSave()"/>
+                      <input type="text" x-model="item.color" @input="debouncedSave()" maxlength="7" style="max-width:100px"/>
                     </div>
                   </div>
                 </div>
@@ -326,38 +415,54 @@
           </div>
         </div>
 
-        <!-- ── PASTOR ── -->
         <div x-show="section==='pastor'">
           <div class="panel-hdr"><div class="panel-h1">Pastor Section</div><div class="panel-sub">Introduce your lead pastor</div></div>
           <div class="toggle-row"><span>Show Pastor Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showPastor" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Label</label><input type="text" x-model="cfg.pastorTitle" @input="debouncedSave()" placeholder="Meet Our Pastor"/></div>
           <div class="field"><label>Pastor Name</label><input type="text" x-model="cfg.pastorName" @input="debouncedSave()" placeholder="Pastor John Smith"/></div>
-          <div class="field"><label>Photo URL (optional)</label><input type="text" x-model="cfg.pastorImage" @input="debouncedSave()" placeholder="https://example.com/pastor.jpg"/></div>
+          <div class="field"><label>Photo</label><input type="text" x-model="cfg.pastorImage" @input="debouncedSave()" placeholder="URL or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('pastorImage', $event)" hidden/><span x-text="imgStatus['pastorImage']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['pastorImage'] || cfg.pastorImage"><img class="img-thumb" :src="imgPreview['pastorImage'] || cfg.pastorImage" alt=""/></template>
+            </div>
+          </div>
           <div class="field"><label>Photo Alt Text</label><input type="text" x-model="cfg.pastorImageAlt" @input="debouncedSave()" placeholder="Pastor smiling in front of the church"/></div>
-          <div class="field"><label>Bio</label><textarea x-model="cfg.pastorBio" @input="debouncedSave()" placeholder="Brief biography..."></textarea></div>
+          <div class="field">
+            <label>Bio</label>
+            <div class="rte-wrap">
+              <div class="rte-bar">
+                <button class="rte-btn" @mousedown.prevent="rteExec('bold')" type="button"><strong>B</strong></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('italic')" type="button"><em>I</em></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('underline')" type="button"><u>U</u></button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('insertUnorderedList')" type="button">&#8226; List</button>
+                <button class="rte-btn" @mousedown.prevent="rteExec('removeFormat')" type="button">&#10005; Clear</button>
+              </div>
+              <div class="rte-body" contenteditable="true"
+                x-effect="if ($el !== document.activeElement) $el.innerHTML = cfg.pastorBio || ''"
+                @blur="syncRte('pastorBio', $el)"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- ── MINISTRIES ── -->
         <div x-show="section==='ministries'">
-          <div class="panel-hdr"><div class="panel-h1">Ministries</div><div class="panel-sub">Showcase your ministry areas</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Ministries</div><div class="panel-sub">Drag to reorder &#8226; showcase your ministry areas</div></div>
           <div class="toggle-row"><span>Show Ministries Section</span><label class="toggle"><input type="checkbox" x-model="cfg.showMinistries" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Section Heading</label><input type="text" x-model="cfg.ministriesHeading" @input="debouncedSave()" placeholder="Our Ministries"/></div>
           <div class="field"><label>Section Subtitle</label><input type="text" x-model="cfg.ministriesSub" @input="debouncedSave()" placeholder="Find your place to serve and grow"/></div>
           <div style="margin-top:8px">
             <template x-for="(item, i) in cfg.ministries" :key="i">
-              <div class="item-card">
-                <div class="item-card-head" @click="$el.nextElementSibling.style.display = $el.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-                  <span class="item-card-label" x-text="(item.icon||'•') + ' ' + (item.name || ('Ministry '+(i+1)))"></span>
-                  <div class="item-card-actions">
-                    <button class="ic-del" @click.stop="removeMinistry(i)">✕</button>
-                  </div>
+              <div class="item-card" draggable="true" @dragstart="dragStart('ministries',i,$event)" @dragover.prevent="dragOver($event);$el.classList.add('drag-over')" @dragleave="$el.classList.remove('drag-over')" @drop="$el.classList.remove('drag-over');drop('ministries',i)">
+                <div class="item-card-head" @click="$el.nextElementSibling.style.display=$el.nextElementSibling.style.display==='none'?'block':'none'">
+                  <span class="drag-handle" @click.stop title="Drag to reorder">&#10783;</span>
+                  <span class="item-card-label" x-text="(item.icon||'&#8226;')+' '+(item.name||('Ministry '+(i+1)))"></span>
+                  <div class="item-card-actions"><button class="ic-del" @click.stop="removeMinistry(i)">&#10005;</button></div>
                 </div>
                 <div class="item-card-body" style="display:none">
                   <div class="col2">
-                    <div class="field"><label>Emoji Icon</label><input type="text" x-model="cfg.ministries[i].icon" @input="debouncedSave()" placeholder="👶"/></div>
-                    <div class="field"><label>Name</label><input type="text" x-model="cfg.ministries[i].name" @input="debouncedSave()" placeholder="Children's Ministry"/></div>
+                    <div class="field"><label>Emoji Icon</label><input type="text" x-model="item.icon" @input="debouncedSave()" placeholder="&#128118;"/></div>
+                    <div class="field"><label>Name</label><input type="text" x-model="item.name" @input="debouncedSave()" placeholder="Children's Ministry"/></div>
                   </div>
-                  <div class="field"><label>Description</label><input type="text" x-model="cfg.ministries[i].desc" @input="debouncedSave()" placeholder="Safe, engaging programs..."/></div>
+                  <div class="field"><label>Description</label><input type="text" x-model="item.desc" @input="debouncedSave()" placeholder="Safe, engaging programs..."/></div>
                 </div>
               </div>
             </template>
@@ -365,13 +470,12 @@
           </div>
         </div>
 
-        <!-- ── MAP & CONTACT ── -->
         <div x-show="section==='mapcontact'">
           <div class="panel-hdr"><div class="panel-h1">Map &amp; Contact</div><div class="panel-sub">Where to find you and how to reach you</div></div>
           <div class="toggle-row"><span>Show Map</span><label class="toggle"><input type="checkbox" x-model="cfg.showMap" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
           <div class="field"><label>Map Section Heading</label><input type="text" x-model="cfg.mapHeading" @input="debouncedSave()" placeholder="Find Us"/></div>
-          <div class="field"><label>Map Address (auto-generates map)</label><input type="text" x-model="cfg.mapAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL 62701"/></div>
-          <div class="info-box"><p><strong>Custom map embed:</strong> In Google Maps, search your church → Share → Embed a map → copy the <code>src="..."</code> URL and paste below to override the auto-generated map.</p></div>
+          <div class="field"><label>Map Address</label><input type="text" x-model="cfg.mapAddress" @input="debouncedSave()" placeholder="123 Faith Ave, Springfield, IL 62701"/></div>
+          <div class="info-box"><p><strong>Custom map embed:</strong> In Google Maps &#8594; Share &#8594; Embed a map &#8594; copy the src URL and paste below.</p></div>
           <div class="field"><label>Custom Map Embed URL (optional)</label><input type="text" x-model="cfg.mapEmbedUrl" @input="debouncedSave()" placeholder="https://www.google.com/maps/embed?..."/></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
           <div class="toggle-row"><span>Show Contact Panel</span><label class="toggle"><input type="checkbox" x-model="cfg.showContact" @change="debouncedSave()"/><span class="toggle-slider"></span></label></div>
@@ -383,11 +487,10 @@
             <div class="field"><label>Email</label><input type="text" x-model="cfg.contactEmail" @input="debouncedSave()" placeholder="info@church.org"/></div>
           </div>
           <div class="field"><label>Website URL (optional)</label><input type="text" x-model="cfg.contactWeb" @input="debouncedSave()" placeholder="https://yourchurch.org"/></div>
-          <div class="info-box"><p><strong>Contact form (free):</strong> Go to <strong>formspree.io</strong> → sign up free → New Form → copy the ID from the URL (letters after <code>/f/</code>) and paste below.</p></div>
+          <div class="info-box"><p><strong>Contact form (free):</strong> formspree.io &#8594; New Form &#8594; copy the ID from the URL after /f/ and paste below.</p></div>
           <div class="field"><label>Formspree Form ID (optional)</label><input type="text" x-model="cfg.formspreeId" @input="debouncedSave()" placeholder="xyzabcde"/></div>
         </div>
 
-        <!-- ── SOCIAL & FOOTER ── -->
         <div x-show="section==='social'">
           <div class="panel-hdr"><div class="panel-h1">Social &amp; Footer</div><div class="panel-sub">Social media links and footer text</div></div>
           <div class="field"><label>Facebook URL</label><input type="text" x-model="cfg.facebook" @input="debouncedSave()" placeholder="https://facebook.com/yourchurch"/></div>
@@ -395,35 +498,50 @@
           <div class="field"><label>YouTube URL</label><input type="text" x-model="cfg.youtube" @input="debouncedSave()" placeholder="https://youtube.com/@yourchurch"/></div>
           <div class="field"><label>Twitter / X URL</label><input type="text" x-model="cfg.twitter" @input="debouncedSave()" placeholder="https://x.com/yourchurch"/></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
-          <div class="field"><label>Footer Text (leave blank for auto)</label><input type="text" x-model="cfg.footerText" @input="debouncedSave()" placeholder="© 2026 My Church. All rights reserved."/></div>
+          <div class="field"><label>Footer Text (leave blank for auto)</label><input type="text" x-model="cfg.footerText" @input="debouncedSave()" placeholder="&#169; 2026 My Church. All rights reserved."/></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
           <div class="col2">
-            <div class="field"><label>Donation / Giving Page URL</label><input type="text" x-model="cfg.donationUrl" @input="debouncedSave()" placeholder="https://giving.example.com"/></div>
+            <div class="field"><label>Donation Page URL</label><input type="text" x-model="cfg.donationUrl" @input="debouncedSave()" placeholder="https://giving.example.com"/></div>
             <div class="field"><label>Donation Button Label</label><input type="text" x-model="cfg.donationText" @input="debouncedSave()" placeholder="Give"/></div>
           </div>
         </div>
 
-        <!-- ── SEO ── -->
         <div x-show="section==='seo'">
-          <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media find and preview your site</div></div>
-          <div class="field"><label>Site URL (your Netlify URL — no trailing slash)</label><input type="text" x-model="cfg.siteUrl" @input="debouncedSave()" placeholder="https://yourchurch.netlify.app"/></div>
-          <div class="field"><label>Meta Description (50–160 characters)</label><input type="text" x-model="cfg.metaDesc" @input="debouncedSave()" placeholder="A welcoming church family in [City]. Join us every Sunday."/></div>
-          <div class="field"><label>Social Share Image URL (1200×630 px recommended)</label><input type="text" x-model="cfg.ogImage" @input="debouncedSave()" placeholder="https://example.com/share-image.jpg"/></div>
-          <div class="info-box"><p>The <strong>Social Share Image</strong> appears when someone shares your site on Facebook, WhatsApp, or iMessage. Use a landscape photo (1200 × 630 px) that represents your church well.</p></div>
-          <div class="field"><label>Favicon URL (.png or .ico)</label><input type="text" x-model="cfg.favicon" @input="debouncedSave()" placeholder="https://example.com/favicon.png"/></div>
+          <div class="panel-hdr"><div class="panel-h1">SEO &amp; Sharing</div><div class="panel-sub">Help search engines and social media preview your site</div></div>
+          <div class="field"><label>Site URL (no trailing slash)</label><input type="text" x-model="cfg.siteUrl" @input="debouncedSave()" placeholder="https://yourchurch.netlify.app"/></div>
+          <div class="field"><label>Meta Description (50&#8211;160 characters)</label><input type="text" x-model="cfg.metaDesc" @input="debouncedSave()" placeholder="A welcoming church family in [City]. Join us every Sunday."/>
+            <p class="field-note" x-text="(cfg.metaDesc || '').length + ' / 160 characters'" :style="(cfg.metaDesc||''). length > 160 ? 'color:var(--red)' : ''"></p>
+          </div>
+          <div style="margin-bottom:16px">
+            <p style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Google Snippet Preview</p>
+            <div class="seo-preview">
+              <div class="seo-domain" x-text="(cfg.siteUrl || 'https://yourchurch.netlify.app').replace(/^https?:\/\//,'')"></div>
+              <div class="seo-title" x-text="(cfg.name || 'Church Name') + (cfg.tagline ? ' | ' + cfg.tagline : '')"></div>
+              <div class="seo-desc" x-text="cfg.metaDesc || 'Add a meta description to control how your site appears in search results.'"></div>
+            </div>
+          </div>
+          <div class="field"><label>Social Share Image (1200&#215;630 px)</label><input type="text" x-model="cfg.ogImage" @input="debouncedSave()" placeholder="URL or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('ogImage', $event)" hidden/><span x-text="imgStatus['ogImage']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['ogImage'] || cfg.ogImage"><img class="img-thumb" :src="imgPreview['ogImage'] || cfg.ogImage" alt=""/></template>
+            </div>
+          </div>
+          <div class="field"><label>Favicon (.png or .ico)</label><input type="text" x-model="cfg.favicon" @input="debouncedSave()" placeholder="URL or upload below"/>
+            <div class="img-upload">
+              <label class="img-upload-btn"><input type="file" accept="image/*" @change="uploadImage('favicon', $event)" hidden/><span x-text="imgStatus['favicon']==='uploading' ? 'Uploading&#8230;' : '&#11014; Upload'"></span></label>
+              <template x-if="imgPreview['favicon'] || cfg.favicon"><img class="img-thumb" :src="imgPreview['favicon'] || cfg.favicon" alt=""/></template>
+            </div>
+          </div>
         </div>
 
-        <!-- ── COMPLIANCE ── -->
         <div x-show="section==='compliance'">
-          <div class="panel-hdr"><div class="panel-h1">Legal &amp; Compliance</div><div class="panel-sub">Privacy policy, GDPR cookie notice, and donation link</div></div>
+          <div class="panel-hdr"><div class="panel-h1">Legal &amp; Compliance</div><div class="panel-sub">Privacy policy and cookie notice</div></div>
           <div class="field"><label>Privacy Policy URL</label><input type="text" x-model="cfg.privacyPolicyUrl" @input="debouncedSave()" placeholder="https://example.com/privacy"/></div>
-          <div class="info-box"><p>A privacy policy is legally required if you collect any visitor data (contact forms, analytics, embedded maps). Generate a free one at <strong>privacypolicygenerator.info</strong> or <strong>termly.io</strong>.</p></div>
+          <div class="info-box"><p>A privacy policy is required if you collect visitor data. Generate one free at <strong>privacypolicygenerator.info</strong> or <strong>termly.io</strong>.</p></div>
           <hr style="border-color:var(--bdr);margin:16px 0"/>
-          <div class="field"><label>Cookie / GDPR Notice Text (leave blank to hide banner)</label><textarea x-model="cfg.cookieNotice" @input="debouncedSave()" placeholder="This site uses cookies to improve your experience. By continuing to browse, you agree to our use of cookies."></textarea></div>
-          <div class="info-box"><p>Required if you use analytics or third-party embeds (Google Maps, YouTube). The banner appears at the bottom of the page until the visitor dismisses it.</p></div>
+          <div class="field"><label>Cookie / GDPR Notice Text (leave blank to hide)</label><textarea x-model="cfg.cookieNotice" @input="debouncedSave()" placeholder="This site uses cookies to improve your experience..."></textarea></div>
         </div>
 
-        <!-- ── THEME ── -->
         <div x-show="section==='theme'">
           <div class="panel-hdr"><div class="panel-h1">Theme</div><div class="panel-sub">Colors and typography</div></div>
           <div class="field"><label>Accent Color (buttons, highlights)</label>
@@ -434,60 +552,109 @@
           </div>
           <div class="field"><label>Heading Font</label>
             <select x-model="cfg.headingFont" @change="debouncedSave()">
-              <option value="'Playfair Display', serif">Playfair Display — Classic &amp; Elegant</option>
-              <option value="Georgia, serif">Georgia — Traditional</option>
-              <option value="'Inter', sans-serif">Inter — Modern &amp; Clean</option>
-              <option value="'Times New Roman', serif">Times New Roman — Formal</option>
+              <option value="'Playfair Display', serif">Playfair Display &#8212; Classic &amp; Elegant</option>
+              <option value="Georgia, serif">Georgia &#8212; Traditional</option>
+              <option value="'Inter', sans-serif">Inter &#8212; Modern &amp; Clean</option>
+              <option value="'Times New Roman', serif">Times New Roman &#8212; Formal</option>
             </select>
           </div>
         </div>
 
-        <!-- ── SECURITY ── -->
         <div x-show="section==='security'">
-          <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Authentication and GitHub publish settings</div></div>
-          <div class="info-box" style="background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3)">
-            <p><strong>Authentication</strong> is handled by Netlify Identity — no passwords are stored client-side. Manage users in your Netlify dashboard under Identity.</p>
-          </div>
+          <div class="panel-hdr"><div class="panel-h1">Security &amp; GitHub</div><div class="panel-sub">Authentication and publish settings</div></div>
+          <div class="info-box"><p><strong>Authentication</strong> is handled by Netlify Identity. Manage users in your Netlify dashboard under Identity.</p></div>
+          <div class="info-box" style="background:rgba(60,201,124,.08);border-color:rgba(60,201,124,.3)"><p><strong>Roles:</strong> In Netlify &#8594; Identity &#8594; select a user &#8594; Edit metadata &#8594; add <code>{"roles":["admin"]}</code> to grant admin access.</p></div>
           <button @click="logout()" style="padding:9px 20px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:16px">Logout Now</button>
           <hr style="border-color:var(--bdr);margin:20px 0"/>
-          <div class="panel-hdr" style="margin-bottom:16px;padding-bottom:0;border:none"><div class="panel-h1" style="font-size:16px">GitHub Auto-Publish</div><div class="panel-sub">Save changes directly to GitHub — Netlify deploys automatically</div></div>
-          <div class="info-box"><p>
-            <strong>Setup (one time):</strong><br/>
-            1. Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong><br/>
-            2. Click <strong>Generate new token</strong><br/>
-            3. Set repository access to <strong>Rivaldo1123/Good_News</strong><br/>
-            4. Under Permissions → Repository → <strong>Contents: Read and Write</strong><br/>
-            5. Generate &amp; paste the token below<br/><br/>
-            <strong>Note:</strong> Your token is stored only in this browser — never sent anywhere except GitHub's API.
-          </p></div>
-          <div class="field"><label>GitHub Personal Access Token</label>
-            <input type="password" id="gh-token-input"
-              placeholder="github_pat_..."
-              @change="sessionStorage.setItem('gh_token', $event.target.value)"
-              x-init="$el.value = sessionStorage.getItem('gh_token') || ''"/>
+          <div style="font-size:16px;font-weight:700;margin-bottom:8px">GitHub Auto-Publish</div>
+          <div class="info-box"><p><strong>Setup:</strong> Create a fine-grained PAT at GitHub &#8594; Settings &#8594; Developer settings with Contents: Read/Write on Rivaldo1123/Good_News, then add <strong>GITHUB_TOKEN</strong> in Netlify &#8594; Environment variables.</p></div>
+        </div>
+
+        <div x-show="section==='schedule' && isAdmin">
+          <div class="panel-hdr"><div class="panel-h1">Scheduled Publishing</div><div class="panel-sub">Auto-publish the draft at a future time</div></div>
+          <div class="info-box"><p>The scheduler checks every 15 minutes. When the time passes, the <strong>Draft config</strong> publishes automatically via Netlify cron. Requires GITHUB_TOKEN.</p></div>
+          <div class="field">
+            <label>Publish Draft At</label>
+            <input type="datetime-local" x-model="cfg.scheduledPublishAt" @change="debouncedSave()" style="max-width:280px"/>
+            <p class="field-note" x-show="cfg.scheduledPublishAt">Scheduled for <strong x-text="new Date(cfg.scheduledPublishAt).toLocaleString()"></strong></p>
           </div>
-          <div class="field"><label>GitHub Repo (owner/repo)</label>
-            <input type="text" id="gh-repo-input"
-              placeholder="Rivaldo1123/Good_News"
-              @input="localStorage.setItem('gh_repo', $event.target.value)"
-              x-init="$el.value = localStorage.getItem('gh_repo') || 'Rivaldo1123/Good_News'"/>
+          <button @click="cfg.scheduledPublishAt='';debouncedSave()" style="padding:8px 16px;background:rgba(232,90,106,.15);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:13px;cursor:pointer" x-show="cfg.scheduledPublishAt">Clear Schedule</button>
+          <template x-if="!cfg.scheduledPublishAt"><p style="font-size:13px;color:var(--muted);margin-top:8px">No schedule set. Choose a date and time above, then save.</p></template>
+        </div>
+
+        <div x-show="section==='media'">
+          <div class="panel-hdr"><div class="panel-h1">Media Library</div><div class="panel-sub">All uploaded images &#8212; click any to copy its URL</div></div>
+          <label class="media-upload-area">
+            <input type="file" accept="image/*" hidden @change="uploadImage('logoUrl',$event);setTimeout(()=>loadMediaFiles(),3000)"/>
+            <p style="font-size:20px;margin-bottom:6px">&#128193;</p>
+            <p>Click to upload a new image (max 4 MB)</p>
+            <p style="font-size:11px;margin-top:4px;color:var(--muted)">JPG, PNG, WebP, GIF, SVG</p>
+          </label>
+          <template x-if="mediaLoading"><p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Loading&#8230;</p></template>
+          <template x-if="!mediaLoading && mediaFiles.length===0"><p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">No images uploaded yet.</p></template>
+          <div class="media-grid" x-show="mediaFiles.length>0">
+            <template x-for="url in mediaFiles" :key="url">
+              <div class="media-item" @click="copyMediaUrl(url)" title="Click to copy URL">
+                <img :src="url" :alt="url.split('/').pop()" loading="lazy"/>
+                <div class="media-item-overlay"><span class="media-item-name" x-text="url.split('/').pop()"></span></div>
+              </div>
+            </template>
           </div>
         </div>
 
-      </div><!-- /.panels -->
-    </div><!-- /.layout -->
-  </div><!-- /#adm -->
+        <div x-show="section==='analytics' && isAdmin">
+          <div class="panel-hdr"><div class="panel-h1">Analytics</div><div class="panel-sub">Last 30 days via Netlify Analytics</div></div>
+          <div class="warn-box" x-show="!analyticsData && !analyticsLoading && !analyticsError"><p><strong>Setup required:</strong> Add <strong>NETLIFY_TOKEN</strong> (personal access token) and <strong>SITE_ID</strong> to your Environment variables.</p></div>
+          <template x-if="analyticsError"><div class="warn-box"><p x-text="analyticsError"></p></div></template>
+          <template x-if="analyticsLoading"><p style="font-size:13px;color:var(--muted);text-align:center;padding:30px">Loading analytics&#8230;</p></template>
+          <template x-if="analyticsData && !analyticsLoading">
+            <div>
+              <div class="analytics-grid">
+                <div class="analytics-card"><div class="analytics-num" x-text="(analyticsData.pageviews?.total||0).toLocaleString()"></div><div class="analytics-label">Page Views</div></div>
+                <div class="analytics-card"><div class="analytics-num" x-text="(analyticsData.visitors?.total||0).toLocaleString()"></div><div class="analytics-label">Unique Visitors</div></div>
+                <div class="analytics-card"><div class="analytics-num" x-text="(analyticsData.pages||[]).length"></div><div class="analytics-label">Tracked Pages</div></div>
+              </div>
+              <p style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Top Pages</p>
+              <div class="top-pages-list">
+                <template x-for="page in (analyticsData.pages||[]).slice(0,10)" :key="page.path">
+                  <div class="top-page-row">
+                    <span class="top-page-path" x-text="page.path"></span>
+                    <span class="top-page-count" x-text="(page.count||page.pageviews||0).toLocaleString()+' views'"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+          <button class="btn-ghost" @click="loadAnalytics()" style="margin-top:16px" x-show="!analyticsLoading">&#128260; Refresh</button>
+        </div>
 
-  <!-- SAVE TOAST -->
-  <div class="saved" :class="{show: saveStatus==='saved'}">Saved ✓</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- PUBLISH STATUS -->
-  <div class="pub-status"
-    :class="{show: publishStatus!=='idle', ok: publishStatus==='ok', err: publishStatus==='error', busy: publishStatus==='busy'}"
-    x-text="publishMessage"></div>
-
-</div><!-- /x-data -->
-
+  <div class="saved" :class="{show: saveStatus==='saved'}">
+    <span x-text="draftMode ? 'Draft saved &#10003;' : 'Saved &#10003;'"></span>
+  </div>
+  <div class="pub-status" :class="{show: publishStatus!=='idle', ok: publishStatus==='ok', err: publishStatus==='error', busy: publishStatus==='busy'}" x-text="publishMessage"></div>
+  <div class="toast-stack">
+    <template x-for="t in toasts" :key="t.id">
+      <div class="toast-item" :class="t.type" x-text="t.msg"></div>
+    </template>
+  </div>
+  <div class="modal-overlay" x-show="previewOpen" @click.self="previewOpen=false" style="display:none">
+    <div class="modal-box" style="max-width:1100px;height:90vh">
+      <div class="modal-hdr">
+        <h2>Live Preview</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:12px;color:var(--muted)">Shows current draft state</span>
+          <button class="btn-ghost" @click="openPreview()">&#128260; Refresh</button>
+          <button class="modal-close" @click="previewOpen=false">&#10005;</button>
+        </div>
+      </div>
+      <iframe style="flex:1;width:100%;border:none;background:#fff;min-height:70vh" :srcdoc="previewHtml" sandbox="allow-scripts"></iframe>
+    </div>
+  </div>
+</div>
 <script type="module" src="/src/admin/main.ts"></script>
 </body>
 </html>
