@@ -80,7 +80,11 @@ export function adminStore() {
     },
 
     getToken(): string {
-      return (this.user as any)?.token?.access_token ?? ''
+      // currentUser() always has the latest auto-refreshed token; fall back to
+      // this.user for the brief window right after login before currentUser is set.
+      return (netlifyIdentity.currentUser() as any)?.token?.access_token
+        ?? (this.user as any)?.token?.access_token
+        ?? ''
     },
 
     showToast(msg: string, type: Toast['type'] = 'ok') {
