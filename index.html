@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <script>(function(){var h=location.hash;if(h&&(h.indexOf('invite_token')>-1||h.indexOf('recovery_token')>-1||h.indexOf('access_token')>-1)){location.replace('/admin'+h);}})();</script>
   <title>Church</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -293,17 +294,6 @@
   // COOKIE CONSENT BANNER
   if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
-</script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-if(window.netlifyIdentity){
-  window.netlifyIdentity.on('init',function(u){
-    if(!u){window.netlifyIdentity.on('login',function(){document.location.href='/admin';});}
-    if(location.hash&&(location.hash.includes('invite_token')||location.hash.includes('recovery_token'))){
-      window.netlifyIdentity.open();
-    }
-  });
-}
 </script>
 </body>
 </html>
