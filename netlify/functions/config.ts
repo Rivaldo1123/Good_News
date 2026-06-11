@@ -1,5 +1,5 @@
 import type { Handler } from '@netlify/functions'
-import { getStore } from '@netlify/blobs'
+import { connectLambda, getStore } from '@netlify/blobs'
 import { DEFAULTS } from '../../src/types/config'
 
 const json = (statusCode: number, body: unknown) => ({
@@ -13,6 +13,9 @@ export const handler: Handler = async (event, context) => {
     const { user } = (context as any).clientContext ?? {}
     if (!user) return json(401, { error: 'Unauthorized' })
 
+    // v1 Lambda functions must wire up the Blobs context from the event;
+    // it is only auto-configured in v2 (export default) functions.
+    connectLambda(event)
     const store = getStore('church-config')
 
     if (event.httpMethod === 'GET') {
