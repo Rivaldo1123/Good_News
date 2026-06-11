@@ -1,16 +1,10 @@
-// Uploads an image through the server-side /api/github function (which holds
-// the GitHub token as an env var). The file lands in dist/uploads/ — Netlify's
-// publish directory — so it is served at /uploads/<name> after deploy.
-
-// Netlify synchronous functions cap the request body around 6 MB; base64
-// inflates by ~33%, so keep the raw image under ~4 MB.
 const MAX_BYTES = 4 * 1024 * 1024
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {
-      const result = reader.result as string // "data:<type>;base64,XXXX"
+      const result = reader.result as string
       const comma = result.indexOf(',')
       resolve(comma >= 0 ? result.slice(comma + 1) : result)
     }
@@ -31,9 +25,6 @@ function safeName(name: string): string {
   return `${Date.now()}-${base}.${ext}`
 }
 
-/**
- * Upload an image to the repo and return the public path (e.g. "/uploads/123-photo.jpg").
- */
 export async function uploadImage(file: File, identityToken: string): Promise<string> {
   if (!identityToken) {
     throw new Error('You must be logged in to upload images.')
