@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && cp _headers dist/_headers",
     "preview": "vite preview"
   },
   "dependencies": {
