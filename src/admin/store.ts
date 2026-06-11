@@ -28,6 +28,9 @@ export function adminStore() {
           this.loadConfig()
         }
       })
+      // Call init() here, after handlers are registered, so the 'init' event
+      // is guaranteed to be caught on page refresh with an existing session.
+      netlifyIdentity.init()
     },
 
     getToken(): string {

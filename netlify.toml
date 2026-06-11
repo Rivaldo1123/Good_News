@@ -8,15 +8,8 @@
 
 [[redirects]]
   from   = "/api/config"
-  to     = "/.netlify/functions/config-get"
+  to     = "/.netlify/functions/config"
   status = 200
-  conditions = {Method = ["GET"]}
-
-[[redirects]]
-  from   = "/api/config"
-  to     = "/.netlify/functions/config-save"
-  status = 200
-  conditions = {Method = ["POST"]}
 
 [[redirects]]
   from   = "/admin"
