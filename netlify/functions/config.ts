@@ -78,8 +78,8 @@ export const handler: Handler = async (event, context) => {
 
     if (event.httpMethod === 'POST') {
       if (isPublish) {
-        if (!roles.includes('admin')) {
-          return json(403, { error: 'Admin role required to publish' })
+        if (!roles.includes('admin') && !roles.includes('editor')) {
+          return json(403, { error: 'Editor or admin role required to publish' })
         }
         const draftRaw = await store.get('config-draft')
         if (!draftRaw) return json(404, { error: 'No draft found' })
