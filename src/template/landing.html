@@ -251,7 +251,11 @@
   const nlks=[{label:'About',href:'#about'},{label:'Services',href:'#services'},{label:'Events',href:'#events'},{label:'Contact',href:'#location'}];
   g('nav-links').innerHTML=nlks.map(l=>`<a href="${e(l.href)}">${e(l.label)}</a>`).join('')+`<a href="#services" class="nav-cta">${e(c.navCtaText||'Join Us')}</a>`;
   g('mob-nav-name').textContent=c.name||'';
-  g('mob-links').innerHTML=nlks.map(l=>`<a href="${e(l.href)}" onclick="closeMob()">${e(l.label)}</a>`).join('')+`<a href="#services" class="mob-cta" onclick="closeMob()">${e(c.navCtaText||'Join Us')}</a>`;
+  const _ml=g('mob-links');
+  _ml.style.cssText='display:flex;flex-direction:column;align-items:stretch;width:100%;max-width:280px';
+  const _ls='display:block;padding:16px 0;text-align:center;font-size:17px;font-weight:600;color:#1a1a2e;border-bottom:1px solid rgba(0,0,0,.08);text-decoration:none';
+  const _cs='display:block;margin-top:20px;padding:14px 0;text-align:center;background:var(--accent);color:#fff;border-radius:40px;font-size:17px;font-weight:600;text-decoration:none';
+  _ml.innerHTML=nlks.map(l=>`<a href="${e(l.href)}" onclick="closeMob()" style="${_ls}">${e(l.label)}</a>`).join('')+`<a href="#services" onclick="closeMob()" style="${_cs}">${e(c.navCtaText||'Join Us')}</a>`;
   window.addEventListener('scroll',()=>g('nav').classList.toggle('scrolled',scrollY>60));
   const hbg=g('hero-bg');
   if(c.heroType==='image'&&c.heroImage){hbg.style.backgroundImage=`url('${c.heroImage}')`;hbg.style.backgroundColor=c.heroColor||'#1a1a4e';}
