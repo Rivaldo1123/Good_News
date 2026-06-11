@@ -6,6 +6,5 @@
 [functions]
   node_bundler = "esbuild"
 
-[[functions]]
-  function = "scheduled-publish"
+[functions."scheduled-publish"]
   schedule = "*/15 * * * *"
