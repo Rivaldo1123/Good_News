@@ -1,6 +1,7 @@
 import type { Handler } from '@netlify/functions'
 import { connectLambda, getStore } from '@netlify/blobs'
 import { DEFAULTS } from '../../src/types/config'
+import { requireUser } from './_shared/auth'
 
 const json = (statusCode: number, body: unknown) => ({
   statusCode,
@@ -10,9 +11,13 @@ const json = (statusCode: number, body: unknown) => ({
 
 export const handler: Handler = async (event, context) => {
   try {
-    const { user } = (context as any).clientContext ?? {}
-    if (!user) return json(401, { error: 'Unauthorized' })
-    const roles: string[] = user.app_metadata?.roles ?? []
+    let user: Record<string, unknown>
+    try {
+      user = requireUser(event.headers.authorization, (context as any).clientContext)
+    } catch {
+      return json(401, { error: 'Unauthorized' })
+    }
+    const roles: string[] = ((user.app_metadata as any)?.roles) ?? []
 
     connectLambda(event as any)
     const store = getStore('church-config')
