@@ -7,4 +7,4 @@
   node_bundler = "esbuild"
 
 [functions."scheduled-publish"]
-  schedule = "*/15 * * * *"
+  schedule = "0 0 * * *"
