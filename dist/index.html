@@ -4,15 +4,20 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <script>(function(){var h=location.hash;if(h&&(h.indexOf('invite_token')>-1||h.indexOf('recovery_token')>-1||h.indexOf('access_token')>-1)){location.replace('/admin'+h);}})();</script>
-  <title>Church</title>
+  <title>Good News Assembly of God</title>
+  <meta name="description" content="You don't have to be perfect to worship here. Come as you are."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Good News Assembly of God"/>
+  <meta property="og:description" content="You don't have to be perfect to worship here. Come as you are."/>
+  <meta property="og:url" content="https://goodnewsaog.netlify.app"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Good News Assembly of God"/>
+  <meta name="twitter:description" content="You don't have to be perfect to worship here. Come as you are."/>
+  <link rel="canonical" href="https://goodnewsaog.netlify.app"/>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Church","name":"Good News Assembly of God","description":"You don't have to be perfect to worship here. Come as you are.","url":"https://goodnewsaog.netlify.app","address":{"@type":"PostalAddress","streetAddress":"6B Congreve Park, Bridgeport, Portmore, St. Catherine"},"sameAs":["https://instagram.com/gnagarmy","https://youtube.com/@gnagfamilyministries8704?si=dFeaKfVwojdpvnxc"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"https://schema.org/Sunday","opens":"10:00"}]}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script id="site-config">
-  /* BEGIN_CONFIG */
-  window.C = {"name":"Good News Assembly of God","tagline":"A Place to Belong, Believe \u0026 Grow","badge":"","navCtaText":"Join Us Sunday","heroType":"color","heroColor":"#1a1a4e","heroImage":"","heroGradFrom":"#1a1a4e","heroGradTo":"#4a0e6e","heroOverlay":0.45,"heroHeading":"Welcome Home","heroSub":"You don't have to be perfect to worship here. Come as you are.","heroCta1":"Join Us Sunday","heroCta1Link":"#services","heroCta2":"Learn More","heroCta2Link":"#about","showInfoBar":true,"infoAddress":"6B Congreve Park, Bridgeport, Portmore, St. Catherine","infoService":"Sundays at 10 AM","infoPhone":"","showAbout":true,"aboutHeading":"About Our Church","aboutSub":"Faith · Community · Purpose","aboutBody":"We are a vibrant, welcoming community of believers committed to making faith real and relevant. Whether you're exploring Christianity for the first time or have been a believer for decades, there is a place for you here.\n\nFounded in 1987, our congregation has grown into a family of over 800 members spanning all generations.","aboutImage":"","aboutImageAlt":"","showServices":true,"servicesHeading":"Join Us for Worship","servicesSub":"Everyone is welcome — come as you are","services":[{"day":"Sunday","time":"10:00 AM","name":"Morning Worship","desc":"Traditional service with hymns"}],"showEvents":true,"eventsHeading":"Upcoming Events","eventsSub":"Stay connected with your church family","events":[{"month":"JUN","day":"15","title":"Summer BBQ","desc":"Family fun for the whole congregation. Bring a dish to share!","color":"#e8507a"},{"month":"JUN","day":"22","title":"Youth Night","desc":"An evening for teens and young adults. Live music \u0026 games.","color":"#6c4ecb"},{"month":"JUL","day":"4","title":"Prayer Vigil","desc":"A powerful night of corporate prayer and worship.","color":"#20b2aa"}],"showPastor":true,"pastorTitle":"Meet Our Pastor","pastorName":"Pastor John Smith","pastorImage":"","pastorImageAlt":"","pastorBio":"Pastor John has been leading Grace Community Church for over 15 years with a heart for people and a passion for the Word. He and his wife Jane have three children and are deeply rooted in this community.","showMinistries":true,"ministriesHeading":"Our Ministries","ministriesSub":"Find your place to serve and grow","ministries":[{"icon":"👶","name":"Children's Ministry","desc":"Safe, engaging programs for ages 0–12"},{"icon":"🎯","name":"Youth Ministry","desc":"Empowering teens to live out their faith"},{"icon":"🎵","name":"Worship Arts","desc":"Choir, band, and creative arts teams"},{"icon":"🤝","name":"Community Outreach","desc":"Serving the needs of our city"},{"icon":"📖","name":"Bible Study","desc":"Small groups meeting throughout the week"},{"icon":"💑","name":"Marriage \u0026 Family","desc":"Strengthening homes and relationships"}],"showMap":true,"mapHeading":"Find Us","mapAddress":"6B Congreve Park, Bridgeport, Portmore, St. Catherine","mapEmbedUrl":"","showContact":true,"contactHeading":"Get In Touch","contactSub":"We'd love to hear from you","contactAddress":"6B Congreve Park, Bridgeport, Portmore, St. Catherine","contactPhone":"","contactEmail":"","contactWeb":"","formspreeId":"","facebook":"","instagram":"","youtube":"","twitter":"","footerText":"","accent":"#6c4ecb","headingFont":"'Playfair Display', serif","siteUrl":"https://goodnewsaog.netlify.app","metaDesc":"","ogImage":"","favicon":"","logoUrl":"","donationUrl":"","donationText":"Give","privacyPolicyUrl":"","cookieNotice":"","announcementBanner":"","announcements":[],"scheduledPublishAt":""};
-  /* END_CONFIG */
-  </script>
   <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -62,6 +67,11 @@
   #info-bar{background:var(--accent);display:flex;justify-content:center;flex-wrap:wrap}
   .ib-item{display:flex;align-items:center;gap:10px;padding:14px 36px;font-size:13px;font-weight:500;color:#fff;border-right:1px solid rgba(255,255,255,.25)}
   .ib-item:last-child{border-right:none}
+  #visit-bar{background:linear-gradient(135deg,#1a1a2e,var(--accent));padding:48px 24px;display:none}
+  #visit-bar .sec-inner{max-width:700px;margin:0 auto;text-align:center}
+  #visit-bar .vb-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:12px}
+  #visit-bar .vb-heading{font-family:var(--hf);font-size:clamp(22px,3vw,32px);color:#fff;margin-bottom:16px}
+  #visit-bar .vb-text{font-size:16px;color:rgba(255,255,255,.82);line-height:1.8}
   .sec{padding:80px 24px}
   .sec-inner{max-width:1100px;margin:0 auto}
   .sec-hdr{text-align:center;margin-bottom:52px}
@@ -97,11 +107,11 @@
   .evt-body p{font-size:14px;color:#666;line-height:1.7}
   #pastor{background:#1a1a2e;padding:80px 24px}
   .pstr-inner{max-width:720px;margin:0 auto;text-align:center}
-  .pstr-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:24px}
+  .pstr-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:24px}
   .pstr-photo{width:140px;height:140px;border-radius:50%;margin:0 auto 24px;overflow:hidden;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;border:3px solid var(--accent);font-size:56px}
   .pstr-photo img{width:100%;height:100%;object-fit:cover}
   .pstr-name{font-family:var(--hf);font-size:clamp(24px,3.5vw,36px);color:#fff;margin-bottom:20px}
-  .pstr-bio{font-size:16px;color:rgba(255,255,255,.72);line-height:1.8}
+  .pstr-bio{font-size:16px;color:rgba(255,255,255,.78);line-height:1.8}
   #ministries{background:#f9f9fc}
   .min-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
   .min-card{background:#fff;border-radius:16px;padding:28px;display:flex;gap:18px;align-items:flex-start;border:1px solid #eee;transition:all .25s}
@@ -120,6 +130,8 @@
   .cp-icon{width:36px;height:36px;border-radius:50%;background:#f0f0f8;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
   .cf{display:flex;flex-direction:column;gap:10px}
   .cf-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cf-group{display:flex;flex-direction:column;gap:4px}
+  .cf-group label{font-size:12px;font-weight:600;color:#555}
   .cf input,.cf textarea{padding:11px 14px;border:1px solid #e0e0e8;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%}
   .cf input:focus,.cf textarea:focus{border-color:var(--accent)}
   .cf textarea{resize:vertical;min-height:90px}
@@ -127,9 +139,10 @@
   .cf-btn:hover{background:var(--accent-dark)}
   #footer{background:#1a1a2e;padding:36px 24px;text-align:center}
   .soc-row{display:flex;gap:14px;justify-content:center;margin-bottom:18px}
-  .soc-a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#fff;transition:background .2s;font-size:14px;font-weight:700}
+  .soc-a{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#fff;transition:background .2s;font-size:14px;font-weight:700}
   .soc-a:hover{background:var(--accent)}
-  .foot-copy{font-size:13px;color:rgba(255,255,255,.45)}
+  .foot-copy{font-size:13px;color:rgba(255,255,255,.70)}
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
   @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:40px}.about-vis{order:-1}.mc-grid{grid-template-columns:1fr}.cp-pane{padding:32px 24px}}
   @media(max-width:768px){#nav{padding:16px 20px}#nav.scrolled{padding:12px 20px}.nav-links{display:none}.hamburger{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}.sec{padding:56px 20px}#pastor{padding:56px 20px}.ib-item{padding:12px 20px;border-right:none;border-bottom:1px solid rgba(255,255,255,.2)}.ib-item:last-child{border-bottom:none}}
   @media(max-width:480px){.cf-2{grid-template-columns:1fr}.hero-btns{flex-direction:column;align-items:center}}
@@ -166,6 +179,8 @@
   <div class="scroll-hint">Scroll</div>
 </section>
 <div id="info-bar"></div>
+<div id="ann-items"></div>
+<div id="visit-bar"><div class="sec-inner"><div class="vb-eyebrow">Plan Your Visit</div><h2 class="vb-heading" id="vb-heading">First Time Here?</h2><p class="vb-text" id="vb-text"></p></div></div>
 <div id="ann-banner"></div>
 <section class="sec" id="about">
   <div class="sec-inner">
@@ -269,40 +284,27 @@
   g('hero-sub').textContent=c.heroSub||'';
   g('hero-btns').innerHTML=`<a href="${e(u(c.heroCta1Link||'#services'))}" class="btn btn-p">${e(c.heroCta1||'Join Us')}</a>`+(c.heroCta2?`<a href="${e(u(c.heroCta2Link||'#about'))}" class="btn btn-o">${e(c.heroCta2)}</a>`:'');
   if(c.showInfoBar!==false){g('info-bar').innerHTML=[c.infoAddress?`<div class="ib-item">📍 ${e(c.infoAddress)}</div>`:'',c.infoService?`<div class="ib-item">🕐 ${e(c.infoService)}</div>`:'',c.infoPhone?`<div class="ib-item">📞 ${e(c.infoPhone)}</div>`:''].join('');}else{g('info-bar').style.display='none';}
-  if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="${e(c.aboutImageAlt||c.aboutHeading||'Our Church')}"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';const ab=c.aboutBody||'';g('about-body').innerHTML=/<[a-z]/i.test(ab)?ab:ab.split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
+  if(c.visitInfo){const vb=g('visit-bar');g('vb-text').textContent=c.visitInfo;vb.style.display='block';}
+  if(c.showAbout!==false){const av=g('about-vis');if(c.aboutImage){av.innerHTML=`<img src="${e(c.aboutImage)}" alt="${e(c.aboutImageAlt||c.aboutHeading||'Our Church')}" loading="lazy"/>`;}else{av.innerHTML='⛪';}g('about-eyebrow').textContent=c.aboutSub||'';g('about-h2').textContent=c.aboutHeading||'About Us';const ab=c.aboutBody||'';g('about-body').innerHTML=/<[a-z]/i.test(ab)?ab:ab.split('\n\n').map(p=>`<p>${e(p)}</p>`).join('');}else{g('about').style.display='none';}
   if(c.showServices!==false){g('svc-h2').textContent=c.servicesHeading||'Join Us';g('svc-sub').textContent=c.servicesSub||'';g('svc-grid').innerHTML=(c.services||[]).map(s=>`<div class="svc-card"><div class="svc-day">${e(s.day)}</div><div class="svc-time">${e(s.time)}</div><div class="svc-name">${e(s.name)}</div>${s.desc?`<div class="svc-desc">${e(s.desc)}</div>`:''}</div>`).join('');}else{g('services').style.display='none';}
   const EC=['#6c4ecb','#e8507a','#20b2aa','#f59e0b'];
   if(c.showEvents!==false){g('evt-h2').textContent=c.eventsHeading||'Events';g('evt-sub').textContent=c.eventsSub||'';g('evt-grid').innerHTML=(c.events||[]).map((ev,i)=>`<div class="evt-card"><div class="evt-head"><div class="evt-badge" style="background:${e(ev.color||EC[i%4])}"><span class="evt-mo">${e(ev.month)}</span><span class="evt-dy">${e(ev.day)}</span></div><div class="evt-title">${e(ev.title)}</div></div><div class="evt-body"><p>${e(ev.desc)}</p></div></div>`).join('');}else{g('events').style.display='none';}
-  if(c.showPastor!==false){g('pstr-eyebrow').textContent=c.pastorTitle||'Meet Our Pastor';const pp=g('pstr-photo');if(c.pastorImage){pp.innerHTML=`<img src="${e(c.pastorImage)}" alt="${e(c.pastorName)}"/>`;}else{pp.textContent='✝';}g('pstr-name').textContent=c.pastorName||'';const pb=c.pastorBio||'';g('pstr-bio').innerHTML=/<[a-z]/i.test(pb)?pb:e(pb).replace(/\n\n/g,'<br><br>');}else{g('pastor').style.display='none';}
+  if(c.showPastor!==false){g('pstr-eyebrow').textContent=c.pastorTitle||'Meet Our Pastor';const pp=g('pstr-photo');if(c.pastorImage){pp.innerHTML=`<img src="${e(c.pastorImage)}" alt="${e(c.pastorName||'Pastor')}" loading="lazy"/>`;}else{pp.textContent='✝';}g('pstr-name').textContent=c.pastorName||'';const pb=c.pastorBio||'';g('pstr-bio').innerHTML=/<[a-z]/i.test(pb)?pb:e(pb).replace(/\n\n/g,'<br><br>');}else{g('pastor').style.display='none';}
   if(c.showMinistries!==false){g('min-h2').textContent=c.ministriesHeading||'Our Ministries';g('min-sub').textContent=c.ministriesSub||'';g('min-grid').innerHTML=(c.ministries||[]).map(m=>`<div class="min-card"><div class="min-icon">${e(m.icon)}</div><div><div class="min-name">${e(m.name)}</div><div class="min-desc">${e(m.desc)}</div></div></div>`).join('');}else{g('ministries').style.display='none';}
   g('loc-h2').textContent=c.mapHeading||'Find Us';
   if(c.showMap!==false){const src=u(c.mapEmbedUrl)||`https://maps.google.com/maps?q=${encodeURIComponent(c.mapAddress||c.contactAddress||'')}&output=embed`;g('map-frame').src=src;}else{g('map-frame').style.display='none';}
-  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><span>${e(c.contactPhone)}</span></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(u(c.privacyPolicyUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><input name="name" placeholder="Your Name" required/><input name="email" type="email" placeholder="Email" required/></div><input name="subject" placeholder="Subject"/><textarea name="message" placeholder="Your message..." required></textarea>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
+  if(c.showContact!==false){g('cp-h2').textContent=c.contactHeading||'Get In Touch';g('cp-sub').textContent=c.contactSub||'';g('cp-items').innerHTML=[c.contactAddress?`<div class="cp-row"><div class="cp-icon">📍</div><span>${e(c.contactAddress)}</span></div>`:'',c.contactPhone?`<div class="cp-row"><div class="cp-icon">📞</div><a href="tel:${e(c.contactPhone)}" style="color:inherit">${e(c.contactPhone)}</a></div>`:'',c.contactEmail?`<div class="cp-row"><div class="cp-icon">✉️</div><a href="mailto:${e(c.contactEmail)}" style="color:var(--accent)">${e(c.contactEmail)}</a></div>`:'',c.officeHours?`<div class="cp-row"><div class="cp-icon">🕐</div><span>${e(c.officeHours)}</span></div>`:'',c.contactWeb?`<div class="cp-row"><div class="cp-icon">🌐</div><a href="${e(u(c.contactWeb))}" target="_blank" style="color:var(--accent)">${e(c.contactWeb)}</a></div>`:''].join('');if(c.formspreeId){const _consent=(c.privacyPolicyUrl||c.cookieNotice)?`<label class="cf-consent"><input type="checkbox" required/><span>I consent to my submitted data being used to respond to my inquiry${c.privacyPolicyUrl?` — <a href="${e(u(c.privacyPolicyUrl))}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Privacy Policy</a>`:''}</span></label>`:'';g('cp-form').innerHTML=`<form class="cf" action="https://formspree.io/f/${e(c.formspreeId)}" method="POST"><div class="cf-2"><div class="cf-group"><label for="cf-name">Your Name</label><input id="cf-name" name="name" placeholder="Your Name" required/></div><div class="cf-group"><label for="cf-email">Email Address</label><input id="cf-email" name="email" type="email" placeholder="Email" required/></div></div><div class="cf-group"><label for="cf-subject">Subject</label><input id="cf-subject" name="subject" placeholder="Subject"/></div><div class="cf-group"><label for="cf-message">Message</label><textarea id="cf-message" name="message" placeholder="Your message..." required></textarea></div>${_consent}<button class="cf-btn" type="submit">Send Message</button></form>`;}else if(c.contactEmail){g('cp-form').innerHTML=`<a href="mailto:${e(c.contactEmail)}" class="btn btn-p" style="align-self:flex-start">Send Us an Email</a>`;}}
   const socs=[['Facebook',c.facebook,'f'],['Instagram',c.instagram,'ig'],['YouTube',c.youtube,'▶'],['Twitter/X',c.twitter,'𝕏']].filter(s=>s[1]);
-  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener noreferrer" title="${e(s[0])}">${s[2]}</a>`).join('');}
+  if(socs.length){g('soc-row').innerHTML=socs.map(s=>`<a href="${e(u(s[1]))}" class="soc-a" target="_blank" rel="noopener noreferrer" aria-label="${e(s[0])}">${s[2]}</a>`).join('');}
   g('foot-copy').textContent=c.footerText||`© ${new Date().getFullYear()} ${c.name}. All rights reserved.`;
   window.openMob=()=>g('mob-nav').classList.add('open');
   window.closeMob=()=>g('mob-nav').classList.remove('open');
-  // FAVICON
   if(c.favicon){const _fl=document.createElement('link');_fl.rel='icon';_fl.href=c.favicon;document.head.appendChild(_fl);}
-  // SEO META + OPEN GRAPH + TWITTER CARD
-  const _desc=c.metaDesc||c.heroSub||c.tagline||'';
-  const _metas=[['name','description',_desc],['property','og:type','website'],['property','og:title',c.name||''],['property','og:description',_desc],['property','og:image',c.ogImage||''],['property','og:url',c.siteUrl||''],['name','twitter:card','summary_large_image'],['name','twitter:title',c.name||''],['name','twitter:description',_desc],['name','twitter:image',c.ogImage||'']].filter(t=>t[2]);
-  _metas.forEach(t=>{const m=document.createElement('meta');m.setAttribute(t[0],t[1]);m.content=t[2];document.head.appendChild(m);});
-  if(c.siteUrl){const _cl=document.createElement('link');_cl.rel='canonical';_cl.href=c.siteUrl;document.head.appendChild(_cl);}
-  // SCHEMA.ORG JSON-LD
-  const _schema={"@context":"https://schema.org","@type":"Church","name":c.name||"","description":_desc,"url":c.siteUrl||"","telephone":c.contactPhone||"","email":c.contactEmail||"","address":{"@type":"PostalAddress","streetAddress":c.contactAddress||""}};
-  if(c.ogImage){_schema.image=c.ogImage;}
-  const _sl=document.createElement('script');_sl.type='application/ld+json';_sl.textContent=JSON.stringify(_schema);document.head.appendChild(_sl);
-  // NAV LOGO IMAGE (overrides text name when logoUrl is set)
   if(c.logoUrl){g('nav-logo').innerHTML=`<img src="${e(u(c.logoUrl))}" alt="${e(c.name||'')}" style="height:40px;width:auto;display:block"/>`;}
-  // DONATION BUTTON IN NAV
   if(c.donationUrl){const _db=document.createElement('a');_db.href=u(c.donationUrl);_db.target='_blank';_db.rel='noopener noreferrer';_db.textContent=c.donationText||'Give';_db.style.cssText='padding:9px 22px;border-radius:24px;font-size:13px;font-weight:600;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);transition:all .2s;white-space:nowrap;margin-left:4px';g('nav-links').appendChild(_db);}
-  // ANNOUNCEMENT BANNER
   if(c.announcementBanner){const _ab=g('ann-banner');_ab.textContent=c.announcementBanner;_ab.style.display='block';}
-  // PRIVACY LINK IN FOOTER
-  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener noreferrer';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.35)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
-  // COOKIE CONSENT BANNER
+  (function(){const now=Date.now();const anns=(c.announcements||[]).filter(a=>{if(!a.active)return false;if(a.expiresAt){const t=new Date(a.expiresAt).getTime();if(!isNaN(t)&&now>t)return false;}return true;});if(!anns.length)return;const BG={info:'#eff6ff',warning:'#fffbeb',celebration:'#f5f3ff'};const BD={info:'#bfdbfe',warning:'#fde68a',celebration:'#ddd6fe'};const TX={info:'#1e40af',warning:'#92400e',celebration:'#5b21b6'};const IC={info:'ℹ️',warning:'⚠️',celebration:'🎉'};g('ann-items').innerHTML=anns.map(a=>{const t=a.type||'info';return `<div style="background:${BG[t]||BG.info};border-bottom:1px solid ${BD[t]||BD.info};padding:10px 24px;text-align:center;font-size:13px;font-weight:500;color:${TX[t]||TX.info}">${IC[t]||IC.info} ${e(a.text)}</div>`;}).join('');})();
+  if(c.privacyPolicyUrl){const _ppl=document.createElement('a');_ppl.href=u(c.privacyPolicyUrl);_ppl.target='_blank';_ppl.rel='noopener noreferrer';_ppl.style.cssText='display:inline-block;margin-top:10px;font-size:12px;color:rgba(255,255,255,.45)';_ppl.textContent='Privacy Policy';g('footer').appendChild(_ppl);}
   if(c.cookieNotice&&!sessionStorage.getItem('cookie_ack')){const _cb=document.createElement('div');_cb.id='cookie-banner';_cb.innerHTML=`<span>${e(c.cookieNotice)}</span><button onclick="document.getElementById('cookie-banner').remove();sessionStorage.setItem('cookie_ack','1')">Got it</button>`;document.body.appendChild(_cb);}
 })();
 </script>
